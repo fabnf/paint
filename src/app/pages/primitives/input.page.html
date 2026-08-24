@@ -1,0 +1,152 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="textCursor"
+    title="Input"
+    lede="The text-entry atom. A real <input class=&quot;form-control&quot;> with Paint's label, hint, error and affordance chrome around it — because selection, IME, autofill and password managers are the platform's job, not a design system's."
+    builtOn=".form-control / .form-label / .form-text"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Anatomy"
+    anchor="anatomy"
+    description="A label that is a real <label for>, a control, and a hint wired into aria-describedby. Everything below the field is optional; the label is not."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <div class="demo-field">
+        <ds-input
+          label="Email"
+          type="email"
+          autocomplete="email"
+          placeholder="ada@paint.dev"
+          hint="We only use it to sign you in."
+          [(value)]="email"
+        />
+      </div>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">A placeholder is not a label</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          It disappears the moment someone types, it fails contrast in most palettes, and screen
+          readers treat it as a hint at best. Paint renders a label or an explicit ariaLabel — there
+          is no third option, and no way to ship a nameless field by accident.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Types"
+    anchor="types"
+    description="type is a semantic choice. It decides the keyboard on a phone, the autofill a browser offers, and what the value actually is."
+  >
+    <app-doc-example code="{{ typeSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-input label="Website" type="url" inputMode="url" placeholder="https://" [(value)]="site" />
+        <ds-stack [gap]="2">
+          <ds-input label="Seats" type="number" [min]="1" [max]="99" [(value)]="seats" />
+          <ds-text variant="code" tone="primary">
+            value = {{ seats() === null ? 'null' : seats() }} ({{ seats() === null ? 'null' : 'number' }})
+          </ds-text>
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Icons, affixes and clearing"
+    anchor="affixes"
+    description="Icons and affixes are decoration: they are hidden from assistive tech, because a $ is not part of the field's name. The clear button is not a tab stop — Escape does the same job from the keyboard."
+  >
+    <app-doc-example code="{{ affixSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-input
+          label="Search"
+          type="search"
+          iconStart="search"
+          placeholder="Find a token…"
+          [clearable]="true"
+          [(value)]="query"
+        />
+        <ds-input label="Amount" type="number" prefix="$" suffix="/month" [(value)]="amount" />
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes"
+    anchor="sizes"
+    description="The same three heights as ds-button, from one control scale — so a field and the button beside it line up."
+  >
+    <app-doc-example code="{{ sizeSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-flex [gap]="3" align="end" [wrap]="'wrap'">
+          <div class="demo-field">
+            <ds-input size="sm" label="Small" placeholder="sm" />
+          </div>
+          <ds-button size="sm">Add</ds-button>
+        </ds-flex>
+        <ds-flex [gap]="3" align="end" [wrap]="'wrap'">
+          <div class="demo-field">
+            <ds-input size="md" label="Medium" placeholder="md" />
+          </div>
+          <ds-button size="md">Add</ds-button>
+        </ds-flex>
+        <ds-flex [gap]="3" align="end" [wrap]="'wrap'">
+          <div class="demo-field">
+            <ds-input size="lg" label="Large" placeholder="lg" />
+          </div>
+          <ds-button size="lg">Add</ds-button>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="States"
+    anchor="states"
+    description="Required, read-only, disabled, invalid. A message is a claim of invalidity, so error sets aria-invalid too — the red border and the announcement can never disagree."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-input label="Required" [required]="true" hint="The asterisk is decoration." />
+        <ds-input label="Read only" [readOnly]="true" value="ada@paint.dev" />
+        <ds-input label="Disabled" [disabled]="true" value="Not available" />
+        <ds-input label="Invalid" value="ada@" error="That is not an email address." />
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Reactive forms"
+    anchor="forms"
+    description="A ControlValueAccessor, so it drops into ngModel or reactive forms with no wrapper. Blur marks it touched; the forms API can disable it."
+  >
+    <app-doc-example code="{{ validationSnippet }}" language="ts">
+      <ds-stack [gap]="3" class="demo-field">
+        <ds-input
+          label="Email"
+          type="email"
+          placeholder="ada@paint.dev"
+          [formControl]="emailControl"
+          [error]="liveError()"
+        />
+        <ds-text variant="code" tone="primary">
+          {{ emailControl.touched ? 'touched' : 'untouched' }} ·
+          {{ emailControl.valid ? 'valid' : 'invalid' }}
+        </ds-text>
+        <ds-text variant="caption">Focus the field and leave it empty to see the message.</ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-input>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

@@ -1,0 +1,134 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="user"
+    title="Avatar"
+    lede="The identity atom. An image if there is one, initials if there is not, an icon if there is no name either — and a tint derived from the name, so the same person is the same colour on every screen."
+    builtOn="Paint tones + the avatar scale"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Three fallbacks, one shape"
+    anchor="fallbacks"
+    description="The fallback is not a loading state. It is what the avatar looks like when the photo 404s — which it will."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-flex [gap]="6" [wrap]="'wrap'" align="center">
+        <ds-stack [gap]="2" align="center">
+          <ds-avatar name="Ada Lovelace" [src]="photo" size="lg" />
+          <ds-text variant="caption">image</ds-text>
+        </ds-stack>
+        <ds-stack [gap]="2" align="center">
+          <ds-avatar name="Grace Hopper" size="lg" />
+          <ds-text variant="caption">initials</ds-text>
+        </ds-stack>
+        <ds-stack [gap]="2" align="center">
+          <ds-avatar name="Katherine Johnson" [src]="brokenPhoto" size="lg" />
+          <ds-text variant="caption">broken image → initials</ds-text>
+        </ds-stack>
+        <ds-stack [gap]="2" align="center">
+          <ds-avatar icon="palette" size="lg" />
+          <ds-text variant="caption">no name → decoration</ds-text>
+        </ds-stack>
+      </ds-flex>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">The tint is derived, not random</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          A hash of the name picks one of the six tones. Randomness would make an avatar a poor
+          recognition cue, which is the only reason initials exist at all — and a hash survives a
+          reload, a refetch and a re-sort.
+        </ds-text>
+        <ds-flex [gap]="2" [wrap]="'wrap'">
+          @for (person of people; track person) {
+            <ds-avatar [name]="person" size="sm" />
+          }
+        </ds-flex>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes and shapes"
+    anchor="sizes"
+    description="Five sizes from the token layer: sm, md and lg line up with the control heights, so an avatar beside an input is a row and not a pile. People are round; projects and files are square."
+  >
+    <app-doc-example [plain]="true">
+      <ds-stack [gap]="5">
+        <ds-flex [gap]="4" align="center" [wrap]="'wrap'">
+          @for (size of sizes; track size) {
+            <ds-stack [gap]="2" align="center">
+              <ds-avatar name="Ada Lovelace" [size]="size" />
+              <ds-text variant="code" tone="subtle">{{ size }}</ds-text>
+            </ds-stack>
+          }
+        </ds-flex>
+        <ds-flex [gap]="4" align="center" [wrap]="'wrap'">
+          @for (size of sizes; track size) {
+            <ds-avatar name="Paint" shape="square" [size]="size" />
+          }
+          <ds-avatar icon="palette" shape="square" size="lg" />
+          <ds-avatar icon="layers" shape="square" size="lg" />
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Presence"
+    anchor="presence"
+    description="The dot is hidden from assistive tech and folded into the avatar's name instead: “Grace Hopper, Online”, not “Grace Hopper” followed by a mystery image."
+  >
+    <app-doc-example code="{{ statusSnippet }}">
+      <ds-flex [gap]="5" [wrap]="'wrap'" align="center">
+        @for (status of statuses; track status) {
+          <ds-stack [gap]="2" align="center">
+            <ds-avatar name="Grace Hopper" size="lg" [status]="status" />
+            <ds-text variant="code" tone="subtle">{{ status }}</ds-text>
+          </ds-stack>
+        }
+        <ds-stack [gap]="2" align="center">
+          <ds-avatar name="Ada Lovelace" size="lg" status="busy" statusLabel="In a meeting" />
+          <ds-text variant="caption">custom label</ds-text>
+        </ds-stack>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="When the name is already there"
+    anchor="decorative"
+    description="Next to the text it repeats, an avatar is decoration. Say it once."
+  >
+    <app-doc-example code="{{ decorativeSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-flex align="center" [gap]="3">
+          <ds-avatar name="Ada Lovelace" size="sm" [decorative]="true" />
+          <ds-stack [gap]="0">
+            <ds-text variant="label">Ada Lovelace</ds-text>
+            <ds-text variant="caption">Owner · ada&#64;paint.dev</ds-text>
+          </ds-stack>
+        </ds-flex>
+
+        <ds-divider />
+
+        <ds-flex class="avatar-stack" align="center" role="group" aria-label="6 collaborators">
+          @for (person of people; track person) {
+            <ds-avatar [name]="person" size="sm" [decorative]="true" />
+          }
+        </ds-flex>
+        <ds-text variant="caption">
+          A stack is a Flex with a negative margin. It is named once, as a group — six names in a row
+          is six announcements.
+        </ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-avatar>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

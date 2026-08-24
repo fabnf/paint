@@ -1,0 +1,230 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="calendar"
+    title="Date & time inputs"
+    lede="A date you can type, a time you can type, and a button that asks for a calendar. Typing is the fastest way to enter a date anybody already knows — which is why these exist before the picker, rather than inside it."
+    builtOn="ds-input + ds-button"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="DateInput"
+    anchor="date-input"
+    description="A text field that parses. It commits on blur and on Enter — never on a keystroke, because 2026-03-0 is neither a date nor a mistake yet."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="5" class="demo-field">
+        <ds-form-field label="Invoice date" hint="Any format: 4/3/26, 2026-03-04, 20260304…">
+          <ds-date-input [(value)]="date" [min]="min" [max]="max" [trigger]="false" />
+        </ds-form-field>
+        <ds-text variant="code" tone="primary">value = {{ date() ?? 'null' }}</ds-text>
+        <ds-text variant="caption">
+          Try <code>tomorrow</code>, or <code>31/02/2026</code>. The value is not a date, so the field
+          says so rather than guessing.
+        </ds-text>
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Not <code>type="date"</code></ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The native control hands the UI to the OS, the parsing to the locale, and the value to a
+            time zone. Three things a design system exists to decide.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">An error is not a deletion</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Unreadable text stays in the box so it can be fixed — but the value goes to
+            <code>null</code>, because keeping the old date would be a lie about what the field says.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">It speaks the date</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            <code>04/03/2026</code> is March in London and April in Boston. A polite live region says
+            “4 March 2026” once the value settles.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Which number is the month?"
+    anchor="order"
+    description="order decides what is typed and what is shown. The parser is generous about separators — 4/3/26, 04.03.2026, 20260304 — and exact about the result."
+  >
+    <app-doc-example code="{{ orderSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="5">
+        <ds-form-field label="ISO (ymd)">
+          <ds-date-input order="ymd" [(value)]="british" [trigger]="false" />
+        </ds-form-field>
+        <ds-form-field label="British (dmy)">
+          <ds-date-input order="dmy" separator="/" [(value)]="british" [trigger]="false" />
+        </ds-form-field>
+        <ds-form-field label="American (mdy)">
+          <ds-date-input order="mdy" separator="/" [(value)]="american" [trigger]="false" />
+        </ds-form-field>
+      </ds-grid>
+    </app-doc-example>
+
+    <app-doc-code [code]="parseSnippet" language="ts" />
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The trigger only asks"
+    anchor="trigger"
+    description="It reports aria-expanded, points at whatever you give it, and emits. There is no popover here and there never will be: an overlay, a focus trap and a dismissal policy are an organism's job. Here is what assembling them looks like — inline, from the outside."
+  >
+    <app-doc-example code="{{ triggerSnippet }}">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-form-field label="Start date" hint="Type it, or press the button — or ArrowDown.">
+          <ds-date-input
+            [(value)]="assembled"
+            [(open)]="calendarOpen"
+            [ariaControls]="calendarId"
+            triggerHasPopup=""
+            [dateDisabled]="isWeekend"
+            (triggerClick)="openCalendar()"
+          />
+        </ds-form-field>
+
+        @if (calendarOpen()) {
+          <ds-box [id]="calendarId" background="surface" [border]="true" radius="lg" [padding]="4">
+            <ds-calendar
+              [(value)]="assembled"
+              [min]="min"
+              [dateDisabled]="isWeekend"
+              (daySelected)="pick()"
+            />
+          </ds-box>
+        }
+
+        <ds-text variant="code" tone="primary">value = {{ assembled() ?? 'null' }}</ds-text>
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">What the organism will own</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          Everything in that example's <em>component</em>: moving focus into the grid when it opens,
+          returning it to the trigger when a day is picked, dismissing on Escape and on an outside
+          click, choosing between a dialog and a disclosure, and saying so with
+          <code>triggerHasPopup</code>. The molecules hand it the hooks —
+          <code>open</code>, <code>ariaControls</code>, <code>daySelected</code> and a public
+          <code>focus()</code> on the calendar — and stop there.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="TimeInput"
+    anchor="time-input"
+    description="The same bargain, for a clock. No dropdown of 96 quarter-hours: that is not a picker, it is a punishment. Arrow keys step by the step; PageUp and PageDown by an hour; stepping never leaves min and max."
+  >
+    <app-doc-example code="{{ timeSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-stack [gap]="3">
+          <ds-form-field label="Starts at" hint="Try 9, 930, or 9:30 pm. Then press ↑.">
+            <ds-time-input [(value)]="start" [step]="15" />
+          </ds-form-field>
+          <ds-text variant="code" tone="primary">value = {{ start() ?? 'null' }}</ds-text>
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-form-field label="Office hours" hint="Between 06:00 and 23:00.">
+            <ds-time-input [(value)]="slot" [step]="30" min="06:00" max="23:00" />
+          </ds-form-field>
+          <ds-text variant="code" tone="primary">value = {{ slot() ?? 'null' }}</ds-text>
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+
+    <app-doc-example code="{{ hour12Snippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-form-field label="Twelve-hour display">
+          <ds-time-input [hour12]="true" [(value)]="end" [step]="15" />
+        </ds-form-field>
+        <ds-form-field label="Twenty-four-hour display">
+          <ds-time-input [(value)]="end" [step]="15" />
+        </ds-form-field>
+      </ds-grid>
+      <ds-text variant="caption" class="mt-3">
+        One value, two clocks. <code>hour12</code> changes the display and what the parser accepts
+        back — never what the model holds.
+      </ds-text>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="A booking form"
+    anchor="form"
+    description="Reactive forms, a required day, and a rule that belongs to neither field on its own."
+  >
+    <app-doc-example [plain]="true">
+      <form class="demo-panel demo-field" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <ds-stack [gap]="5">
+          <ds-stack [gap]="1">
+            <ds-text variant="h4" [as]="'h3'">Book the studio</ds-text>
+            <ds-text variant="bodySm" tone="muted">Weekends are for drying.</ds-text>
+          </ds-stack>
+
+          <ds-form-field label="Day" [required]="true" [error]="dayMessage()">
+            <ds-date-input
+              formControlName="day"
+              order="dmy"
+              separator="/"
+              [min]="min"
+              [dateDisabled]="isWeekend"
+              [trigger]="false"
+            />
+          </ds-form-field>
+
+          <ds-grid [gap]="4">
+            <ds-grid-item [span]="6">
+              <ds-form-field label="From" [required]="true">
+                <ds-time-input formControlName="from" [step]="30" min="08:00" max="20:00" />
+              </ds-form-field>
+            </ds-grid-item>
+            <ds-grid-item [span]="6">
+              <ds-form-field label="To" [required]="true" [error]="orderMessage()">
+                <ds-time-input formControlName="to" [step]="30" min="08:00" max="20:00" />
+              </ds-form-field>
+            </ds-grid-item>
+          </ds-grid>
+
+          <ds-button variant="primary" type="submit" [fullWidth]="true">Book it</ds-button>
+
+          <ds-text variant="code" tone="primary">
+            {{ form.getRawValue().day || 'null' }} · {{ form.getRawValue().from }} →
+            {{ form.getRawValue().to }}
+          </ds-text>
+        </ds-stack>
+      </form>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of the two molecules.">
+    <ds-stack [gap]="6">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">&lt;ds-date-input&gt;</ds-text>
+        <app-doc-api-table [rows]="dateInputs" nameHeading="Input" label="Date input inputs" />
+        <app-doc-api-table [rows]="dateOutputs" nameHeading="Output" label="Date input outputs" />
+      </ds-stack>
+      <ds-stack [gap]="3">
+        <ds-text variant="label">&lt;ds-time-input&gt;</ds-text>
+        <app-doc-api-table [rows]="timeInputs" nameHeading="Input" label="Time input inputs" />
+        <app-doc-api-table [rows]="timeOutputs" nameHeading="Output" label="Time input outputs" />
+      </ds-stack>
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

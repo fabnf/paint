@@ -1,0 +1,111 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="search"
+    title="CommandPalette"
+    lede="The jump-to box: a modal combobox over everything a product can do — commands, links, entities, mixed in one list. ⌘K / Ctrl+K opens it anywhere; typing filters at keystroke speed; Enter runs the row. The modal machinery is the Dialog's, the ARIA is the Select's, the rows speak the Menu's language."
+    builtOn="the Dialog's machinery + a combobox/listbox + ds-icon"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Jump to, run, go"
+    anchor="demo"
+    description="Press ⌘K (or Ctrl+K) right now — or use the button. Commands fire toasts, links navigate this very docs site, entities are invoices you can find by their own words (try “mural” or “overdue”). Arrows walk, Enter selects, Escape returns focus to wherever you were."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-flex [gap]="3" align="center" [wrap]="'wrap'">
+        <ds-button variant="secondary" iconStart="search" (clicked)="palette.openPalette()">
+          Jump to…&nbsp;<kbd class="token-chip px-1 rounded">⌘K</kbd>
+        </ds-button>
+        @if (lastRun()) {
+          <ds-text variant="code" tone="primary">(commandRun) → {{ lastRun() }}</ds-text>
+        }
+      </ds-flex>
+
+      <ds-command-palette #palette [items]="commands" (commandRun)="onRun($event)" />
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Three verbs, one list"
+    anchor="items"
+    description="What kind of row an item is falls out of which fields are set — there is no type tag to forget."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">run — a command</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Called on selection, before the palette closes. “New invoice”, “Export ledger”,
+            “Toggle sidebar” — the things a product does.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">link / href — a place</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            link navigates the router and closes behind itself; href leaves the app in a new tab,
+            noopener, and wears the external-link glyph so nobody is surprised.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">an entity — a noun</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            “INV-204 — Mural” is a link wearing a noun, found by its keywords. Feed the palette
+            recent records and it becomes the fastest search box in the product.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Predictable, not fuzzy"
+    anchor="matching"
+    description="Prefix beats word-boundary beats substring beats keyword beats description — and ties keep input order, so a consumer's own ranking survives. Deliberately no fuzziness: a palette is used at typing speed, and fuzzy surprises cost more than they save. Keywords exist for the synonyms fuzziness would be excused by."
+  >
+    <app-doc-example code="{{ buttonSnippet }}" [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">The Dialog's modality</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Scroll lock, inert page, Escape, click-beside-to-close, focus restored to whatever
+              summoned it. One overlay contract across the system.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">The Select's ARIA</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              A real combobox: aria-activedescendant follows the arrows, the listbox is controlled,
+              the result count is announced politely. Focus never leaves the input.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">The Menu's rows</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Icon gutter, label, quiet description, a kbd hint on the right. A person who knows
+              one Paint list knows them all.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and the exported matcher of <ds-command-palette>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="methods" nameHeading="Member" label="Methods and functions" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

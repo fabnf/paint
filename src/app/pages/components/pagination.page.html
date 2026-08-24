@@ -1,0 +1,171 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="more"
+    title="Pagination"
+    lede="Which page of the list you are on, and how to get to another. Buttons, not links, because nothing here changes the URL — and a control whose width changes as you page through it is a control that gets clicked twice."
+    builtOn=".pagination / .page-link"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A paginated list"
+    anchor="list"
+    description="The shape every app ends up with: a toolbar to filter it, a page of rows, a summary, and the page buttons. When the filter excludes everything, the list is not empty — the query is, and the empty state has to say so."
+  >
+    <app-doc-example code="{{ listSnippet }}" language="ts">
+      <ds-box background="surface" [border]="true" radius="lg" class="demo-list">
+        <ds-toolbar ariaLabel="Invoice list" class="demo-list__toolbar">
+          <ds-search-field
+            class="demo-list__search"
+            label="Filter invoices"
+            [labelHidden]="true"
+            placeholder="Filter invoices…"
+            size="sm"
+            [debounce]="0"
+            [value]="query()"
+            [resultCount]="filtered().length"
+            (search)="search($event)"
+          />
+          <ds-divider orientation="vertical" [spacing]="0" />
+          <ds-select
+            class="demo-list__size"
+            [options]="pageSizes"
+            [value]="pageSize()"
+            size="sm"
+            label="Rows per page"
+            (selectionChange)="setPageSize($any($event))"
+          />
+        </ds-toolbar>
+
+        @if (rows().length) {
+          <ul class="demo-list__rows">
+            @for (invoice of rows(); track invoice.id) {
+              <li class="demo-list__row">
+                <ds-flex justify="between" align="center" [gap]="3">
+                  <ds-flex align="center" [gap]="3">
+                    <ds-avatar [name]="invoice.owner" size="xs" [decorative]="true" />
+                    <ds-stack [gap]="0">
+                      <ds-text variant="label">{{ invoice.project }}</ds-text>
+                      <ds-text variant="caption">#{{ invoice.id }} · {{ invoice.owner }}</ds-text>
+                    </ds-stack>
+                  </ds-flex>
+                  <ds-flex align="center" [gap]="3">
+                    <ds-badge [tone]="$any(tone(invoice.status))">{{ invoice.status }}</ds-badge>
+                    <ds-text variant="code">{{ "$" + invoice.amount }}</ds-text>
+                  </ds-flex>
+                </ds-flex>
+              </li>
+            }
+          </ul>
+
+          <div class="demo-list__footer">
+            <ds-pagination
+              [(page)]="page"
+              [total]="filtered().length"
+              [pageSize]="pageSize()"
+              [showSummary]="true"
+              size="sm"
+              label="Invoice pages"
+            />
+          </div>
+        } @else {
+          <!-- Not "no invoices": forty-three of them are behind that query. -->
+          <ds-empty-state
+            icon="search"
+            title="No invoices match “{{ query() }}”"
+            description="Every invoice is still there — the filter is hiding them."
+            [live]="true"
+          >
+            <ds-button dsEmptyStateActions size="sm" variant="secondary" (clicked)="search('')">
+              Clear the filter
+            </ds-button>
+          </ds-empty-state>
+        }
+      </ds-box>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">A page that no longer exists is not a page</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          Filtering from 43 invoices to 4 while you are on page 7 leaves you looking at nothing, with
+          a control that says you are somewhere. The component clamps what it draws; resetting the
+          page is the list's job, and it is one line.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Counting"
+    anchor="counting"
+    description="Give it the number of items and it counts the pages. Give it the number of pages and it believes you."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="6">
+        <ds-pagination [(page)]="simple" [total]="57" [pageSize]="10" [showSummary]="true" label="Demo pages" />
+        <ds-divider />
+        <ds-flex [gap]="4" align="center" [wrap]="'wrap'">
+          <ds-pagination [(page)]="compact" [pageCount]="12" variant="compact" label="Compact demo" />
+          <ds-text variant="caption">
+            Compact: two arrows and a counter, for a sidebar or a phone.
+          </ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The width never changes"
+    anchor="width"
+    description="Seven slots at page 1, seven at page 6, seven at page 200. An ellipsis is only drawn where it replaces more than one page — because a “…” that stands for a single page is wider than the page it hid."
+  >
+    <app-doc-example code="{{ widthSnippet }}" language="ts">
+      <ds-stack [gap]="4">
+        @for (count of [7, 10, 200]; track count) {
+          <ds-flex [gap]="4" align="center" [wrap]="'wrap'">
+            <ds-text variant="code" tone="subtle" class="stat-row">{{ count }} pages</ds-text>
+            <ds-pagination [page]="1" [pageCount]="count" size="sm" [label]="count + ' pages'" />
+          </ds-flex>
+        }
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The gap is not a button</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            It is <code>aria-hidden</code> and cannot be focused: the pages it stands for are reachable
+            from the ones beside it.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The list changed, and focus did not move</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            “Page 3 of 12” goes into a polite region that was on the page before the first click — so
+            the first change is the first thing it says.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The range, on its own"
+    anchor="range"
+    description="Pure, exported and tested separately — including the property that the current page is always drawn and the width never changes."
+  >
+    <app-doc-api-table [rows]="rangeRows" nameHeading="Function" label="Pagination functions" />
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-pagination>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

@@ -1,0 +1,167 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="grid"
+    title="DataGrid"
+    lede="The heavy-duty sibling of DataTable: AG Grid Community, wearing Paint. The wrapper is deliberately thin — the DataTable's toolbar, its empty and loading story, a selection model in the same shape, and a token bridge so the grid follows the theme at runtime. Everything else is AG's, on purpose."
+    builtOn="ag-grid-community (no Enterprise) + Paint's chrome"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="An operations console, not a settings page"
+    anchor="grid"
+    description="500 rows, virtualised. Sort any column; drag headers to reorder or resize them; open the per-column filters; search everything at once from the toolbar. The toolbar, the selection count and the footer are the DataTable's — the engine underneath is not."
+  >
+    <app-doc-example code="{{ gridSnippet }}">
+      <ds-data-grid
+        caption="Trades"
+        [columns]="columns"
+        [rows]="trades()"
+        [rowKey]="byId"
+        [selectable]="true"
+        [(selection)]="selected"
+        [quickFilter]="query()"
+        [density]="density()"
+        height="24rem"
+        (rowClick)="onRowClick($event)"
+      >
+        <ds-flex dsGridActions [gap]="2" align="center">
+          <ds-search-field
+            label="Search trades"
+            [labelHidden]="true"
+            placeholder="Search trades…"
+            [(value)]="query"
+          />
+          <ds-button variant="ghost" size="sm" iconStart="rows" (clicked)="toggleDensity()">
+            {{ density() === 'compact' ? 'Comfortable' : 'Compact' }}
+          </ds-button>
+        </ds-flex>
+
+        <ds-flex dsGridFooter justify="between" align="center">
+          <ds-text variant="caption">{{ trades().length }} trades · {{ filledCount() }} filled</ds-text>
+          @if (lastClicked()) {
+            <ds-text variant="caption">last opened: {{ lastClicked() }}</ds-text>
+          }
+        </ds-flex>
+      </ds-data-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Empty and loading, the Paint way"
+    anchor="states"
+    description="AG's own overlays are suppressed; the grid shows the same ds-empty-state and the same wait as every other organism, painted over the rows and under the header — the columns stay readable while there is nothing beneath them."
+  >
+    <app-doc-example [plain]="true">
+      <ds-stack [gap]="3">
+        <ds-flex [gap]="2">
+          <ds-button variant="secondary" size="sm" iconStart="download" (clicked)="loadStateRows()">
+            Load rows
+          </ds-button>
+          <ds-button variant="ghost" size="sm" (clicked)="clearStateRows()">Clear</ds-button>
+        </ds-flex>
+
+        <ds-data-grid
+          caption="Working orders"
+          [columns]="columns"
+          [rows]="stateRows()"
+          [rowKey]="byId"
+          [loading]="stateLoading()"
+          height="18rem"
+          [empty]="{ icon: 'search', title: 'No working orders', description: 'Load some, or widen the filter.' }"
+        >
+          <ds-button dsGridEmptyAction variant="primary" size="sm" iconStart="download" (clicked)="loadStateRows()">
+            Load rows
+          </ds-button>
+        </ds-data-grid>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The token bridge"
+    anchor="theme"
+    description="The same trick the Bootstrap bridge plays: AG's Quartz theme with every value re-pointed at a --ds-* custom property. Toggle Paint's theme in the header of this page and watch the grid follow — headers, selection tint, filter popups, even the scrollbars via browserColorScheme."
+  >
+    <app-doc-code [code]="themeSnippet" language="ts" />
+  </app-doc-section>
+
+  <app-doc-section
+    heading="DataTable or DataGrid?"
+    anchor="or-table"
+    description="Both render rows. They answer different questions, and the first one is still the default."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-data-table&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Rows of record: invoices on a settings page, members of a team, fifty things with names.
+            It is real HTML — semantic table markup Paint owns outright — with sorting, selection
+            and templated cells, at zero dependency cost. It paginates rather than virtualises,
+            because fifty rows do not need an engine.
+          </ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            <strong>Default to it.</strong> If the screen works with a page size of 25, it is a
+            table screen.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-data-grid&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Working surfaces: a blotter, a log viewer, an ops console — thousands of rows the user
+            scrubs, filters per column, reorders and resizes while they work. That is an engine's
+            job, and AG Grid Community is the engine; Paint adds the chrome and the theme and
+            refuses to re-wrap the rest.
+          </ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            <strong>Reach for it when the table starts fighting you</strong> — not before. It costs
+            a dependency, and its markup is AG's, not yours.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Same words</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            caption, density, loading, empty, selectable, [(selection)], rowKey, (rowClick),
+            dsGridActions / dsGridFooter / dsGridEmptyAction — the DataTable's API, so switching
+            engines is not switching vocabularies.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">AG's columns</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            DataGridColumn is a type alias for AG's ColDef — not a Paint dialect that would drift
+            from the documentation products actually read. (gridReady) hands out the real GridApi.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Community only</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            No Enterprise modules, no licence key, no watermark roulette. If a screen needs row
+            grouping or pivoting, that is a product decision with a price tag — not a Paint default.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and slots of <ds-data-grid>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" label="DataGrid slots" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

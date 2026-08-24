@@ -1,0 +1,131 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="toggle"
+    title="Switch"
+    lede="The immediate-effect toggle. A native checkbox wearing role=&quot;switch&quot; — which is a promise about behaviour, not about shape: if the change only lands when the user presses Save, it is a checkbox."
+    builtOn=".form-switch / .form-check-input"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Anatomy"
+    anchor="anatomy"
+    description="Label, track, hint. Space toggles it — and so does Enter, because a switch reads as a button and people press Enter on buttons."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4" class="demo-form">
+        <ds-switch label="Email digests" hint="A summary every Monday." [(checked)]="digests" />
+        <ds-switch label="Mentions" hint="Only when someone @mentions you." [(checked)]="mentions" />
+        <ds-text variant="code" tone="primary">
+          digests = {{ digests() }} · mentions = {{ mentions() }}
+        </ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="It really is immediate"
+    anchor="immediate"
+    description="This switch is bound to the showcase's own ThemeService. There is no Save button, because there is nothing to save."
+  >
+    <app-doc-example code="{{ themeSnippet }}" language="ts">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="demo-form">
+        <ds-switch
+          label="Dark mode"
+          hint="Re-tints every token, and every Bootstrap component with them."
+          labelPlacement="start"
+          [checked]="dark()"
+          (changed)="setDark($event)"
+        />
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Settings rows"
+    anchor="placement"
+    description="labelPlacement=&quot;start&quot; puts the label first and pushes the track to the end of the row, so a column of settings lines up down its edge."
+  >
+    <app-doc-example code="{{ placementSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="demo-form">
+        <ds-stack [gap]="0" [divided]="true">
+          <div class="settings-row">
+            <ds-switch label="Grain" hint="Texture over surfaces." labelPlacement="start" [(checked)]="grain" />
+          </div>
+          <div class="settings-row">
+            <ds-switch label="Reduced motion" labelPlacement="start" />
+          </div>
+          <div class="settings-row">
+            <ds-switch label="Beta features" labelPlacement="start" [disabled]="true" />
+          </div>
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes and states"
+    anchor="states"
+    description="Three track sizes from the control scale. Off is a state, not an absence: the track stays visible against the page."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-stack [gap]="3">
+          <ds-switch size="sm" label="Small" [checked]="true" />
+          <ds-switch size="md" label="Medium" [checked]="true" />
+          <ds-switch size="lg" label="Large" [checked]="true" />
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-switch label="Off" />
+          <ds-switch label="On" [checked]="true" />
+          <ds-switch label="Disabled" [disabled]="true" />
+          <ds-switch label="Disabled and on" [disabled]="true" [checked]="true" />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="What role=“switch” buys"
+    anchor="semantics"
+    description="One attribute, and only one thing changes."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Announcement</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A screen reader says “on” and “off” instead of “checked” and “not checked”. The control
+            underneath is still a checkbox.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Keyboard</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Space comes from the platform. Paint adds Enter, which a checkbox ignores, and swallows
+            it so a form never submits instead of toggling.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Forced colours</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The thumb is a background image, and High Contrast drops those. The control falls back
+            to the system's own checkbox rather than disappearing.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-switch>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

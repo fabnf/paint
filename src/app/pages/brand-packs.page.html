@@ -1,0 +1,178 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Foundation"
+    icon="palette"
+    title="Brand packs"
+    lede="Paint is multi-brand: a pack pours a complete identity — light and dark semantic colours, plus optional gradients, radii and font stacks — into the same --ds-* properties every component already reads. Components are brand-agnostic; they never learn a switch happened."
+    builtOn="BrandPack + ThemeService + [dsBrand]"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Try it on the whole site"
+    anchor="switcher"
+    description="The palette menu in the header switches the active pack for the entire docs shell — every primitive, molecule and organism re-pours, because they all drink from --ds-*. The Paint logo stays: packs are palettes, not lockups."
+  >
+    <app-doc-example [plain]="true">
+      <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+        @for (pack of packs; track pack.id) {
+          <ds-button
+            [variant]="activeBrand().id === pack.id ? 'primary' : 'secondary'"
+            size="sm"
+            [iconStart]="activeBrand().id === pack.id ? 'check' : null"
+            (clicked)="setBrand(pack.id)"
+          >
+            {{ pack.name }}
+          </ds-button>
+        }
+        <ds-text variant="bodySm" tone="muted">
+          active: <code>{{ activeBrand().id }}</code> — persisted alongside the mode.
+        </ds-text>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The gallery: same primitives, every pack, both modes"
+    anchor="gallery"
+    description="Each panel is a scoped region ([dsBrand] + [dsTheme]) showing identical components. Nothing inside the panels is styled per brand — the panels swap the custom properties, and the components follow. Note the corners and the display face moving with the pack, not just the colours."
+  >
+    <ds-stack [gap]="6">
+      @for (pack of packs; track pack.id) {
+        <ds-stack [gap]="3">
+          <ds-flex [gap]="2" align="baseline">
+            <ds-text variant="h3" [as]="'h3'">{{ pack.name }}</ds-text>
+            <ds-text variant="caption" tone="muted">id: {{ pack.id }}</ds-text>
+          </ds-flex>
+
+          <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="4">
+            @for (mode of modes; track mode) {
+              <div class="swatch-panel" [dsTheme]="mode" [dsBrand]="pack.id">
+                <p class="swatch-panel__label">{{ mode }}</p>
+
+                <div class="swatch-panel__row">
+                  <ds-button variant="primary" size="sm">Save changes</ds-button>
+                  <ds-button variant="secondary" size="sm">Preview</ds-button>
+                  <ds-button variant="ghost" size="sm">Cancel</ds-button>
+                </div>
+
+                <ds-input
+                  label="Workspace name"
+                  placeholder="e.g. Atelier"
+                  hint="Shown on every invoice."
+                />
+
+                <ds-alert tone="info" title="Heads up">
+                  The same alert, drinking the same tokens.
+                </ds-alert>
+
+                <div class="swatch-panel__row">
+                  <ds-badge tone="primary">primary</ds-badge>
+                  <ds-badge tone="accent" variant="solid">accent</ds-badge>
+                  <ds-badge tone="success">success</ds-badge>
+                  <ds-badge tone="warning">warning</ds-badge>
+                  <ds-badge tone="danger" variant="outline">danger</ds-badge>
+                </div>
+
+                <ds-data-table
+                  caption="Invoices"
+                  [columns]="invoiceColumns"
+                  [rows]="invoices"
+                  [bordered]="true"
+                  density="compact"
+                />
+              </div>
+            }
+          </ds-grid>
+        </ds-stack>
+      }
+    </ds-stack>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Registering and switching"
+    anchor="register"
+    description="A host registers packs with provideTheme; Paint is always available and always the default. setBrand remaps every --ds-* (and the derived --bs-*) on the root; the choice persists alongside the mode."
+  >
+    <ds-stack [gap]="4">
+      <app-doc-code [code]="registerSnippet" language="ts" />
+      <app-doc-code [code]="switchSnippet" language="ts" />
+    </ds-stack>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="A scoped brand on a subtree"
+    anchor="scope"
+    description="[dsBrand] writes the pack's properties onto that host — children inherit them the way they already inherit the root's, siblings never hear about it, and a nested scope may differ again. Below: a Paint shell, a Tidewater region, and an Ember dark island inside it."
+  >
+    <app-doc-example code="{{ scopeSnippet }}">
+      <div class="scope-demo">
+        <ds-text variant="label">Paint shell</ds-text>
+        <ds-button variant="primary" size="sm">Shell action</ds-button>
+
+        <section class="scope-demo__region" dsBrand="tidewater">
+          <ds-text variant="label">dsBrand="tidewater"</ds-text>
+          <ds-button variant="primary" size="sm">Region action</ds-button>
+          <ds-badge tone="accent">inherited by children</ds-badge>
+
+          <aside class="scope-demo__region" [dsTheme]="'dark'" dsBrand="ember">
+            <ds-text variant="label">dsBrand="ember" + dsTheme="dark"</ds-text>
+            <ds-button variant="primary" size="sm">Nested action</ds-button>
+            <ds-badge tone="primary">nested, not leaking</ds-badge>
+          </aside>
+        </section>
+
+        <section class="scope-demo__region">
+          <ds-text variant="label">Sibling — untouched</ds-text>
+          <ds-button variant="primary" size="sm">Still the shell's brand</ds-button>
+        </section>
+      </div>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The rules of the house"
+    anchor="rules"
+    description="What a pack may own, and what stays Paint's."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Voice, not physics</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A pack owns colour, gradients, corners and type faces. Spacing, the type scale,
+            elevation and motion stay Paint's — and the built-in packs share the status colours,
+            because success must mean the same green on every brand.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Same bar as Paint</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Every pack is tested against the exact contrast table Paint's own palette must clear —
+            every AA text pair, every 3:1 non-text pair, in both modes. A brand that fails AA is
+            not an identity, it is a regression with a name.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Paint paints first</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The static Sass fallbacks stay Wet Paint — no brand hex is duplicated into Sass. The
+            first paint is Paint; the runtime pack wins the moment provideTheme runs. And the
+            ds-logo stays the design system's mark: packs are palettes, not lockups.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="The BrandPack shape, and how the theme layer serves it.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="packApi" nameHeading="BrandPack" label="BrandPack fields" />
+      <app-doc-api-table [rows]="serviceApi" nameHeading="Member" label="ThemeService and directives" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

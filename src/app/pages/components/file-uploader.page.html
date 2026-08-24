@@ -1,0 +1,118 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="upload"
+    title="FileUploader"
+    lede="The multi-file flow, assembled: a dropzone feeding a queue of rows, with the organism owning the list, the concurrency, cancel-on-remove and retry — and refusing to own the wire. Uploads go through an adapter: one function a product writes over its own HTTP."
+    builtOn="ds-file-dropzone + ds-file-queue-item + ds-alert"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Empty, uploading, failed — one component, all three"
+    anchor="states"
+    description="Drop some files. At most three travel at once; the rest wait, visibly. Every third file fails its first attempt on purpose, so the error row and its retry button demonstrate themselves — retried files always make it."
+  >
+    <app-doc-example code="{{ flowSnippet }}" language="ts">
+      <ds-stack [gap]="4" class="demo-form">
+        <ds-file-uploader
+          [adapter]="adapter"
+          hint="Anything you like — nothing leaves this page. Every third file fails once."
+          (uploaded)="onUploaded($event)"
+        />
+        @if (lastUploaded()) {
+          <ds-text variant="code" tone="primary">(uploaded) → {{ lastUploaded() }}</ds-text>
+        }
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The adapter owns the wire"
+    anchor="adapter"
+    description="The organism never imports HttpClient, fetch or anything else that knows where bytes go. It hands the adapter a file and a report object; the adapter hands back a cancel handle — which is what makes remove-while-uploading an abort rather than a lie."
+  >
+    <app-doc-code [code]="adapterSnippet" language="ts" />
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Manual upload"
+    anchor="manual"
+    description="autoUpload=false queues files without starting them: the flow for forms that upload on submit, or metered connections. Upload all says how many it will start; retry and remove work the same either way."
+  >
+    <app-doc-example code="{{ manualSnippet }}">
+      <ds-stack [gap]="4" class="demo-form">
+        <ds-file-uploader
+          [adapter]="manualAdapter"
+          [autoUpload]="false"
+          [maxConcurrent]="2"
+          label="Queue files here, or"
+          hint="Nothing uploads until you press the button."
+        />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Screening, in sentences"
+    anchor="screening"
+    description="The dropzone's rules, with the organism adding the words: a rejection becomes a dismissible alert that names each file and the rule it broke, with the limits filled in. maxFiles caps the whole queue — at capacity the dropzone closes rather than over-promising."
+  >
+    <app-doc-example [plain]="true">
+      <ds-stack [gap]="4" class="demo-form">
+        <ds-file-uploader
+          [adapter]="strictAdapter"
+          accept=".txt,.md,.csv"
+          [maxSize]="512 * 1024"
+          [maxFiles]="3"
+          hint="Plain text only, up to 512 KB, three files in total."
+        />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="What the organism owns"
+    anchor="behaviour"
+    description="Everything the molecules refused to — and nothing the product should."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Concurrency, visible</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            maxConcurrent files on the wire; the rest say “Queued” instead of silently throttling.
+            A finished file frees its slot for the next in line.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Remove means stop</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Removing an uploading row cancels its transport before the row goes — and a destroyed
+            uploader cancels everything still flying. No orphaned requests.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Narrated, not chatty</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Each row announces its own failure; the organism adds exactly one more announcement,
+            when the whole queue settles. A chatty adapter cannot resurrect a settled file.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and methods of <ds-file-uploader>, and the adapter contract.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="methods" nameHeading="Method" label="FileUploader methods" />
+      <app-doc-api-table [rows]="adapterApi" nameHeading="Member" label="UploadAdapter contract" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

@@ -1,0 +1,153 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="bell"
+    title="Feed"
+    lede="A pile of events, systemised: a rail of moments, each with a node, a sentence, a clock and a read state. The activity list and the notification inbox are this one organism wearing different chrome — the host owns the items and the detail, the feed renders, announces and emits."
+    builtOn="ds-avatar + ds-icon + ds-empty-state + an injectable clock"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="An activity timeline"
+    anchor="timeline"
+    description="Vertical by default — a feed is a column. Actors render as avatars, events as toned icon tiles, and the body under each title is the host's template, with the item in scope: a quoted comment here, a diff stat there, nothing where nothing belongs. Time reads relative and speaks absolute."
+  >
+    <app-doc-example code="{{ timelineSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="demo-form">
+        <ds-feed [items]="activity" [now]="now" label="Project activity">
+          <ng-template dsFeedBody [dsFeedBodyItems]="activity" let-item>
+            @if (item.data?.quote) {
+              <blockquote class="feed-quote">{{ item.data?.quote }}</blockquote>
+            }
+            @if (item.data?.diff) {
+              <code class="feed-diff">{{ item.data?.diff }}</code>
+            }
+          </ng-template>
+        </ds-feed>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Horizontal, when it earns it"
+    anchor="horizontal"
+    description="A feed goes sideways only when the items are few, the order is the story, and every name deserves reading: releases, milestones, a pipeline. Anything that scrolls past four or five entries wanted to be vertical."
+  >
+    <app-doc-example [plain]="true">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-feed [items]="releases" orientation="horizontal" [now]="now" label="Release history" />
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The notification inbox"
+    anchor="inbox"
+    description="The same organism inside the popover molecule — no new parts. The bell wears the unread count (countUnread over the host's own items); unread rows are bolder and carry the mark-read dot; Mark all read is one map() in the host; an emptied inbox is the feed's empty state. Open one and the host marks it read, because opening is reading."
+  >
+    <app-doc-example code="{{ inboxSnippet }}">
+      <ds-flex [gap]="4" align="center" [wrap]="'wrap'">
+        <span class="bell">
+          <ds-popover
+            label="Notifications"
+            icon="bell"
+            [iconOnly]="true"
+            align="start"
+            [width]="380"
+          >
+            <ds-stack [gap]="3">
+              <ds-flex justify="between" align="center" [gap]="3">
+                <ds-text variant="label">Notifications</ds-text>
+                <ds-flex [gap]="1">
+                  @if (unreadCount() > 0) {
+                    <ds-button variant="ghost" size="sm" (clicked)="markAllRead()">
+                      Mark all read
+                    </ds-button>
+                  }
+                  @if (notifications().length > 0) {
+                    <ds-button variant="ghost" size="sm" (clicked)="clearAll()">Clear</ds-button>
+                  }
+                </ds-flex>
+              </ds-flex>
+
+              <ds-feed
+                [items]="notifications()"
+                [now]="now"
+                label="Notifications"
+                [empty]="{ icon: 'bell', title: 'All caught up', description: 'New activity lands here.' }"
+                (itemOpen)="openNotification($event)"
+                (markRead)="markRead($event)"
+              >
+                <ds-button dsFeedEmptyAction variant="secondary" size="sm" iconStart="refresh" (clicked)="restock()">
+                  Fetch again
+                </ds-button>
+              </ds-feed>
+            </ds-stack>
+          </ds-popover>
+
+          @if (unreadCount() > 0) {
+            <ds-badge
+              class="bell__count"
+              tone="accent"
+              variant="solid"
+              size="sm"
+              [srLabel]="unreadCount() + ' unread notifications'"
+            >
+              {{ unreadCount() }}
+            </ds-badge>
+          }
+        </span>
+
+        <ds-text variant="bodySm" tone="muted">
+          {{ unreadCount() }} unread{{ lastOpened() ? ' · last opened: ' + lastOpened() : '' }}
+        </ds-text>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Who owns what"
+    anchor="ownership"
+    description="The bargain every Paint organism keeps, kept again."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The host: items and detail</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The feed never mutates an item. markRead and itemOpen are reports; flipping the flag
+            and opening the drawer are the host's — the items are its data, not the feed's.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The feed: rail, clock, state</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Nodes that say who or what, relative time that speaks its absolute self to screen
+            readers, unread as weight + dot + a word — and an empty state with a way out.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">No new parts</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Avatars, icon tiles, tones, the empty state, the popover around the inbox — all
+            existing Paint. The organism adds the contract, not the pieces.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs, slots and helpers of <ds-feed>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" label="Feed slots" />
+      <app-doc-api-table [rows]="helpers" nameHeading="Helper" label="Exported helpers" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

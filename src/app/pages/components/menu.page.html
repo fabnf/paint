@@ -1,0 +1,201 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="more"
+    title="Menu"
+    lede="A button that drops a list of actions. Bootstrap's dropdown markup, Paint's Button as the trigger, and none of Bootstrap's JS — open state, keyboard, type-ahead, dismissal and focus return are Angular."
+    builtOn=".dropdown-menu / .dropdown-item"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Anatomy"
+    anchor="basic"
+    description="One array describes the whole menu: items, headers and dividers. Selection emits an id — never an index."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-flex [gap]="4" align="center" [wrap]="'wrap'">
+        <ds-menu label="Actions" [entries]="entries" (itemSelect)="run($event)" />
+        <ds-text variant="code" tone="primary">(itemSelect) → {{ lastAction() }}</ds-text>
+      </ds-flex>
+    </app-doc-example>
+
+    <app-doc-code [code]="typesSnippet" language="ts" />
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Triggers"
+    anchor="triggers"
+    description="The trigger is Paint's Button, so every variant, size and icon works. Drop the caret and the label for a row-level menu."
+  >
+    <app-doc-example code="{{ triggerSnippet }}">
+      <ds-flex [gap]="3" align="center" [wrap]="'wrap'">
+        <ds-menu label="Actions" variant="primary" [entries]="simpleEntries" />
+        <ds-menu label="Export" variant="secondary" icon="download" [entries]="simpleEntries" />
+        <ds-menu label="View" variant="ghost" icon="settings" [entries]="viewEntries" />
+        <ds-menu label="Row actions" variant="ghost" icon="more" [iconOnly]="true" [caret]="false" [entries]="simpleEntries" />
+        <ds-menu label="Small" variant="secondary" size="sm" [entries]="simpleEntries" />
+        <ds-menu label="Disabled" [disabled]="true" [entries]="simpleEntries" />
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Alignment"
+    anchor="alignment"
+    description="Menus near the end of a row should open back toward the content. The panel also flips above the trigger when the viewport runs out of room."
+  >
+    <app-doc-example code="{{ alignSnippet }}">
+      <ds-flex justify="between" [gap]="3">
+        <ds-menu label="align=start" [entries]="simpleEntries" />
+        <ds-menu label="align=end" align="end" [entries]="simpleEntries" />
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="In context"
+    anchor="context"
+    description="Where menus actually live: a card header, a table row, a toolbar."
+  >
+    <app-doc-example [plain]="true">
+      <div class="frame">
+        <div class="frame__bar">
+          <span class="frame__dot"></span>
+          <span class="frame__dot"></span>
+          <span class="frame__dot"></span>
+        </div>
+        <div class="frame__body">
+          <ds-stack [gap]="4">
+            <ds-flex justify="between" align="center" [gap]="3">
+              <ds-stack [gap]="1">
+                <ds-text variant="h4" [as]="'h3'">Mural — March</ds-text>
+                <ds-text variant="caption">Edited 2 hours ago</ds-text>
+              </ds-stack>
+              <ds-flex [gap]="2" align="center">
+                <ds-button variant="secondary" size="sm" iconStart="check">Approve</ds-button>
+                <ds-menu
+                  label="More actions"
+                  variant="ghost"
+                  size="sm"
+                  icon="more"
+                  [iconOnly]="true"
+                  [caret]="false"
+                  align="end"
+                  [entries]="entries"
+                  (itemSelect)="run($event)"
+                />
+              </ds-flex>
+            </ds-flex>
+
+            <ds-box background="surface-sunken" radius="md" [padding]="4">
+              <ds-text variant="bodySm" tone="muted">
+                Icon-only menus need a label — it becomes the accessible name, and Menu forwards
+                aria-haspopup, aria-expanded and aria-controls to the trigger for you.
+              </ds-text>
+            </ds-box>
+          </ds-stack>
+        </div>
+      </div>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Keyboard" anchor="keyboard" description="The ARIA menu button pattern.">
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3" [divided]="true">
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">↓ / Enter / Space</ds-text>
+          <ds-text variant="bodySm" tone="muted">Opens the menu; ↓ lands on the first item</ds-text>
+        </ds-flex>
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">↑ ↓</ds-text>
+          <ds-text variant="bodySm" tone="muted">Moves between enabled items, wrapping at the ends</ds-text>
+        </ds-flex>
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">a–z</ds-text>
+          <ds-text variant="bodySm" tone="muted">Type-ahead: jumps to the first matching label</ds-text>
+        </ds-flex>
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">Esc</ds-text>
+          <ds-text variant="bodySm" tone="muted">Closes and returns focus to the trigger</ds-text>
+        </ds-flex>
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">Tab</ds-text>
+          <ds-text variant="bodySm" tone="muted">Closes the menu and moves on — a menu never traps focus</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="Guidance" anchor="guidance">
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="guide">
+        <ds-stack [gap]="3">
+          <ds-flex align="center" [gap]="2">
+            <ds-icon name="success" size="md" class="text-success" />
+            <ds-text variant="h4" [as]="'h3'">Do</ds-text>
+          </ds-flex>
+          <ds-stack [gap]="2">
+            <ds-text variant="bodySm" tone="muted">Use a Menu for actions. For picking a value, use Select.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Put the destructive item last, behind a divider, flagged destructive.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Show shortcuts you have actually bound elsewhere.</ds-text>
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="guide">
+        <ds-stack [gap]="3">
+          <ds-flex align="center" [gap]="2">
+            <ds-icon name="warning" size="md" class="text-danger" />
+            <ds-text variant="h4" [as]="'h3'">Don't</ds-text>
+          </ds-flex>
+          <ds-stack [gap]="2">
+            <ds-text variant="bodySm" tone="muted">Don't hide the only path to a primary action in a menu.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Don't nest menus — flatten, or open a Dialog.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Don't mark more than one item destructive.</ds-text>
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="Accessibility" anchor="accessibility">
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3" [divided]="true">
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Headers are groups</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A labelled header opens a role="group" with aria-labelledby, so the heading is announced
+            instead of skipped — headers inside a menu are otherwise invisible to assistive tech.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Shortcuts in two forms</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The “⌘D” glyphs are hidden and the real combination rides on aria-keyshortcuts, because
+            a screen reader reads the symbol, not the key.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Hints describe, they do not rename</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A second line becomes aria-describedby, so the item is still called “Export”.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Focus goes in and comes back</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            ArrowDown opens and lands on the first item; Escape and selecting both return focus to
+            the trigger. Tab closes the menu rather than trapping it.
+          </ds-text>
+        </ds-stack>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-menu>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

@@ -1,0 +1,105 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="home"
+    title="MapViewer"
+    lede="The map every app wires by hand, wired once: Google Maps behind the host's key, wearing Paint — a quiet token-styled basemap, Paint pins, and a Paint detail card when one is selected. Not an InfoWindow; never an InfoWindow."
+    builtOn="Google Maps JS API (host key) + ds-search-field + Paint's card"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Pins, a detail card, and search-to-jump"
+    anchor="demo"
+    description="Click a studio pin and the detail card opens — the header is the card's, the body is your template, with the marker's own data in scope. Try the search: “oslo” jumps to a marker and selects it; with a key configured, anything else would go to Google's geocoder."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="3">
+        @if (!hasKey) {
+          <ds-alert tone="info" title="This page is running the mock engine">
+            No API key is configured in the docs app, so the organism renders its token-styled
+            preview plate — the exact engine tests and CI use. Every behaviour below (selection,
+            the card, search-to-jump) is identical with real tiles.
+          </ds-alert>
+        }
+
+        <ds-map-viewer
+          [markers]="studios"
+          [(selected)]="selected"
+          [searchable]="true"
+          label="Paint studios map"
+          height="26rem"
+          (placeFound)="onPlaceFound($event)"
+        >
+          <ng-template dsMapDetail [dsMapDetailMarkers]="studios" let-marker>
+            <ds-flex [gap]="2" align="center">
+              <ds-badge [tone]="marker.data!.status === 'Open' ? 'success' : 'warning'">
+                {{ marker.data!.status }}
+              </ds-badge>
+              <ds-text variant="bodySm" tone="muted">{{ marker.data!.easel }}</ds-text>
+            </ds-flex>
+            <ds-button size="sm" variant="primary" iconStart="calendar" (clicked)="book(marker)">
+              Book a visit
+            </ds-button>
+          </ng-template>
+        </ds-map-viewer>
+
+        <ds-text variant="code" tone="primary">
+          selected = {{ selected() ?? 'null' }}{{ lastPlace() ? ' · placeFound: ' + lastPlace() : '' }}
+        </ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The engine is a seam"
+    anchor="adapter"
+    description="The organism owns markers, selection, the card and the search flow; the adapter owns the tiles. Hosts with a key get Google; hosts (and CI) without one get a preview plate that says what it is — projected, focusable pins on a graticule, watermarked. A mock that pretends to be cartography is a lie with a legend."
+  >
+    <app-doc-code [code]="adapterSnippet" language="ts" />
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Paint over the basemap"
+    anchor="style"
+    description="With a key, the Google canvas is restyled from the live tokens at create time — surfaces, roads, water and labels in the theme's neutrals, POI noise off — so the pins and the data are the loudest things on the map. A brand pack re-paints the map too, because the styles are read from --ds-*, not hex."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The host's key</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            provideMaps(&#123; apiKey &#125;) — a billing relationship between the host and Google. Paint
+            ships no key, loads the script once, at runtime, only when the Google engine is used.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Paint detail, not InfoWindow</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The card is Paint's: tokens, real buttons, a close that works, a template with the
+            marker in scope. Google's bubble never renders.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Search, composed</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The ds-search-field molecule, wired: markers first (jump + select), the geocoder
+            second (pan), and a polite announcement saying which of the three things happened.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and the detail slot of <ds-map-viewer>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" label="MapViewer slots" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

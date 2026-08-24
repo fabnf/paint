@@ -1,0 +1,172 @@
+.page {
+  max-width: 72rem;
+}
+
+/* —— Color —— */
+.swatch {
+  aspect-ratio: 1.6 / 1;
+  border-radius: var(--ds-radius-md);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 8%);
+}
+
+.swatch__var {
+  font-size: 0.6875rem;
+  word-break: break-all;
+}
+
+.ramp {
+  border-radius: var(--ds-radius-md);
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 8%);
+}
+
+.ramp__cell {
+  flex: 1;
+  min-width: 0;
+  height: 3rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: var(--ds-space-1);
+}
+
+.ramp__key {
+  font-family: var(--ds-font-mono);
+  font-size: 0.5625rem;
+  color: rgb(255 255 255 / 75%);
+  mix-blend-mode: difference;
+}
+
+/* —— Typography —— */
+.font-sample {
+  margin: 0;
+  font-size: 2.75rem;
+  line-height: 1.1;
+  color: var(--ds-color-primary);
+}
+
+.ramp-row {
+  padding: var(--ds-space-4) var(--ds-space-5);
+  border-bottom: 1px solid var(--ds-color-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.ramp-row__meta {
+  flex: 0 0 9rem;
+}
+
+.ramp-row__sample {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* —— Spacing —— */
+.space__key {
+  flex: 0 0 2.25rem;
+}
+
+.space__value {
+  flex: 0 0 4rem;
+}
+
+.space__bar {
+  height: 0.75rem;
+  min-width: 2px;
+  border-radius: var(--ds-radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--ds-color-primary),
+    color-mix(in srgb, var(--ds-color-primary) 55%, var(--ds-color-surface))
+  );
+}
+
+.radius {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: var(--ds-color-primary-muted);
+  border: 1px solid var(--ds-color-primary);
+}
+
+/* —— Icons —— */
+.icon-cell {
+  text-align: center;
+  transition: border-color 140ms ease;
+
+  &:hover {
+    border-color: var(--ds-color-primary);
+    color: var(--ds-color-primary);
+  }
+}
+
+.icon-cell__name {
+  max-width: 100%;
+  font-size: 0.625rem;
+}
+
+/* —— Effects —— */
+.elevation-demo {
+  width: 4rem;
+  height: 4rem;
+}
+
+.mix-swatch {
+  width: 5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: var(--ds-radius-sm);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 8%);
+}
+
+.texture-swatch {
+  height: 4rem;
+  border-radius: var(--ds-radius-md);
+  border: 1px solid var(--ds-color-border);
+}
+
+/* Grain needs something to sit on, so the swatch brings its own paint. */
+.texture-swatch--grain {
+  background-image: var(--ds-texture-grain), var(--ds-gradient-brand);
+  background-size: 120px 120px, cover;
+  background-blend-mode: soft-light;
+  border-color: transparent;
+}
+
+.texture-swatch--hatch {
+  background-image: var(--ds-texture-hatch);
+  background-size: 8px 8px;
+}
+
+/* —— Pigment blend —— */
+.blend-demo {
+  position: relative;
+  width: 7rem;
+  height: 4rem;
+  flex-shrink: 0;
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+  overflow: hidden;
+}
+
+.blend-demo__a,
+.blend-demo__b {
+  position: absolute;
+  inset-block-start: 0.5rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--ds-radius-full);
+}
+
+.blend-demo__a {
+  inset-inline-start: 1rem;
+  background: var(--ds-color-primary);
+}
+
+.blend-demo__b {
+  inset-inline-start: 3rem;
+  background: var(--ds-color-accent);
+  mix-blend-mode: var(--ds-blend-pigment, multiply);
+}

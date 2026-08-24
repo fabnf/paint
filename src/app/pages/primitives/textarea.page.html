@@ -1,0 +1,94 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="rows"
+    title="Textarea"
+    lede="Input's longer sibling. The same label, hint, error and size contract over a real <textarea> — plus the two things multi-line entry actually needs: growing with its content, and a character count that does not shout into a screen reader."
+    builtOn=".form-control"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Anatomy"
+    anchor="anatomy"
+    description="Same field, more lines. rows sets the starting height; the handle is the user's."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <div class="demo-form">
+        <ds-textarea
+          label="Notes"
+          [rows]="4"
+          placeholder="What changed?"
+          hint="Markdown is supported."
+          [(value)]="notes"
+        />
+      </div>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Resize"
+    anchor="resize"
+    description="Three behaviours. 'auto' measures the content on every change — including a value a form wrote in, which never passed through a keystroke."
+  >
+    <app-doc-example code="{{ autoSnippet }}">
+      <ds-stack [gap]="5" class="demo-form">
+        <ds-textarea label="Auto — grows with the content" resize="auto" [rows]="2" [(value)]="grow" />
+        <ds-textarea label="Vertical — the default handle" resize="vertical" [rows]="2" />
+        <ds-textarea label="None — fixed at its rows" resize="none" [rows]="2" />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Counting characters"
+    anchor="count"
+    description="maxLength is enforced by the browser. The counter is a convenience for people who can see it, and is kept out of the accessibility tree on purpose."
+  >
+    <app-doc-example code="{{ countSnippet }}">
+      <div class="demo-form">
+        <ds-textarea
+          label="Bio"
+          [rows]="3"
+          [maxLength]="140"
+          [showCount]="true"
+          hint="Up to 140 characters."
+          [(value)]="bio"
+        />
+      </div>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">Why the count is aria-hidden</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          A live counter re-announces itself on every keystroke, which makes the field unusable with
+          a screen reader on. The limit belongs in the hint — said once, before typing starts — and
+          the browser enforces it regardless.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="States"
+    anchor="states"
+    description="Required, read-only, disabled, invalid — identical to Input, because a field is a field."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-textarea label="Required" [rows]="2" [required]="true" />
+        <ds-textarea label="Read only" [rows]="2" [readOnly]="true" value="Frozen at v0.3.1." />
+        <ds-textarea label="Disabled" [rows]="2" [disabled]="true" value="Not available" />
+        <ds-textarea label="Invalid" [rows]="2" value="Too short" error="Tell us a little more." />
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-textarea>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

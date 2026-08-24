@@ -1,0 +1,180 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="box"
+    title="Box"
+    lede="The most primitive primitive: a container that speaks only in tokens. Spacing, surface, radius, border and elevation — compiled straight to Bootstrap utilities."
+    builtOn="spacing / bg / border / shadow utilities"
+    status="Stable"
+  />
+
+  <app-doc-section
+    heading="Surfaces"
+    anchor="surfaces"
+    description="Twelve semantic surfaces, plus the three brand mixes. Roles resolve per theme, so a muted callout stays legible in dark mode; the mixes bring their own text colour."
+  >
+    <app-doc-example code="{{ surfaceSnippet }}" [plain]="true">
+      <ds-stack [gap]="4">
+        <ds-grid [cols]="{ base: 2, md: 3, lg: 4 }" [gap]="3">
+          @for (item of mixes; track item.surface) {
+            <ds-box [background]="item.surface" radius="lg" [padding]="4" class="ds-grain h-100">
+              <ds-stack [gap]="2">
+                <ds-text variant="label">{{ item.surface }}</ds-text>
+                <ds-text variant="bodySm" class="mix-caption">{{ item.usage }}</ds-text>
+              </ds-stack>
+            </ds-box>
+          }
+        </ds-grid>
+
+        <ds-grid [cols]="{ base: 2, md: 3, lg: 4 }" [gap]="3">
+          @for (item of surfaces; track item.surface) {
+            <ds-box
+              [background]="item.surface"
+              [border]="item.surface === 'transparent' || item.surface === 'canvas'"
+              radius="lg"
+              [padding]="4"
+              class="h-100"
+            >
+              <ds-stack [gap]="2">
+                <ds-text
+                  variant="label"
+                  [tone]="item.surface === 'primary' || item.surface === 'accent' ? 'on-primary' : 'default'"
+                >
+                  {{ item.surface }}
+                </ds-text>
+                <ds-text
+                  variant="caption"
+                  [tone]="item.surface === 'primary' || item.surface === 'accent' ? 'on-primary' : 'muted'"
+                >
+                  {{ item.usage }}
+                </ds-text>
+              </ds-stack>
+            </ds-box>
+          }
+        </ds-grid>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Spacing"
+    anchor="spacing"
+    description="Padding and margin accept space tokens only — per side, per axis, and per breakpoint. Pick a token and watch the class change."
+  >
+    <app-doc-example
+      title="Padding playground"
+      [description]="'padding = ' + padding() + ' → ' + paddingRem(padding()) + ' → class p-' + padding()"
+      [plain]="true"
+    >
+      <ds-stack [gap]="4">
+        <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+          @for (token of paddingTokens; track token) {
+            <ds-button
+              size="sm"
+              [variant]="padding() === token ? 'primary' : 'secondary'"
+              (clicked)="setPadding(token)"
+            >
+              {{ token }}
+            </ds-button>
+          }
+        </ds-flex>
+
+        <ds-box background="primary-muted" radius="lg" [padding]="padding()" class="demo-outline">
+          <div class="demo-block demo-block--solid">content</div>
+        </ds-box>
+      </ds-stack>
+    </app-doc-example>
+
+    <app-doc-code [code]="spacingSnippet" />
+  </app-doc-section>
+
+  <app-doc-section heading="Radius" anchor="radius" description="Six radius tokens, from square to pill.">
+    <app-doc-example [plain]="true">
+      <ds-flex [gap]="4" [wrap]="'wrap'">
+        @for (radius of radii; track radius) {
+          <ds-stack [gap]="2" align="center">
+            <ds-box background="primary-muted" [border]="true" [radius]="radius" class="radius-demo"></ds-box>
+            <ds-text variant="code" tone="subtle">{{ radius }}</ds-text>
+          </ds-stack>
+        }
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Elevation"
+    anchor="elevation"
+    description="Four shadow steps. Elevation signals layering — not importance."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 2, md: 4 }" [gap]="5">
+        @for (elevation of elevations; track elevation) {
+          <ds-box background="surface" [border]="true" radius="lg" [elevation]="elevation" [padding]="5">
+            <ds-stack [gap]="1">
+              <ds-text variant="label">{{ elevation }}</ds-text>
+              <ds-text variant="caption">elevation="{{ elevation }}"</ds-text>
+            </ds-stack>
+          </ds-box>
+        }
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Borders" anchor="borders" description="All sides, one side, or a stronger hairline.">
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 4 }" [gap]="4">
+        <ds-box background="surface" [border]="true" radius="md" [padding]="4">
+          <ds-text variant="code">[border]="true"</ds-text>
+        </ds-box>
+        <ds-box background="surface" [border]="true" [borderStrong]="true" radius="md" [padding]="4">
+          <ds-text variant="code">borderStrong</ds-text>
+        </ds-box>
+        <ds-box background="surface" border="top" [padding]="4">
+          <ds-text variant="code">border="top"</ds-text>
+        </ds-box>
+        <ds-box background="surface" border="start" [padding]="4">
+          <ds-text variant="code">border="start"</ds-text>
+        </ds-box>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Responsive display"
+    anchor="display"
+    description="Display is a token too: hide a box on mobile, show it as a grid from md up."
+  >
+    <app-doc-example code="{{ displaySnippet }}" [plain]="true">
+      <ds-stack [gap]="3">
+        <ds-box background="success-muted" radius="md" [padding]="4" [display]="{ base: 'block', md: 'none' }">
+          <ds-text variant="bodySm">Visible below md — resize the window.</ds-text>
+        </ds-box>
+        <ds-box background="info-muted" radius="md" [padding]="4" [display]="{ base: 'none', md: 'block' }">
+          <ds-text variant="bodySm">Visible from md up — resize the window.</ds-text>
+        </ds-box>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Composition"
+    anchor="composition"
+    description="Box never styles type or layout. It gives the surface; Stack and Text do the rest."
+  >
+    <app-doc-example code="{{ compositionSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" elevation="sm" [padding]="6" class="compose-demo">
+        <ds-stack [gap]="3">
+          <ds-text variant="h4" [as]="'h3'">Storage</ds-text>
+          <ds-text tone="muted">48.2 GB of 100 GB used</ds-text>
+          <ds-box background="surface-elevated" radius="full" [padding]="0" class="meter">
+            <div class="meter__fill"></div>
+          </ds-box>
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-box>.">
+    <app-doc-api-table [rows]="inputs" />
+  </app-doc-section>
+</ds-stack>

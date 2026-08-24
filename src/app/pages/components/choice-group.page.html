@@ -1,0 +1,149 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="checkbox"
+    title="Choice groups"
+    lede="RadioGroup and CheckboxGroup. The atoms are enough to render a radio; they are not enough to render a question. A pile of radios under a heading is, to a screen reader, three unrelated controls and a paragraph."
+    builtOn="ds-radio / ds-checkbox in a <fieldset>"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="RadioGroup"
+    anchor="radio-group"
+    description="One question, one answer. A <fieldset role=&quot;radiogroup&quot;> with a <legend>, one shared name — and therefore the browser's own keyboard pattern: one tab stop, arrows to move and select."
+  >
+    <app-doc-example code="{{ radioSnippet }}">
+      <ds-stack [gap]="6" class="demo-form">
+        <ds-radio-group
+          legend="Deploy target"
+          hint="You can redeploy at any time."
+          [options]="targets"
+          [(value)]="target"
+        />
+        <ds-text variant="code" tone="primary">value = {{ target() ?? 'null' }}</ds-text>
+
+        <ds-divider />
+
+        <ds-radio-group
+          legend="Size"
+          orientation="horizontal"
+          [options]="sizes"
+          [(value)]="size"
+          size="sm"
+        />
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">The keyboard is not Paint's</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          Tab enters the group once, landing on the selected radio. Arrows move and select within it,
+          wrapping at the ends and skipping the disabled one. All of that comes from the shared
+          <code>name</code>, which is why the group generates one — and why a roving tabindex would,
+          at best, arrive back at the same place.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="CheckboxGroup"
+    anchor="checkbox-group"
+    description="One question, any number of answers, and an array instead of five booleans. There is no role=&quot;checkboxgroup&quot; — a <fieldset> already says “group”, and the browser has nothing special to do with it."
+  >
+    <app-doc-example code="{{ checkboxSnippet }}">
+      <ds-stack [gap]="5" class="demo-form">
+        <ds-checkbox-group
+          legend="Scopes"
+          hint="You can change these later."
+          [options]="scopes"
+          [selectAll]="true"
+          [(value)]="granted"
+        />
+        <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+          <ds-text variant="caption">value =</ds-text>
+          @for (scope of granted(); track scope) {
+            <ds-chip tone="primary">{{ scope }}</ds-chip>
+          } @empty {
+            <ds-text variant="code" tone="subtle">[]</ds-text>
+          }
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Mixed is a real state</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The master is a native <code>indeterminate</code> checkbox, announced as “mixed”. It is
+            the only reason the Checkbox atom has that input — and clicking it resolves to checked,
+            because “select all” is what the user came for.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">It cannot untick what you cannot</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A disabled option that was pre-selected stays selected, whichever way the master goes. The
+            user could not have unticked it by hand, so the master does not do it for them.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="A group is a field"
+    anchor="field"
+    description="Hint and error live in the same chrome as every other field, and describe the group. The error goes on the radios too — aria-invalid belongs where the user's focus lands."
+  >
+    <app-doc-example code="{{ formsSnippet }}" language="ts">
+      <form class="demo-panel demo-form" (ngSubmit)="submit()" novalidate>
+        <ds-stack [gap]="5">
+          <ds-radio-group
+            legend="Plan"
+            [options]="plans"
+            [formControl]="planControl"
+            [required]="true"
+            [error]="planError()"
+          />
+          <ds-flex [gap]="3" align="center" [wrap]="'wrap'">
+            <ds-button variant="primary" size="sm" type="submit">Continue</ds-button>
+            <ds-text variant="code" tone="primary">
+              {{ planControl.value ?? 'null' }} · {{ planControl.valid ? 'valid' : 'invalid' }}
+            </ds-text>
+          </ds-flex>
+        </ds-stack>
+      </form>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">Do not wrap a group in a FormField</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          A <code>&lt;label for&gt;</code> can name one control. Over a set of radios it would name the
+          first and leave the rest anonymous — so the groups provide their own field context, and a
+          <code>&lt;ds-form-field&gt;</code> above them is quietly ignored by the controls inside.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of the two groups.">
+    <ds-stack [gap]="6">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">&lt;ds-radio-group&gt;</ds-text>
+        <app-doc-api-table [rows]="radioInputs" nameHeading="Input" label="Radio group inputs" />
+      </ds-stack>
+      <ds-stack [gap]="3">
+        <ds-text variant="label">&lt;ds-checkbox-group&gt;</ds-text>
+        <app-doc-api-table [rows]="checkboxInputs" nameHeading="Input" label="Checkbox group inputs" />
+      </ds-stack>
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

@@ -1,0 +1,162 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="bell"
+    title="Toast"
+    lede="Short, polite announcements. Bootstrap's toast markup inside a single host region, driven by a service — because a notification is something code decides, not something layout declares."
+    builtOn=".toast / .toast-container"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Try it"
+    anchor="try"
+    description="Every button here calls ToastService. The toasts appear in the shell's host, bottom-end — hover one to hold its countdown."
+  >
+    <app-doc-example [plain]="true">
+      <ds-stack [gap]="4">
+        <ds-flex [gap]="2" [wrap]="'wrap'">
+          <ds-button variant="secondary" iconStart="success" (clicked)="show('success')">Success</ds-button>
+          <ds-button variant="secondary" iconStart="info" (clicked)="show('info')">Info</ds-button>
+          <ds-button variant="secondary" iconStart="warning" (clicked)="show('warning')">Warning</ds-button>
+          <ds-button variant="secondary" iconStart="warning" (clicked)="show('danger')">Danger</ds-button>
+          <ds-button variant="accent" iconStart="sparkle" (clicked)="show('brand')">Brand</ds-button>
+        </ds-flex>
+        <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+          <ds-button variant="primary" iconStart="minus" (clicked)="showWithAction()">With an Undo action</ds-button>
+          <ds-button variant="ghost" iconStart="bell" (clicked)="showPersistent()">Persistent</ds-button>
+          <ds-button variant="ghost" iconStart="layers" (clicked)="showStack()">Stack five</ds-button>
+          <ds-button variant="ghost" iconStart="close" (clicked)="clear()">Clear</ds-button>
+          @if (undone()) {
+            <ds-text variant="label" tone="success">Undo ran ✓</ds-text>
+          }
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Variants"
+    anchor="variants"
+    description="The variant paints a stripe and picks an icon — never the whole surface. A notification has to stay readable over whatever it covers."
+  >
+    <app-doc-example [plain]="true">
+      <ds-stack [gap]="3">
+        @for (sample of samples; track sample.id) {
+          <ds-toast [toast]="sample" />
+        }
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The service"
+    anchor="service"
+    description="Queue, limit and timers live in the service; pixels live in the host. Toasts are requested from code, never declared in a page."
+  >
+    <app-doc-code [code]="serviceSnippet" language="ts" />
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The host"
+    anchor="host"
+    description="One host per app renders every toast as a polite live region — announcements reach assistive tech without stealing focus."
+  >
+    <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="4">
+      <app-doc-code [code]="hostSnippet" />
+      <app-doc-code [code]="provideSnippet" language="ts" />
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Actions"
+    anchor="actions"
+    description="One action per toast, and only for something genuinely reversible. Give an undoable toast more time."
+  >
+    <app-doc-code [code]="actionSnippet" language="ts" />
+  </app-doc-section>
+
+  <app-doc-section heading="Accessibility" anchor="accessibility">
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3" [divided]="true">
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Two permanent live regions</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The host renders a polite and an assertive region before any toast exists — a live region
+            created at the same moment as its content often goes unannounced. Status variants go
+            polite; warning and danger interrupt.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Announced once</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The toasts themselves carry no live role. A role="alert" nested inside a live region is
+            read twice by some screen readers.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">The icon is spoken</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Announcements are prefixed with the variant — “Error: Upload failed” — because the icon
+            carrying that meaning is decorative.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Time to read, and to reach</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Hover or focus pauses the countdown, the stack sits last in the document so it never
+            precedes the page, and the region is labelled so it can be navigated to deliberately.
+          </ds-text>
+        </ds-stack>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="Guidance" anchor="guidance">
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="guide">
+        <ds-stack [gap]="3">
+          <ds-flex align="center" [gap]="2">
+            <ds-icon name="success" size="md" class="text-success" />
+            <ds-text variant="h4" [as]="'h3'">Do</ds-text>
+          </ds-flex>
+          <ds-stack [gap]="2">
+            <ds-text variant="bodySm" tone="muted">Confirm what happened, in the past tense: “Project saved”.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Pair destructive actions with an Undo and a longer duration.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Use duration 0 when the message must be read.</ds-text>
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="guide">
+        <ds-stack [gap]="3">
+          <ds-flex align="center" [gap]="2">
+            <ds-icon name="warning" size="md" class="text-danger" />
+            <ds-text variant="h4" [as]="'h3'">Don't</ds-text>
+          </ds-flex>
+          <ds-stack [gap]="2">
+            <ds-text variant="bodySm" tone="muted">Don't put a form, a long error or the only copy of information in a toast.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Don't toast every keystroke — the queue drops the oldest past the limit.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Don't ask a question. That's a Dialog.</ds-text>
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="ToastOptions, ToastService and <ds-toast-host>.">
+    <ds-stack [gap]="6">
+      <ds-stack [gap]="3">
+        <ds-text variant="label" tone="muted">ToastOptions</ds-text>
+        <app-doc-api-table [rows]="toastApi" nameHeading="Option" />
+      </ds-stack>
+      <ds-stack [gap]="3">
+        <ds-text variant="label" tone="muted">ToastService</ds-text>
+        <app-doc-api-table [rows]="serviceApi" nameHeading="Member" />
+      </ds-stack>
+      <ds-stack [gap]="3">
+        <ds-text variant="label" tone="muted">&lt;ds-toast-host&gt;</ds-text>
+        <app-doc-api-table [rows]="hostApi" />
+      </ds-stack>
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

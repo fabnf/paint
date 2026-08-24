@@ -1,0 +1,36 @@
+/* Feed page chrome. */
+@use './components-page';
+
+/* The bell wears its count on the shoulder. */
+.bell {
+  position: relative;
+  display: inline-block;
+}
+
+.bell__count {
+  position: absolute;
+  inset-block-start: -0.4rem;
+  inset-inline-end: -0.4rem;
+  pointer-events: none;
+}
+
+/* Host-owned bodies in the timeline demo. */
+.feed-quote {
+  margin: 0;
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border-inline-start: 3px solid var(--ds-color-border-strong);
+  background: var(--ds-color-surface-sunken);
+  border-radius: var(--ds-radius-sm);
+  font-size: var(--ds-font-size-sm);
+  color: var(--ds-color-text-muted);
+  font-style: italic;
+}
+
+.feed-diff {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-font-size-xs);
+  color: var(--ds-color-success);
+  background: var(--ds-color-surface-sunken);
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--ds-radius-sm);
+}

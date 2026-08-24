@@ -1,0 +1,127 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="box"
+    title="EmptyState"
+    lede="Nothing here, and what to do about it. Three empties wear the same clothes and mean entirely different things — so the component makes you say which, and never writes “Nothing to show”."
+    builtOn="ds-icon + the type ramp"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Three empties"
+    anchor="three"
+    description="Nothing yet, nothing found, nothing allowed. Only the first is an invitation; offering “create your first invoice” to someone whose filter excluded fifty of them is how a product loses a user's trust in one sentence."
+  >
+    <app-doc-example code="{{ threeEmptiesSnippet }}">
+      <ds-stack [gap]="5">
+        <ds-radio-group
+          legend="Which empty?"
+          [legendHidden]="true"
+          orientation="horizontal"
+          size="sm"
+          [options]="kinds"
+          [(value)]="kind"
+        />
+
+        <ds-box background="surface" [border]="true" radius="lg">
+          @switch (kind()) {
+            @case ('first-run') {
+              <ds-empty-state icon="plus" title="No projects yet" description="Start one, and it appears here — with its invoices, its calendar and its people.">
+                <ds-button dsEmptyStateActions iconStart="plus">New project</ds-button>
+              </ds-empty-state>
+            }
+            @case ('no-results') {
+              <ds-empty-state
+                icon="search"
+                title="No invoices match “overdue”"
+                description="Every invoice is still there — the filter is hiding them."
+                [live]="true"
+              >
+                <ds-button dsEmptyStateActions variant="secondary">Clear the filter</ds-button>
+              </ds-empty-state>
+            }
+            @case ('no-access') {
+              <ds-empty-state
+                icon="warning"
+                tone="warning"
+                title="You cannot see this project"
+                description="Ask an owner for access, or switch to a workspace you belong to."
+              >
+                <ds-flex dsEmptyStateActions [gap]="2">
+                  <ds-button variant="secondary" size="sm">Request access</ds-button>
+                  <ds-button variant="ghost" size="sm">Switch workspace</ds-button>
+                </ds-flex>
+              </ds-empty-state>
+            }
+          }
+        </ds-box>
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-badge tone="success" variant="soft" icon="check">Nothing yet</ds-badge>
+          <ds-text variant="bodySm" tone="muted">
+            The feature works; the user has not used it. This is the only empty state that is really
+            an invitation — give it the first action.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-badge tone="info" variant="soft" icon="search">Nothing found</ds-badge>
+          <ds-text variant="bodySm" tone="muted">
+            A filter or a search excluded everything. Offer to clear it. Announce it — the content
+            was <em>replaced</em>, and focus did not move.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-badge tone="warning" variant="soft" icon="warning">Nothing allowed</ds-badge>
+          <ds-text variant="bodySm" tone="muted">
+            Permissions, or an error. Say what happened and who can fix it. Never an illustration of
+            a happy robot.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes, texture and headings"
+    anchor="sizes"
+    description="sm fits inside a card; lg fills a page. The title is a <p> until you say otherwise, because an <h2> in the middle of a table lies about the document's outline."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="5">
+        <ds-box background="surface" [border]="true" radius="lg">
+          <ds-empty-state size="sm" icon="bell" tone="neutral" title="No notifications" description="You are all caught up." />
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg">
+          <ds-empty-state icon="search" title="No results" description="Try another filter." align="start" />
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg">
+          <ds-empty-state size="sm" title="No invoices" [textured]="true" description="Hatched paper, for an empty panel." />
+        </ds-box>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="DataTable draws one for you"
+    anchor="data-table"
+    description="The organism's empty state used to be a private copy of this block, with its own icon disc, its own title styles and its own action slot. It is now this component — the hatched band and the live region stay with the table, because they belong to the table and not to the message."
+  >
+    <app-doc-code [code]="tableSnippet" language="html" />
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and slots of <ds-empty-state>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" label="Empty state slots" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

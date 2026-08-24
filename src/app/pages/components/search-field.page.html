@@ -1,0 +1,153 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="search"
+    title="SearchField"
+    lede="A text input that knows it is a search: it debounces, it says how many results there are, and its spinner lives inside the field. Three things every product rebuilds around a search box, and gets wrong in the same three ways."
+    builtOn="ds-input + ds-spinner + a live region"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A search, end to end"
+    anchor="anatomy"
+    description="Type: nothing happens until you stop. Then the spinner appears inside the field, the results change, and a screen reader hears “12 results” — once."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="5" class="demo-form">
+        <ds-search-field
+          label="Search invoices"
+          [labelHidden]="true"
+          placeholder="Search invoices…"
+          [(value)]="query"
+          [loading]="searching()"
+          [resultCount]="results().length"
+          (search)="run($event)"
+        />
+
+        <ds-box background="surface" [border]="true" radius="lg" class="search-results">
+          <ds-stack [gap]="0" [divided]="true" class="p-4">
+            @for (invoice of results(); track invoice.id) {
+              <ds-flex justify="between" align="center" [gap]="3" class="search-row">
+                <ds-flex align="center" [gap]="3">
+                  <ds-avatar [name]="invoice.owner" size="xs" [decorative]="true" />
+                  <ds-stack [gap]="0">
+                    <ds-text variant="label">{{ invoice.project }}</ds-text>
+                    <ds-text variant="caption">#{{ invoice.id }} · {{ invoice.owner }}</ds-text>
+                  </ds-stack>
+                </ds-flex>
+                <ds-text variant="code">{{ invoice.amount }}</ds-text>
+              </ds-flex>
+            } @empty {
+              <ds-stack [gap]="2" align="center" class="py-4">
+                <ds-text variant="label">No invoices match</ds-text>
+                <ds-text variant="caption">Try a project, an owner, or an invoice number.</ds-text>
+              </ds-stack>
+            }
+          </ds-stack>
+        </ds-box>
+
+        <ds-stack [gap]="2">
+          <ds-text variant="caption">Queries actually emitted:</ds-text>
+          <ds-flex [gap]="2" [wrap]="'wrap'">
+            @for (query of emitted(); track $index) {
+              <ds-chip tone="primary">{{ query }}</ds-chip>
+            } @empty {
+              <ds-text variant="caption">— none yet</ds-text>
+            }
+          </ds-flex>
+        </ds-stack>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Keystrokes are not queries"
+    anchor="debounce"
+    description="The debounce is the difference between five requests and one. Clearing the field is answered at once, though — emptying a filter is not a thought in progress, and neither is pressing Enter."
+  >
+    <app-doc-example code="{{ debounceSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="6">
+        <ds-stack [gap]="3">
+          <ds-text variant="label">Remote — 300 ms</ds-text>
+          <ds-search-field label="Search invoices" [labelHidden]="true" placeholder="Remote…" (search)="run($event)" />
+          <ds-text variant="caption">
+            One request when the typing stops. <code>Enter</code> flushes the wait rather than racing it.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-text variant="label">In memory — no wait</ds-text>
+          <ds-search-field
+            label="Filter projects"
+            [labelHidden]="true"
+            placeholder="Filter…"
+            [debounce]="0"
+            [(value)]="filter"
+            [resultCount]="filtered().length"
+          />
+          <ds-flex [gap]="2" [wrap]="'wrap'">
+            @for (invoice of filtered(); track invoice.id) {
+              <ds-chip>{{ invoice.project }}</ds-chip>
+            } @empty {
+              <ds-text variant="caption">No matches</ds-text>
+            }
+          </ds-flex>
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Saying how many"
+    anchor="announcing"
+    description="A list that silently changes under a screen-reader user is a list that did not change. The count goes into one polite region — born empty, so the first answer is heard — and it is also the field's description, so it survives a re-focus."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Once, not per keystroke</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The region says “Searching…”, then “12 results”. It never narrates the query back.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Nothing before the first answer</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            An untouched search announces no count. The list below it was not a result of anything.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The spinner stays quiet</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            It is <code>decorative</code> and lives inside the field. Two voices saying “busy” is one
+            voice too many.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Landmark, or not"
+    anchor="landmark"
+    description="role=&quot;search&quot; is for the search of a page or a region. A filter on a list is not one, and a page of landmarks is a page of noise — so it is off by default."
+  >
+    <app-doc-example code="{{ landmarkSnippet }}" language="html" [plain]="true">
+      <ds-stack [gap]="4" class="demo-form">
+        <ds-search-field label="Search the docs" [landmark]="true" placeholder="Search the docs…" />
+        <ds-search-field label="Filter projects" placeholder="Filter projects…" size="sm" />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-search-field>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

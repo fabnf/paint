@@ -1,0 +1,241 @@
+/* Documentation shell. Paint tokens only — no hard-coded values. */
+
+$sidebar-width: 16.5rem;
+$navbar-height: 4.25rem;
+
+.skip-link {
+  position: absolute;
+  z-index: 30;
+  margin: var(--ds-space-2);
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-color-primary);
+  color: var(--ds-color-on-primary);
+}
+
+/* —— Brand bar —— */
+.app-navbar {
+  position: relative;
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  min-height: $navbar-height;
+  padding: 0;
+  background: color-mix(in srgb, var(--ds-color-surface) 82%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--ds-color-border);
+
+  /* A hairline of wet paint across the top of the product. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: -1px;
+    height: 2px;
+    background: var(--ds-gradient-brand);
+    opacity: 0.9;
+  }
+}
+
+.app-navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+  width: 100%;
+  padding-inline: var(--ds-space-4);
+  padding-block: var(--ds-space-3);
+}
+
+.app-navbar__brand {
+  color: var(--ds-color-text);
+  text-decoration: none;
+  border-radius: var(--ds-radius-md);
+
+  &:hover {
+    color: var(--ds-color-text);
+  }
+}
+
+.app-navbar__version {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1_5);
+}
+
+.app-navbar__version ds-badge:first-child {
+  font-family: var(--ds-font-mono);
+}
+
+/* —— Shell —— */
+.app-shell {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100vh - #{$navbar-height});
+}
+
+.app-sidebar {
+  position: sticky;
+  inset-block-start: $navbar-height;
+  flex: 0 0 $sidebar-width;
+  width: $sidebar-width;
+  height: calc(100vh - #{$navbar-height});
+  overflow-y: auto;
+  padding: var(--ds-space-6) var(--ds-space-4);
+  border-inline-end: 1px solid var(--ds-color-border);
+  background: var(--ds-color-surface);
+}
+
+.app-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-6);
+}
+
+.app-sidebar__title {
+  margin: 0 0 var(--ds-space-1);
+  padding-inline: var(--ds-space-2);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: var(--ds-letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--ds-color-text-subtle);
+}
+
+.app-sidebar__caption {
+  margin: 0 0 var(--ds-space-2);
+  padding-inline: var(--ds-space-2);
+  font-size: var(--ds-font-size-xs);
+  color: var(--ds-color-text-subtle);
+}
+
+.app-sidebar__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  border-radius: var(--ds-radius-md);
+
+  /* The active page is marked with a stroke of brand, not just a tint. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block: 0.35rem;
+    inset-inline-start: -0.5rem;
+    width: 3px;
+    border-radius: var(--ds-radius-full);
+    background: var(--ds-gradient-brand);
+    opacity: 0;
+    transition: opacity 140ms ease;
+  }
+
+  &.active {
+    font-weight: var(--ds-font-weight-semibold);
+  }
+
+  &.active::before {
+    opacity: 1;
+  }
+}
+
+.app-sidebar__next {
+  margin-top: auto;
+  padding-top: var(--ds-space-4);
+  border-top: 1px solid var(--ds-color-border);
+}
+
+.app-sidebar__roadmap {
+  margin: 0;
+  padding-inline-start: var(--ds-space-5);
+  color: var(--ds-color-text-subtle);
+  font-size: var(--ds-font-size-sm);
+
+  li {
+    margin-block: var(--ds-space-1);
+  }
+}
+
+.app-scrim {
+  position: fixed;
+  inset: $navbar-height 0 0;
+  z-index: 9;
+  border: 0;
+  padding: 0;
+  background: color-mix(in srgb, var(--ds-color-text) 40%, transparent);
+}
+
+/* —— Content —— */
+.app-main {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--ds-space-8) var(--ds-space-page-gutter) var(--ds-space-10);
+
+  /* No isolation here: modal overlays (Dialog, Drawer) render inside the
+     routed page and must stack above the sticky navbar. An isolated main
+     would flatten their z-index below it — a backdrop that dims everything
+     except the header is a backdrop with a hole in it. */
+
+  /* A wash of pigment in the corner of the canvas. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    width: min(40rem, 60%);
+    height: 24rem;
+    background: radial-gradient(
+      ellipse at top right,
+      color-mix(in srgb, var(--ds-color-primary) 10%, transparent),
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.app-footer {
+  margin-top: auto;
+  padding-top: var(--ds-space-8);
+  margin-top: var(--ds-space-16);
+  border-top: 1px solid var(--ds-color-border);
+}
+
+.app-footer__text {
+  font-size: var(--ds-font-size-sm);
+  color: var(--ds-color-text-subtle);
+}
+
+@media (min-width: 992px) {
+  .app-navbar__inner {
+    padding-inline: var(--ds-space-6);
+  }
+
+  .app-main {
+    padding: var(--ds-space-10) var(--ds-space-page-gutter-lg) var(--ds-space-16);
+  }
+}
+
+/* Mobile: the sidebar becomes a drawer */
+@media (max-width: 991.98px) {
+  .app-sidebar {
+    position: fixed;
+    inset-block: $navbar-height 0;
+    inset-inline-start: 0;
+    z-index: 10;
+    height: auto;
+    transform: translateX(-100%);
+    transition: transform 200ms ease;
+    box-shadow: var(--bs-box-shadow-lg, 0 18px 40px -12px rgb(0 0 0 / 22%));
+  }
+
+  .app-sidebar--open {
+    transform: translateX(0);
+  }
+}

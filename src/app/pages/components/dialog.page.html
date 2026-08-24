@@ -1,0 +1,244 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="window"
+    title="Dialog"
+    lede="A modal conversation. Bootstrap's modal markup with none of its JS — Paint supplies the parts a modal lives or dies by: a focus trap, focus restore, a counted scroll lock, Escape and backdrop dismissal, and the ARIA wiring."
+    builtOn=".modal / .modal-dialog / .modal-backdrop"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Confirm"
+    anchor="confirm"
+    description="The most common dialog: a decision with consequences. Tone inks the top edge; the action says what it does, never “OK”."
+  >
+    <app-doc-example code="{{ confirmSnippet }}">
+      <ds-flex [gap]="3" [wrap]="'wrap'">
+        <ds-button variant="danger" iconStart="trash" (clicked)="confirm.set(true)">Delete project</ds-button>
+      </ds-flex>
+    </app-doc-example>
+
+    <ds-dialog
+      [(open)]="confirm"
+      title="Delete project"
+      description="This cannot be undone."
+      tone="danger"
+      icon="warning"
+      (closed)="onClosed($event)"
+    >
+      <ds-text>Everything in “{{ projectName() }}” will be removed — 24 files and 3 exports.</ds-text>
+
+      <ds-flex dsDialogActions [gap]="2" justify="end">
+        <ds-button variant="ghost" (clicked)="confirm.set(false)">Cancel</ds-button>
+        <ds-button variant="danger" iconStart="trash" (clicked)="destroy()">Delete project</ds-button>
+      </ds-flex>
+    </ds-dialog>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Forms inside dialogs"
+    anchor="form"
+    description="Paint's components compose: a Select inside a Dialog keeps its keyboard and its focus behaviour, and the trap lets it."
+  >
+    <app-doc-example code="{{ formSnippet }}">
+      <ds-button variant="primary" iconStart="settings" (clicked)="form.set(true)">Project settings</ds-button>
+    </app-doc-example>
+
+    <ds-dialog [(open)]="form" title="Project settings" icon="settings" description="Visible to everyone in the workspace.">
+      <ds-stack [gap]="4">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" [as]="'label'">Name</ds-text>
+          <input
+            class="form-control"
+            dsDialogAutofocus
+            [value]="projectName()"
+            (input)="projectName.set($any($event.target).value)"
+            aria-label="Project name"
+          />
+        </ds-stack>
+
+        <ds-stack [gap]="2">
+          <ds-text variant="label" [as]="'label'">Visibility</ds-text>
+          <ds-select [options]="visibility" [(value)]="projectVisibility" label="Visibility" />
+        </ds-stack>
+
+        <ds-box background="primary-muted" radius="md" [padding]="3">
+          <ds-flex [gap]="2" align="start">
+            <ds-icon name="info" size="sm" class="text-primary guide__icon" />
+            <ds-text variant="bodySm">
+              The Select's panel sits inside the sheet, so the focus trap keeps Tab where it belongs.
+            </ds-text>
+          </ds-flex>
+        </ds-box>
+      </ds-stack>
+
+      <ds-flex dsDialogActions [gap]="2" justify="end">
+        <ds-button variant="ghost" (clicked)="form.set(false)">Cancel</ds-button>
+        <ds-button variant="primary" iconStart="check" (clicked)="save()">Save changes</ds-button>
+      </ds-flex>
+    </ds-dialog>
+  </app-doc-section>
+
+  <app-doc-section heading="Sizes" anchor="sizes" description="Four widths. Pick the smallest that fits the decision.">
+    <app-doc-example [plain]="true">
+      <ds-flex [gap]="2" [wrap]="'wrap'">
+        @for (size of sizes; track size) {
+          <ds-button variant="secondary" (clicked)="openSized(size)">size = {{ size }}</ds-button>
+        }
+      </ds-flex>
+    </app-doc-example>
+
+    <ds-dialog [(open)]="sized" [size]="size()" title="Size {{ size() }}" description="Same sheet, four widths.">
+      <ds-text tone="muted">
+        Bootstrap's modal sizes, Paint's radius and shadow tokens. Long bodies can scroll inside the
+        sheet with [scrollable]="true".
+      </ds-text>
+      <ds-flex dsDialogActions justify="end">
+        <ds-button variant="primary" (clicked)="sized.set(false)">Got it</ds-button>
+      </ds-flex>
+    </ds-dialog>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Tone & brand"
+    anchor="tone"
+    description="Default for neutral asks, danger for destruction, brand for the rare moment that deserves the gradient."
+  >
+    <app-doc-example [plain]="true">
+      <ds-flex [gap]="2" [wrap]="'wrap'">
+        <ds-button variant="accent" iconStart="sparkle" (clicked)="brand.set(true)">Brand tone</ds-button>
+        <ds-button variant="secondary" iconStart="minus" (clicked)="locked.set(true)">Not dismissible</ds-button>
+        <ds-button variant="secondary" iconStart="rows" (clicked)="scrolling.set(true)">Scrollable body</ds-button>
+      </ds-flex>
+    </app-doc-example>
+
+    <ds-dialog [(open)]="brand" title="Wet Paint is live" tone="brand" icon="sparkle" description="v0.3.0 — primitives, molecules and organisms.">
+      <ds-stack [gap]="3">
+        <ds-text>
+          Six new components, a palette that earns its name, and a mark that finally looks like paint.
+        </ds-text>
+        <ds-box background="surface-sunken" radius="md" [padding]="4">
+          <ds-text variant="bodySm" tone="muted">
+            Brand tone is for launches and celebrations. Everything else is default.
+          </ds-text>
+        </ds-box>
+      </ds-stack>
+      <ds-flex dsDialogActions [gap]="2" justify="end">
+        <ds-button variant="ghost" (clicked)="brand.set(false)">Later</ds-button>
+        <ds-button variant="accent" iconEnd="arrowRight" (clicked)="brand.set(false)">See what's new</ds-button>
+      </ds-flex>
+    </ds-dialog>
+
+    <ds-dialog [(open)]="locked" title="Session expired" [dismissible]="false" icon="warning" description="You need to sign in again to keep working.">
+      <ds-text tone="muted">
+        Escape and the backdrop do nothing here, and there is no close button — the user has to
+        choose. Use this sparingly.
+      </ds-text>
+      <ds-flex dsDialogActions [gap]="2" justify="end">
+        <ds-button variant="ghost" (clicked)="locked.set(false)">Sign out</ds-button>
+        <ds-button variant="primary" (clicked)="locked.set(false)">Sign in again</ds-button>
+      </ds-flex>
+    </ds-dialog>
+
+    <ds-dialog [(open)]="scrolling" title="Release notes" [scrollable]="true" size="lg" icon="book">
+      <ds-stack [gap]="3">
+        @for (paragraph of paragraphs; track paragraph) {
+          <ds-text tone="muted">
+            {{ paragraph + 1 }}. The body scrolls inside the sheet, so the header and the actions stay
+            put while the page behind stays locked. Paint counts its scroll locks, so stacked
+            overlays never fight over the body's overflow.
+          </ds-text>
+        }
+      </ds-stack>
+      <ds-flex dsDialogActions justify="end">
+        <ds-button variant="primary" (clicked)="scrolling.set(false)">Done</ds-button>
+      </ds-flex>
+    </ds-dialog>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Focus"
+    anchor="focus"
+    description="Focus moves to the sheet on open, stays inside while it lives, and returns to the trigger on close."
+  >
+    <app-doc-code [code]="focusSnippet" />
+    <app-doc-code [code]="lockedSnippet" />
+  </app-doc-section>
+
+  <app-doc-section heading="Accessibility" anchor="accessibility">
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3" [divided]="true">
+        <ds-stack [gap]="1">
+          <ds-text variant="label">The page behind goes inert</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            aria-modal is only a hint: some screen readers let users keep arrowing through the page,
+            and find-in-page ignores focus traps entirely. Paint marks everything outside the sheet
+            inert, which removes it from the tab order *and* the accessibility tree — while leaving
+            live regions audible, so a toast still reaches you.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Focus starts on the sheet</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Not on the close button: landing on “Close” is a trap for anyone who reads before they
+            act. The title is announced first. Use [dsDialogAutofocus] to name a better target.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Named and described</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            title becomes aria-labelledby and description becomes aria-describedby — which is why
+            title is required.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Scroll locks are counted</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Stacked overlays cannot leave the page unscrollable, and the scrollbar's width is
+            compensated so nothing jumps.
+          </ds-text>
+        </ds-stack>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="Guidance" anchor="guidance">
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="guide">
+        <ds-stack [gap]="3">
+          <ds-flex align="center" [gap]="2">
+            <ds-icon name="success" size="md" class="text-success" />
+            <ds-text variant="h4" [as]="'h3'">Do</ds-text>
+          </ds-flex>
+          <ds-stack [gap]="2">
+            <ds-text variant="bodySm" tone="muted">Name the action in the button: “Delete project”, not “OK”.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Keep one decision per dialog.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Use [dsDialogAutofocus] for the field people came to fill in.</ds-text>
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="guide">
+        <ds-stack [gap]="3">
+          <ds-flex align="center" [gap]="2">
+            <ds-icon name="warning" size="md" class="text-danger" />
+            <ds-text variant="h4" [as]="'h3'">Don't</ds-text>
+          </ds-flex>
+          <ds-stack [gap]="2">
+            <ds-text variant="bodySm" tone="muted">Don't stack a dialog on a dialog. Replace the content instead.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Don't use a dialog for a message — that's a Toast.</ds-text>
+            <ds-text variant="bodySm" tone="muted">Don't turn off dismissible to force a decision that can wait.</ds-text>
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and slots of <ds-dialog>.">
+    <ds-stack [gap]="6">
+      <app-doc-api-table [rows]="inputs" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

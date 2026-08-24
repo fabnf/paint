@@ -1,0 +1,161 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="info"
+    title="Tooltip"
+    lede="The name of a thing, on demand. A bubble that opens on hover and on keyboard focus, wired to its trigger with aria-describedby — so a screen reader hears the words the moment the control is focused, timers or not."
+    builtOn="a positioned bubble + the WAI-ARIA tooltip pattern"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A description that follows focus"
+    anchor="anatomy"
+    description="Wrap the control; give the tooltip its words. Hover waits out a short delay; keyboard focus shows it immediately — whoever tabbed here asked."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-flex [gap]="2" align="center">
+        <ds-tooltip text="Copy to clipboard">
+          <ds-button variant="ghost" iconStart="copy" label="Copy" />
+        </ds-tooltip>
+        <ds-tooltip text="Download as CSV">
+          <ds-button variant="ghost" iconStart="download" label="Download" />
+        </ds-tooltip>
+        <ds-tooltip text="Delete project — asks first">
+          <ds-button variant="ghost" iconStart="trash" label="Delete" />
+        </ds-tooltip>
+        <ds-tooltip text="Saved 2 minutes ago" placement="bottom">
+          <ds-badge tone="success" icon="check">Saved</ds-badge>
+        </ds-tooltip>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Placement"
+    anchor="placement"
+    description="Four sides, one preference. Top and bottom check the viewport before they commit and flip when the space runs out; the bubble never causes a scrollbar just to say three words."
+  >
+    <app-doc-example code="{{ placementSnippet }}">
+      <ds-flex [gap]="3" align="center" [wrap]="'wrap'">
+        <ds-tooltip text="Above (default)" placement="top">
+          <ds-button variant="secondary" size="sm">top</ds-button>
+        </ds-tooltip>
+        <ds-tooltip text="Below" placement="bottom">
+          <ds-button variant="secondary" size="sm">bottom</ds-button>
+        </ds-tooltip>
+        <ds-tooltip text="Before" placement="start">
+          <ds-button variant="secondary" size="sm">start</ds-button>
+        </ds-tooltip>
+        <ds-tooltip text="After" placement="end">
+          <ds-button variant="secondary" size="sm">end</ds-button>
+        </ds-tooltip>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="A description, not a name"
+    anchor="naming"
+    description="An icon-only button still needs its own label. The tooltip may repeat it, but must never be the only place it lives — a tooltip that carries the name disappears exactly when a touch user needs it."
+  >
+    <app-doc-example code="{{ nameSnippet }}" [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-flex [gap]="3" class="guide">
+            <ds-icon name="success" class="guide__icon" style="color: var(--ds-color-success)" />
+            <ds-stack [gap]="1">
+              <ds-text variant="label">Label on the button, words in the bubble</ds-text>
+              <ds-text variant="bodySm" tone="muted">
+                The control is named with or without the tooltip. The bubble adds what the label
+                cannot fit: a consequence, a shortcut, a timestamp.
+              </ds-text>
+            </ds-stack>
+          </ds-flex>
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-flex [gap]="3" class="guide">
+            <ds-icon name="warning" class="guide__icon" style="color: var(--ds-color-danger)" />
+            <ds-stack [gap]="1">
+              <ds-text variant="label">The tooltip as the only name</ds-text>
+              <ds-text variant="bodySm" tone="muted">
+                Take the tooltip away — on touch, it already is — and the button is anonymous.
+                Anything interactive, or anything the user must read slowly, belongs in a popover.
+              </ds-text>
+            </ds-stack>
+          </ds-flex>
+        </ds-box>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Dismissible, hoverable, persistent"
+    anchor="a11y"
+    description="The three WCAG 1.4.13 requirements, by construction. The bubble stays in the DOM even while hidden, so the accessible description always resolves."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Dismissible</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Escape closes the bubble — and only the bubble. The key never travels on to close the
+            dialog the trigger happens to live in.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Hoverable</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Moving the pointer onto the bubble keeps it open, so its text can be read at any zoom
+            level without a race.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Persistent</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            It stays until hover or focus leaves. No timer takes it away mid-sentence.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Tooltip or popover?"
+    anchor="or-popover"
+    description="Whether the user can do anything with it."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-tooltip&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Text only, on hover and focus, gone when they leave. Nothing inside it can be clicked,
+            copied or tabbed to — if it could, the bubble would be a trap.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-popover&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Opens on click, holds real content — forms, buttons, links — and stays until it is
+            dismissed. Focus moves in, and Escape brings it back.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and slots of <ds-tooltip>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" label="Tooltip slots" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

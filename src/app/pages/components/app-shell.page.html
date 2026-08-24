@@ -1,0 +1,94 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="columns"
+    title="AppShell"
+    lede="The top bar, sidebar, mobile drawer, user block, ⌘K, and a notifications bell — composed once. Desktop: a collapsible sidebar beside the content. Narrow viewports: the sidebar becomes a Drawer. The host owns navigation, user-menu actions, palette commands, and notification items."
+    builtOn="ds-drawer + ds-breadcrumb + ds-menu + ds-command-palette + ds-feed + ds-popover"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A realistic frame"
+    anchor="demo"
+    description="The shell below is a live ds-app-shell — resize your browser to see the sidebar become a Drawer, press ⌘K (or the Jump to button) to open the palette, click the bell to see the inbox, collapse the sidebar, and try the user menu. Everything projects into the main slot, including this very text."
+  >
+    <app-doc-example code="{{ shellSnippet }}">
+      <ds-app-shell
+        appName="Atelier"
+        [navSections]="navSections"
+        [user]="user"
+        [userMenu]="userMenu"
+        [paletteItems]="commands"
+        [paletteHotkey]="false"
+        [notifications]="notifications()"
+        [showBell]="true"
+        [breadcrumbs]="breadcrumbs"
+        [now]="now"
+        (notificationOpen)="onNotification($event)"
+        (notificationMarkRead)="onMarkRead($event)"
+        (userAction)="onUserAction($event)"
+      >
+        <ds-stack [gap]="4">
+          <ds-text variant="h2" [as]="'h2'">Dashboard</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            This is the main slot — the host's page content. Everything around it is the shell.
+          </ds-text>
+          <ds-alert tone="info" title="This is a real shell">
+            The sidebar collapses, the bell opens, the breadcrumb is live, and ⌘K opens the palette
+            (hotkey off in this embed, but the "Jump to" button works). The text you are reading is
+            projected ng-content.
+          </ds-alert>
+          <ds-flex [gap]="3" [wrap]="'wrap'">
+            <ds-badge tone="success">{{ unreadCount() }} unread</ds-badge>
+            <ds-badge tone="primary">3 invoices</ds-badge>
+            <ds-badge tone="accent">2 projects</ds-badge>
+          </ds-flex>
+        </ds-stack>
+      </ds-app-shell>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="What composes, and from where"
+    anchor="composition"
+    description="No new primitives — the shell is strictly composition."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">ds-drawer (mobile nav)</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Below the lg breakpoint the sidebar becomes a Drawer: modal, focus-trapped, Escape
+            returns to the hamburger. Links close it on navigation.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">ds-command-palette (⌘K)</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The palette's own hotkey is wired through, or the shell renders a "Jump to…" trigger
+            in the top bar. Items are the host's — commands, links, entities, mixed.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">ds-feed + ds-popover (bell)</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The notification bell is a popover trigger wearing a badge; inside it a ds-feed
+            renders the host's items, with itemOpen/markRead flowing straight through.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-app-shell>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

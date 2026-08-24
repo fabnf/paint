@@ -1,0 +1,175 @@
+/* Shared chrome for the six primitive pages. */
+
+.page {
+  max-width: 68rem;
+}
+
+/* Placeholder blocks used to visualise layout primitives. */
+.demo-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: var(--ds-space-3) var(--ds-space-4);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-color-primary-muted);
+  border: 1px dashed color-mix(in srgb, var(--ds-color-primary) 45%, transparent);
+  color: var(--ds-color-primary);
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-font-size-sm);
+  white-space: nowrap;
+}
+
+.demo-block--tall {
+  min-height: 5rem;
+}
+
+.demo-block--solid {
+  background: var(--ds-color-surface-elevated);
+  border-style: solid;
+  border-color: var(--ds-color-border);
+  color: var(--ds-color-text-muted);
+}
+
+.demo-outline {
+  border: 1px dashed color-mix(in srgb, var(--ds-color-primary) 40%, transparent);
+  border-radius: var(--ds-radius-md);
+}
+
+/* Button page */
+.variant-row {
+  padding-block: var(--ds-space-1);
+}
+
+.variant-row__demo {
+  flex: 0 0 10rem;
+}
+
+.full-width-demo {
+  max-width: 22rem;
+}
+
+/* Box page */
+.swatch-strip {
+  height: 2.5rem;
+  border-radius: var(--ds-radius-sm);
+}
+
+/* Text page */
+.specimen {
+  max-width: 60ch;
+}
+
+/* Grid / Flex pages */
+.control-bar {
+  padding: var(--ds-space-3) var(--ds-space-4);
+  border-bottom: 1px solid var(--ds-color-border);
+  background: var(--ds-color-surface-elevated);
+  border-radius: var(--ds-radius-lg) var(--ds-radius-lg) 0 0;
+}
+
+.token-chip {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-font-size-xs);
+  color: var(--ds-color-text-muted);
+  background: var(--ds-color-surface-elevated);
+  border: 1px solid var(--ds-color-border);
+}
+
+/* Brand mixes on the Box page: the text rides on the gradient, so it inherits
+   whatever colour the mix brings with it. */
+.mix-caption {
+  font-size: var(--ds-font-size-xs);
+  opacity: 0.8;
+}
+
+/* Form-control pages: a field is a column, not a canvas-wide block. */
+.demo-field {
+  max-width: 22rem;
+}
+
+.demo-form {
+  max-width: 32rem;
+}
+
+/* Settings-row composition on the Switch page. */
+.settings-row {
+  padding-block: var(--ds-space-3);
+}
+
+/* Radio page: a fieldset is the group, but it brings browser chrome with it. */
+.demo-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.demo-fieldset > legend {
+  float: none;
+  width: auto;
+  margin-bottom: var(--ds-space-3);
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Display & feedback pages */
+.chip-row {
+  min-height: 2rem;
+}
+
+/* A stack of avatars is a Flex with a negative margin — not a component. */
+.avatar-stack ds-avatar + ds-avatar {
+  margin-inline-start: -0.6rem;
+}
+
+.avatar-stack ds-avatar {
+  /* The ring is the page behind it, so overlapping avatars stay separate shapes. */
+  box-shadow: 0 0 0 2px var(--ds-color-surface);
+  border-radius: var(--ds-radius-full);
+}
+
+.swatch-demo {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--ds-radius-sm);
+}
+
+.loading-card {
+  max-width: 24rem;
+}
+
+.stat-row {
+  min-width: 12rem;
+}
+
+/* Display & feedback pages */
+.chip-row {
+  min-height: 2rem;
+}
+
+/* A stack of avatars is a Flex with a negative margin — not a component. */
+.avatar-stack ds-avatar + ds-avatar {
+  margin-inline-start: -0.6rem;
+}
+
+.avatar-stack ds-avatar {
+  /* The ring is the page behind it, so overlapping avatars stay separate shapes. */
+  box-shadow: 0 0 0 2px var(--ds-color-surface);
+  border-radius: var(--ds-radius-full);
+}
+
+.swatch-demo {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--ds-radius-sm);
+}
+
+.loading-card {
+  max-width: 24rem;
+}
+
+.stat-row {
+  min-width: 12rem;
+}

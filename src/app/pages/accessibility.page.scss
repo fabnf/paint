@@ -1,0 +1,42 @@
+.page {
+  max-width: 70rem;
+}
+
+.a11y__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-color-primary);
+  background: var(--ds-color-primary-muted);
+}
+
+.a11y__field {
+  min-width: 16rem;
+}
+
+.a11y__kbd {
+  padding: 0.05rem 0.35rem;
+  border-radius: var(--ds-radius-sm);
+  background: var(--ds-color-surface-sunken);
+  border: 1px solid var(--ds-color-border);
+  color: var(--ds-color-text);
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-font-size-xs);
+  white-space: nowrap;
+}
+
+.a11y__sr-name {
+  flex: 0 0 8rem;
+  color: var(--ds-color-primary);
+}
+
+.a11y__badge {
+  color: var(--ds-color-primary);
+  background: var(--ds-color-primary-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--ds-letter-spacing-wide);
+}

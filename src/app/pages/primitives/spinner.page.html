@@ -1,0 +1,107 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="refresh"
+    title="Spinner"
+    lede="The indeterminate-wait atom. A ring that turns, a name that is spoken once, and nothing else. The moment you can say “4 of 10”, it is the wrong component."
+    builtOn=".spinner-border"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Sizes and tones"
+    anchor="sizes"
+    description="Four diameters; the stroke scales with them, so a 40px spinner is not drawn with a hairline."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="6">
+        <ds-flex [gap]="6" align="center" [wrap]="'wrap'">
+          @for (size of sizes; track size) {
+            <ds-stack [gap]="3" align="center">
+              <ds-spinner [size]="size" />
+              <ds-text variant="code" tone="subtle">{{ size }}</ds-text>
+            </ds-stack>
+          }
+        </ds-flex>
+
+        <ds-flex [gap]="5" align="center" [wrap]="'wrap'">
+          @for (tone of tones; track tone) {
+            <ds-spinner [tone]="tone" size="sm" [decorative]="true" />
+          }
+          <ds-text variant="caption">(decorative here — seven live regions would be seven announcements)</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="It says what it is waiting for"
+    anchor="label"
+    description="A spinner is a live region with a visually hidden name. “Loading…” is the default; “Loading invoices…” is better, and costs one word."
+  >
+    <app-doc-example [plain]="true">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="6" class="loading-card">
+        <ds-flex [gap]="3" align="center">
+          <ds-spinner size="sm" label="Loading invoices…" />
+          <ds-text tone="muted">Loading invoices…</ds-text>
+        </ds-flex>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Inside something that is already busy"
+    anchor="decorative"
+    description="A loading button reports aria-busy and keeps its place in the tab order. The spinner inside it must not also announce itself — so <ds-button> passes decorative, and tone=&quot;inherit&quot; so the ring takes the button's ink."
+  >
+    <app-doc-example code="{{ decorativeSnippet }}">
+      <ds-flex [gap]="3" [wrap]="'wrap'" align="center">
+        <ds-button [loading]="saving()" (clicked)="save()">Save changes</ds-button>
+        <ds-button variant="accent" [loading]="saving()" (clicked)="save()">Mix</ds-button>
+        <ds-button variant="ghost" [loading]="saving()" (clicked)="save()">Rename</ds-button>
+        <ds-text variant="caption">One spinner, three inks — all of them currentColor.</ds-text>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Spinner, progress or skeleton?"
+    anchor="which"
+    description="Three ways to say “wait”. They are not interchangeable."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="3">
+          <ds-spinner size="sm" [decorative]="true" />
+          <ds-text variant="label" tone="primary">Spinner</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The wait has no length and the result has no shape. A save, a delete, a sign-in.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="3">
+          <ds-progress ariaLabel="Example" [value]="62" [hideLabel]="true" size="sm" />
+          <ds-text variant="label" tone="primary">Progress</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            You can count it. Uploads, imports, quota. Use it the moment you can say “4 of 10”.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="3">
+          <ds-skeleton [lines]="2" />
+          <ds-text variant="label" tone="primary">Skeleton</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The shape of the answer is known. It says what is coming, and the page does not jump when
+            it arrives.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-spinner>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

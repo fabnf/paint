@@ -1,0 +1,136 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="tag"
+    title="Badge"
+    lede="The status-label atom. A short, non-interactive label — a status, a count, a version — painted from the tone properties every display atom shares. It is never a button, and never a tab stop."
+    builtOn=".badge"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Tones"
+    anchor="tones"
+    description="A tone is a meaning, not a colour. Pick by what the badge says; the theme decides what that looks like, in both modes, at the contrast the token layer asserts."
+  >
+    <app-doc-example code="{{ toneSnippet }}">
+      <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+        @for (tone of tones; track tone) {
+          <ds-badge [tone]="tone">{{ tone }}</ds-badge>
+        }
+      </ds-flex>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg">
+      <ds-stack [gap]="0" [divided]="true" class="p-4">
+        @for (item of meanings; track item.tone) {
+          <ds-flex [direction]="{ base: 'column', sm: 'row' }" align="start" [gap]="4" class="variant-row">
+            <div class="variant-row__demo">
+              <ds-badge [tone]="item.tone">{{ item.label }}</ds-badge>
+            </div>
+            <ds-stack [gap]="1">
+              <ds-text variant="code" tone="primary">tone="{{ item.tone }}"</ds-text>
+              <ds-text variant="bodySm" tone="muted">{{ item.when }}</ds-text>
+            </ds-stack>
+          </ds-flex>
+        }
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Variants"
+    anchor="variants"
+    description="Soft by default, because a page of solid badges is a page of alarms. Solid is for the one that matters; outline for a quiet label on a busy surface."
+  >
+    <app-doc-example code="{{ variantSnippet }}">
+      <ds-stack [gap]="4">
+        @for (variant of ['soft', 'solid', 'outline']; track variant) {
+          <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+            <ds-text variant="code" tone="subtle" class="variant-row__demo">{{ variant }}</ds-text>
+            @for (tone of tones; track tone) {
+              <ds-badge [tone]="tone" [variant]="$any(variant)">{{ tone }}</ds-badge>
+            }
+          </ds-flex>
+        }
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">Why solid is safe in both themes</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          A filled badge writes in onPrimary — white on paper, ink on a lit canvas. It is the same
+          role a filled button uses, and the token layer asserts it clears 4.5:1 on every tone, in
+          both themes. There is no onDanger token because there does not need to be one.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Shape, icons and dots"
+    anchor="shape"
+    description="Two sizes, a pill, an optional leading icon or dot. All of it decoration: the text is the badge."
+  >
+    <app-doc-example [plain]="true">
+      <ds-flex [gap]="3" [wrap]="'wrap'" align="center">
+        <ds-badge tone="success" icon="check">Shipped</ds-badge>
+        <ds-badge tone="warning" [dot]="true">Expiring</ds-badge>
+        <ds-badge tone="info" size="md" icon="info">Beta</ds-badge>
+        <ds-badge tone="neutral" variant="outline">v0.3.1</ds-badge>
+        <ds-badge tone="primary" [pill]="true" variant="solid">Pro</ds-badge>
+        <ds-badge tone="danger" variant="solid" icon="warning">2 failures</ds-badge>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Counts have to be spoken"
+    anchor="counts"
+    description="A badge reading “12” against an inbox says nothing out loud. srLabel hides the glyph and names the badge properly — the same trick <ds-tabs> uses for its own counts."
+  >
+    <app-doc-example code="{{ countSnippet }}">
+      <ds-flex [gap]="4" align="center">
+        <ds-flex align="center" [gap]="2">
+          <ds-icon name="bell" />
+          <ds-text>Inbox</ds-text>
+          <ds-badge tone="accent" [pill]="true" srLabel="12 unread messages">12</ds-badge>
+        </ds-flex>
+        <ds-divider orientation="vertical" [spacing]="0" />
+        <ds-text variant="caption">Screen reader: “Inbox, 12 unread messages”</ds-text>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Badge or chip?"
+    anchor="or-chip"
+    description="The difference is who put it there."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Badge — the system's</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A fact about the thing it sits on: the build failed, the plan is Pro, there are 12 of
+            them. The user cannot remove a fact.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Chip — the user's</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A value they put there: a tag, a filter, a recipient. Which is why it can carry a remove
+            button — and why a badge never does.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-badge>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

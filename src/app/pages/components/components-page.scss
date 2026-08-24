@@ -1,0 +1,166 @@
+/* Shared chrome for the molecule & organism pages. */
+
+.page {
+  max-width: 68rem;
+}
+
+/* Placeholder blocks used to visualise layout and panels. */
+.demo-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: var(--ds-space-3) var(--ds-space-4);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-color-primary-muted);
+  border: 1px dashed color-mix(in srgb, var(--ds-color-primary) 45%, transparent);
+  color: var(--ds-color-primary);
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-font-size-sm);
+}
+
+.demo-field {
+  max-width: 22rem;
+}
+
+.demo-panel {
+  padding: var(--ds-space-5);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+}
+
+/* A fake app window, for components that need somewhere to live. */
+.frame {
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-color-surface);
+  overflow: hidden;
+}
+
+.frame__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-2_5) var(--ds-space-3);
+  border-bottom: 1px solid var(--ds-color-border);
+  background: var(--ds-color-surface-sunken);
+}
+
+.frame__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-color-border-strong);
+}
+
+.frame__body {
+  padding: var(--ds-space-5);
+}
+
+.token-chip {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-font-size-xs);
+  color: var(--ds-color-text-muted);
+  background: var(--ds-color-surface-sunken);
+  border: 1px solid var(--ds-color-border);
+}
+
+/* Guidance cards: do / don't */
+.guide {
+  height: 100%;
+}
+
+.guide__icon {
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+/* —— Form molecules —— */
+
+/* A native colour input is a swatch, not a text field. */
+.colour-input {
+  width: 100%;
+  max-width: 8rem;
+  padding: var(--ds-space-1);
+  cursor: pointer;
+}
+
+.demo-form {
+  max-width: 34rem;
+}
+
+.search-results {
+  min-height: 10rem;
+}
+
+.search-row {
+  padding-block: var(--ds-space-2);
+}
+
+/* —— Form molecules —— */
+
+/* A native colour input is a swatch, not a text field. */
+.colour-input {
+  width: 100%;
+  max-width: 8rem;
+  padding: var(--ds-space-1);
+  cursor: pointer;
+}
+
+.demo-form {
+  max-width: 34rem;
+}
+
+.search-results {
+  min-height: 10rem;
+}
+
+.search-row {
+  padding-block: var(--ds-space-2);
+}
+
+/* —— Structure molecules —— */
+.demo-list {
+  overflow: hidden;
+}
+
+.demo-list__toolbar {
+  padding: var(--ds-space-3);
+  border-bottom: 1px solid var(--ds-color-border);
+  background: var(--ds-color-surface-sunken);
+  gap: var(--ds-space-3);
+}
+
+.demo-list__search {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.demo-list__size {
+  flex: 0 0 10rem;
+}
+
+.demo-list__rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.demo-list__row {
+  padding: var(--ds-space-3) var(--ds-space-4);
+}
+
+.demo-list__row + .demo-list__row {
+  border-top: 1px solid var(--ds-color-border);
+}
+
+.demo-list__footer {
+  padding: var(--ds-space-3) var(--ds-space-4);
+  border-top: 1px solid var(--ds-color-border);
+  background: var(--ds-color-surface-sunken);
+}
+
+.demo-toolbar {
+  max-width: 44rem;
+}

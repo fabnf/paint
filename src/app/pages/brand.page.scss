@@ -1,0 +1,159 @@
+.page {
+  max-width: 70rem;
+}
+
+/* ———————————————————————— Signature ———————————————————————— */
+.signature {
+  padding: var(--ds-space-10) var(--ds-space-8);
+  border-radius: var(--ds-radius-2xl);
+  background-image: var(--ds-gradient-brand);
+  box-shadow: var(--ds-shadow-glow);
+  color: #fff;
+}
+
+.signature__logo {
+  color: #fff;
+}
+
+.signature__meta {
+  max-width: 30ch;
+}
+
+.signature__eyebrow {
+  color: rgb(255 255 255 / 70%);
+  text-transform: uppercase;
+  letter-spacing: var(--ds-letter-spacing-wider);
+}
+
+.signature__headline {
+  color: #fff;
+}
+
+.signature__lede {
+  color: rgb(255 255 255 / 80%);
+}
+
+.anatomy__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-gradient-brand);
+  color: #fff;
+}
+
+/* ———————————————————————— Lockups ———————————————————————— */
+.lockup__stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 6.5rem;
+}
+
+.mono-demo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 7rem;
+  color: #fff;
+}
+
+/* ———————————————————————— Mixes ———————————————————————— */
+.mix {
+  width: 100%;
+  max-width: 14rem;
+  height: 4.5rem;
+  flex-shrink: 0;
+  border-radius: var(--ds-radius-md);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 8%);
+}
+
+.mix__meta {
+  flex: 1 1 auto;
+}
+
+.accent {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: var(--ds-radius-full);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 8%);
+}
+
+/* ———————————————————————— Pigment demo ———————————————————————— */
+.pigment {
+  position: relative;
+  height: 7rem;
+  border-radius: var(--ds-radius-md);
+  overflow: hidden;
+}
+
+.pigment--light {
+  background: #ffffff;
+}
+
+.pigment--dark {
+  background: #141221;
+}
+
+.pigment__violet,
+.pigment__magenta {
+  position: absolute;
+  inset-block-start: 1rem;
+  width: 5rem;
+  height: 5rem;
+  border-radius: var(--ds-radius-full);
+}
+
+/* They have to genuinely overlap — that overlap is the whole demo. */
+.pigment__violet {
+  inset-inline-start: calc(50% - 4.25rem);
+  background: #7c3dff;
+}
+
+.pigment__magenta {
+  inset-inline-start: calc(50% - 0.75rem);
+  background: #ef2d92;
+}
+
+.pigment__magenta--multiply {
+  mix-blend-mode: multiply;
+}
+
+.pigment__magenta--screen {
+  mix-blend-mode: screen;
+}
+
+/* ———————————————————————— Texture ———————————————————————— */
+.texture-demo {
+  min-height: 7rem;
+}
+
+.texture-demo__label {
+  color: #fff;
+}
+
+.texture-demo__caption {
+  color: rgb(255 255 255 / 75%);
+}
+
+.rule__icon {
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+/* Clear space diagram: the guide equals the height of the bowl. */
+.clearspace {
+  display: flex;
+  justify-content: center;
+  padding: var(--ds-space-6);
+}
+
+.clearspace__guide {
+  padding: 1.75rem;
+  border: 1px dashed color-mix(in srgb, var(--ds-color-accent) 60%, transparent);
+  border-radius: var(--ds-radius-md);
+  background: color-mix(in srgb, var(--ds-color-accent) 6%, transparent);
+}

@@ -1,0 +1,99 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="chevronRight"
+    title="Breadcrumb"
+    lede="Where this page sits, and how to go back up. An ordered list of links inside a named nav, ending in the page you are on — which is not a link, because it goes nowhere."
+    builtOn="<nav> + <ol> + ds-link"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A path"
+    anchor="anatomy"
+    description="Links all the way up, and text at the end. The separators are decoration and are hidden, because a screen reader already knows it is reading a list."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-breadcrumb [items]="short" />
+        <ds-divider />
+        <ds-breadcrumb [items]="short" separator="/" label="Breadcrumb with a slash" />
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The last crumb is not a link</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            It goes nowhere, so it is a <code>&lt;span aria-current="page"&gt;</code>. A link to the
+            page you are on is a tab stop that does nothing.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">One nav, one name</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            It is a navigation landmark. Two of them on a page need two <code>label</code>s, or
+            neither can be told from the other.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Real links</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            <code>&lt;ds-link&gt;</code> with a real <code>href</code>, so middle-click and
+            “copy link address” work. A crumb with nowhere to go renders as text.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="When the path is too long"
+    anchor="collapse"
+    description="The two crumbs that matter are the first and the last. The rest collapse into a button that says how many it is hiding — never into a silent “…” — and expands in place, rather than behind a menu that only a pointer can open."
+  >
+    <app-doc-example code="{{ collapseSnippet }}">
+      <ds-stack [gap]="5">
+        <ds-breadcrumb [items]="deep" [maxItems]="maxItems()" label="Collapsing breadcrumb" />
+
+        <ds-flex [gap]="3" align="center" [wrap]="'wrap'">
+          <ds-text variant="caption">maxItems</ds-text>
+          <ds-pagination
+            [page]="maxItems()"
+            [pageCount]="6"
+            variant="compact"
+            size="sm"
+            label="maxItems"
+            (pageChange)="maxItems.set($event)"
+          />
+          <ds-text variant="caption">
+            Press the button to expand. Focus lands on the first crumb it was hiding — not on the
+            body.
+          </ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">It refuses to collapse one crumb</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          A button that stands for a single page is wider than the page it hid, and costs a tab stop
+          to get past. Below that, the path is drawn in full.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-breadcrumb>, and the shape of an item.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="itemRows" nameHeading="BreadcrumbItem" label="Breadcrumb item" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

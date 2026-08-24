@@ -1,0 +1,127 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="filter"
+    title="FilterBar"
+    lede="The top of every list page, systemised: a search field, one summarising select per filter, an active-chip row that says what is narrowing the list — and removes it in place — and Clear. The state is one plain, serialisable object; the bar owns no results."
+    builtOn="ds-search-field + ds-select + ds-chip + ds-button"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A filtered list, live"
+    anchor="live"
+    description="Type, pick, watch the list follow — every edit commits and emits. The select triggers summarise (“Status · 2”) instead of piling chips into the bar; the chips live below, each one a removable sentence. The result count feeds back into the search field's live region."
+  >
+    <app-doc-example code="{{ liveSnippet }}">
+      <ds-stack [gap]="3">
+        <ds-filter-bar
+          [filters]="filters"
+          [(state)]="state"
+          [resultCount]="filtered().length"
+          searchLabel="Search invoices"
+          searchPlaceholder="Search invoices…"
+        />
+
+        <ds-box background="surface" [border]="true" radius="lg" class="demo-list">
+          <ul class="demo-list__rows">
+            @for (invoice of filtered(); track invoice.id) {
+              <li class="demo-list__row">
+                <ds-flex align="center" [gap]="3">
+                  <ds-text variant="bodySm" class="fw-semibold">{{ invoice.id }}</ds-text>
+                  <ds-text variant="bodySm" tone="muted">{{ invoice.project }}</ds-text>
+                  <ds-badge
+                    [tone]="invoice.status === 'paid' ? 'success' : invoice.status === 'sent' ? 'warning' : 'danger'"
+                    size="sm"
+                  >
+                    {{ invoice.status }}
+                  </ds-badge>
+                  <ds-box class="ms-auto">
+                    <ds-flex align="center" [gap]="4">
+                      <ds-text variant="bodySm" tone="muted">{{ ownerNames[invoice.owner] }}</ds-text>
+                      <ds-text variant="bodySm">{{ invoice.amount }}</ds-text>
+                    </ds-flex>
+                  </ds-box>
+                </ds-flex>
+              </li>
+            } @empty {
+              <li class="demo-list__row">
+                <ds-text variant="bodySm" tone="muted">No invoices match. Clear something.</ds-text>
+              </li>
+            }
+          </ul>
+          <ds-flex class="demo-list__footer" justify="between">
+            <ds-text variant="caption">{{ filtered().length }} of {{ invoices.length }}</ds-text>
+            <ds-text variant="caption">{{ activeCount(state()) }} filters active</ds-text>
+          </ds-flex>
+        </ds-box>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Apply mode, for expensive queries"
+    anchor="apply"
+    description="When every keystroke would cost a round trip, applyMode collects edits in a draft: Apply lights up when something changed, nothing emits until it is pressed, and the chips keep showing what is actually applied. Removing a chip is still immediate — a kept promise, revoked."
+  >
+    <app-doc-example code="{{ applySnippet }}">
+      <ds-stack [gap]="3">
+        <ds-filter-bar
+          [filters]="filters"
+          [(state)]="appliedState"
+          [applyMode]="true"
+          [loading]="applying()"
+          searchLabel="Search invoices"
+          (stateChange)="onApply($event)"
+        />
+        <ds-text variant="bodySm" tone="muted">
+          {{ applying() ? 'Querying…' : appliedResults().length + ' results for the applied state.' }}
+        </ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="What the organism owns"
+    anchor="behaviour"
+    description="The loop a list page always hand-wires, wired once."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">One state object</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Search and selections in one serialisable FilterState — made for a query string, a
+            saved view, a URL. The bar never holds results; it narrows and reports.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Chips say why</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            “Status: Paid”, removable where it stands, named in full for a screen reader. The chip
+            row always reflects the committed state — in apply mode too.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Composed, not invented</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The options grammar is the Select's, the debounce and result announcements are the
+            SearchField's, the chips are ds-chip. The bar adds the contract, not the controls.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and slots of <ds-filter-bar>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" label="FilterBar slots" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

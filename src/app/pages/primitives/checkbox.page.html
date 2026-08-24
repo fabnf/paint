@@ -1,0 +1,118 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="checkbox"
+    title="Checkbox"
+    lede="The independent-choice atom. A native input behind Paint's chrome: Space toggles it, Tab reaches it, Windows High Contrast paints it, and indeterminate is announced as “mixed” without a line of ARIA."
+    builtOn=".form-check / .form-check-input"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Anatomy"
+    anchor="anatomy"
+    description="The label is the click target, not a caption beside it. A hint sits under the label, in the text column, and is wired into aria-describedby."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4" class="demo-form">
+        <ds-checkbox label="Remember me" [(checked)]="remember" />
+        <ds-checkbox
+          label="I accept the terms"
+          hint="You can revoke consent at any time."
+          [error]="submitted() && !terms() ? 'You must accept to continue.' : ''"
+          [(checked)]="terms"
+        />
+        <ds-flex [gap]="3" align="center">
+          <ds-button size="sm" variant="secondary" (clicked)="submitted.set(true)">Submit</ds-button>
+          <ds-text variant="code" tone="primary">checked = {{ terms() }}</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Mixed"
+    anchor="mixed"
+    description="A parent over a partial selection is neither on nor off. Clicking it resolves to checked, because “select all” is what the user came for."
+  >
+    <app-doc-example code="{{ mixedSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="demo-form">
+        <ds-stack [gap]="4">
+          <ds-checkbox
+            label="All scopes"
+            [checked]="allGranted()"
+            [indeterminate]="someGranted()"
+            (changed)="toggleAll($event)"
+          />
+          <ds-stack [gap]="3" class="ps-4">
+            @for (scope of scopes; track scope.id) {
+              <ds-checkbox
+                [label]="scope.label"
+                [hint]="scope.hint"
+                [checked]="isGranted(scope.id)"
+                (changed)="toggleScope(scope.id, $event)"
+              />
+            }
+          </ds-stack>
+          <ds-text variant="code" tone="primary">granted = [{{ granted().join(', ') }}]</ds-text>
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes and states"
+    anchor="states"
+    description="Three indicator sizes from the control scale, and the states a form puts a box into."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-stack [gap]="3">
+          <ds-checkbox size="sm" label="Small" [checked]="true" />
+          <ds-checkbox size="md" label="Medium" [checked]="true" />
+          <ds-checkbox size="lg" label="Large" [checked]="true" />
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-checkbox label="Required" [required]="true" />
+          <ds-checkbox label="Invalid" error="You must accept to continue." />
+          <ds-checkbox label="Disabled" [disabled]="true" />
+          <ds-checkbox label="Disabled and checked" [disabled]="true" [checked]="true" />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Checkbox or switch?"
+    anchor="or-switch"
+    description="The question is not how it looks. It is when the change takes effect."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Checkbox</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The value is part of a form and lands when the form is submitted. Several of them are a
+            set of independent answers to one question.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Switch</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The change happens the moment it moves. No Save button, no undo — the setting is already
+            on.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-checkbox>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

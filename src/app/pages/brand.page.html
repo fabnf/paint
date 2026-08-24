@@ -1,0 +1,305 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Brand"
+    icon="palette"
+    title="Brand"
+    [lede]="brand.description"
+    builtOn="inline SVG + tokens"
+    status="v0.3.0"
+  />
+
+  <!-- ———————————————————————— Signature ———————————————————————— -->
+  <app-doc-section
+    heading="The signature"
+    anchor="signature"
+    description="The mark is the paint: one brush stroke pulls the P, a magenta dab multiplies where it crosses, and a lime drip runs off the bowl. Nothing is a decal — the pigment actually mixes."
+  >
+    <div class="signature ds-grain">
+      <ds-flex [direction]="{ base: 'column', md: 'row' }" align="center" justify="between" [gap]="8">
+        <ds-logo size="xl" [tagline]="true" [underline]="true" [mono]="true" class="signature__logo" />
+        <ds-stack [gap]="2" class="signature__meta">
+          <ds-text variant="label" class="signature__eyebrow">{{ brand.releaseName }}</ds-text>
+          <ds-text variant="h3" [as]="'p'" class="signature__headline">{{ brand.headline }}</ds-text>
+          <ds-text variant="bodySm" class="signature__lede">{{ brand.shortDescription }}</ds-text>
+        </ds-stack>
+      </ds-flex>
+    </div>
+
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      @for (item of anatomy; track item.title) {
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="3">
+            <span class="anatomy__icon">
+              <ds-icon [name]="item.icon" size="md" />
+            </span>
+            <ds-text variant="h4" [as]="'h3'">{{ item.title }}</ds-text>
+            <ds-text variant="bodySm" tone="muted">{{ item.body }}</ds-text>
+          </ds-stack>
+        </ds-box>
+      }
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Lockups ———————————————————————— -->
+  <app-doc-section
+    heading="Lockups"
+    anchor="lockups"
+    description="Three lockups cover every placement. Pick the smallest one that still identifies the product."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      @for (lockup of lockups; track lockup.variant) {
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="4">
+            <ds-box background="surface-sunken" radius="md" [padding]="5" class="lockup__stage">
+              <ds-logo [variant]="lockup.variant" size="lg" />
+            </ds-box>
+            <ds-stack [gap]="1">
+              <ds-text variant="h4" [as]="'h3'">{{ lockup.label }}</ds-text>
+              <ds-text variant="bodySm" tone="muted">{{ lockup.usage }}</ds-text>
+              <ds-text variant="code" tone="subtle">variant="{{ lockup.variant }}"</ds-text>
+            </ds-stack>
+          </ds-stack>
+        </ds-box>
+      }
+    </ds-grid>
+
+    <app-doc-example title="Sizes" description="Mark, wordmark and tagline scale as one lockup." [code]="logoSnippet">
+      <ds-flex align="end" [gap]="8" [wrap]="'wrap'">
+        @for (item of sizes; track item.size) {
+          <ds-stack [gap]="3" align="center">
+            <ds-logo [size]="item.size" />
+            <ds-text variant="caption">{{ item.size }} · {{ item.label }}</ds-text>
+          </ds-stack>
+        }
+      </ds-flex>
+    </app-doc-example>
+
+    <app-doc-example
+      title="Mono & the underline"
+      description="On anything saturated, the mark goes mono and inherits currentColor. The brushed underline is for display moments only."
+      [plain]="true"
+    >
+      <ds-grid [cols]="{ base: 1, sm: 3 }" [gap]="4">
+        <ds-box background="brand" radius="lg" [padding]="5" class="ds-grain mono-demo">
+          <ds-logo [mono]="true" size="lg" [underline]="true" />
+        </ds-box>
+        <ds-box background="primary" radius="lg" [padding]="5" class="mono-demo">
+          <ds-logo [mono]="true" size="lg" />
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="mono-demo">
+          <ds-logo size="lg" />
+        </ds-box>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Paint mixes ———————————————————————— -->
+  <app-doc-section
+    heading="Paint mixes"
+    anchor="mixes"
+    description="Three gradients, declared once in effects.tokens.ts. Anything else is not the brand."
+  >
+    <ds-stack [gap]="4">
+      @for (mix of mixes; track mix.name) {
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="4">
+          <ds-flex [direction]="{ base: 'column', md: 'row' }" [gap]="5" align="center">
+            <div class="mix ds-grain" [style.background-image]="mix.css"></div>
+            <ds-stack [gap]="1" class="mix__meta">
+              <ds-flex align="center" [gap]="2" [wrap]="'wrap'">
+                <ds-text variant="h4" [as]="'h3'">{{ mix.name }}</ds-text>
+                <ds-text variant="code" tone="subtle">{{ mix.token }}</ds-text>
+              </ds-flex>
+              <ds-text variant="bodySm" tone="muted">{{ mix.usage }}</ds-text>
+            </ds-stack>
+          </ds-flex>
+        </ds-box>
+      }
+    </ds-stack>
+
+    <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="4">
+          <ds-text variant="label">Accents</ds-text>
+          <ds-stack [gap]="3" [divided]="true">
+            @for (accent of accents; track accent.name) {
+              <ds-flex align="center" [gap]="3">
+                <span class="accent" [style.background]="accent.value"></span>
+                <ds-stack [gap]="1">
+                  <ds-flex align="center" [gap]="2">
+                    <ds-text variant="label">{{ accent.name }}</ds-text>
+                    <ds-text variant="code" tone="subtle">{{ accent.value }}</ds-text>
+                  </ds-flex>
+                  <ds-text variant="caption">{{ accent.role }}</ds-text>
+                </ds-stack>
+              </ds-flex>
+            }
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+
+      <app-doc-code [code]="brandTokenSnippet" language="ts" />
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Pigment ———————————————————————— -->
+  <app-doc-section
+    heading="How pigment mixes"
+    anchor="pigment"
+    description="Wet paint darkens where it layers. On a lit dark canvas the same trick turns to mud, so the theme decides: multiply on paper, screen in the dark. The logo never knows which."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="4">
+          <ds-flex justify="between" align="center">
+            <ds-text variant="label">Light</ds-text>
+            <ds-text variant="code" tone="primary">{{ blend.light }}</ds-text>
+          </ds-flex>
+          <div class="pigment pigment--light">
+            <span class="pigment__violet"></span>
+            <span class="pigment__magenta pigment__magenta--multiply"></span>
+          </div>
+          <ds-text variant="caption">The overlap goes deeper, like ink on ink.</ds-text>
+        </ds-stack>
+      </ds-box>
+
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="4">
+          <ds-flex justify="between" align="center">
+            <ds-text variant="label">Dark</ds-text>
+            <ds-text variant="code" tone="primary">{{ blend.dark }}</ds-text>
+          </ds-flex>
+          <div class="pigment pigment--dark">
+            <span class="pigment__violet"></span>
+            <span class="pigment__magenta pigment__magenta--screen"></span>
+          </div>
+          <ds-text variant="caption">The overlap lights up, like two gels on a lamp.</ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+
+    <ds-box background="primary-muted" radius="lg" [padding]="4">
+      <ds-flex [gap]="3" align="start">
+        <ds-icon name="info" size="md" class="text-primary rule__icon" />
+        <ds-text variant="bodySm">
+          Flip the theme in the brand bar and watch the dab on the mark change its mind —
+          <ds-text variant="code" [as]="'code'" [inline]="true">--ds-blend-pigment</ds-text>
+          resolves per theme like every other token.
+        </ds-text>
+      </ds-flex>
+    </ds-box>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Texture ———————————————————————— -->
+  <app-doc-section
+    heading="Texture"
+    anchor="texture"
+    description="Flat color looks like plastic. Grain, hatching and a marker swipe are inline SVG — no requests, no assets, and decorative by construction."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="brand" radius="lg" [padding]="5" class="ds-grain texture-demo">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="on-primary" class="texture-demo__label">.ds-grain</ds-text>
+          <ds-text variant="caption" class="texture-demo__caption">Film grain over a paint mix</ds-text>
+        </ds-stack>
+      </ds-box>
+
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="ds-hatch texture-demo">
+        <ds-stack [gap]="2">
+          <ds-text variant="label">.ds-hatch</ds-text>
+          <ds-text variant="caption">Pencil hatching for empty wells</ds-text>
+        </ds-stack>
+      </ds-box>
+
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="texture-demo">
+        <ds-stack [gap]="2">
+          <ds-text variant="label"><span class="ds-marker">.ds-marker</span></ds-text>
+          <ds-text variant="caption">Highlighter swipe behind inline text</ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+
+    <app-doc-code [code]="textureSnippet" />
+  </app-doc-section>
+
+  <!-- ———————————————————————— Usage ———————————————————————— -->
+  <app-doc-section heading="Using the logo" anchor="usage" description="Clear space, and the short list of things that protect the mark.">
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="4">
+          <ds-flex align="center" [gap]="2">
+            <ds-icon name="success" size="md" class="text-success" />
+            <ds-text variant="h4" [as]="'h3'">Do</ds-text>
+          </ds-flex>
+          <ds-stack [gap]="2">
+            @for (rule of rules.do; track rule) {
+              <ds-flex [gap]="2" align="start">
+                <ds-icon name="check" size="sm" class="text-success rule__icon" />
+                <ds-text variant="bodySm">{{ rule }}</ds-text>
+              </ds-flex>
+            }
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="4">
+          <ds-flex align="center" [gap]="2">
+            <ds-icon name="warning" size="md" class="text-danger" />
+            <ds-text variant="h4" [as]="'h3'">Don't</ds-text>
+          </ds-flex>
+          <ds-stack [gap]="2">
+            @for (rule of rules.dont; track rule) {
+              <ds-flex [gap]="2" align="start">
+                <ds-icon name="close" size="sm" class="text-danger rule__icon" />
+                <ds-text variant="bodySm">{{ rule }}</ds-text>
+              </ds-flex>
+            }
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+
+    <app-doc-example
+      title="Clear space"
+      description="Keep a margin equal to the height of the bowl on every side."
+      [plain]="true"
+    >
+      <div class="clearspace">
+        <div class="clearspace__guide">
+          <ds-logo size="lg" />
+        </div>
+      </div>
+    </app-doc-example>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Voice ———————————————————————— -->
+  <app-doc-section
+    heading="Voice"
+    anchor="voice"
+    description="Paint documents itself the way it builds: concrete, short, and honest about its internals."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      @for (item of voice; track item.title) {
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="4">
+            <ds-text variant="h4" [as]="'h3'">{{ item.title }}</ds-text>
+            <ds-stack [gap]="3">
+              <ds-stack [gap]="1">
+                <ds-text variant="caption" tone="success" [uppercase]="true">Write</ds-text>
+                <ds-text variant="bodySm">{{ item.do }}</ds-text>
+              </ds-stack>
+              <ds-stack [gap]="1">
+                <ds-text variant="caption" tone="danger" [uppercase]="true">Not</ds-text>
+                <ds-text variant="bodySm" tone="muted" [italic]="true">{{ item.dont }}</ds-text>
+              </ds-stack>
+            </ds-stack>
+          </ds-stack>
+        </ds-box>
+      }
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-logo>.">
+    <app-doc-api-table [rows]="logoApi" />
+  </app-doc-section>
+</ds-stack>

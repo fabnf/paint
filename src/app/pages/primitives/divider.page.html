@@ -1,0 +1,108 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="minus"
+    title="Divider"
+    lede="The separation atom. A rule between two things, with an optional word in it — and role=&quot;separator&quot; either way, unless it is pure decoration, in which case it says nothing at all."
+    builtOn="a border and a role"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A rule, and the space around it"
+    anchor="basics"
+    description="spacing is a space token, applied on the axis the divider cuts across. The divider owns its margin, because a rule with asymmetric space around it belongs to whichever side is closer."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-text variant="bodySm">Solid, the default, with a 4-token margin.</ds-text>
+        <ds-divider />
+        <ds-text variant="bodySm">Dashed, with more air.</ds-text>
+        <ds-divider variant="dashed" [spacing]="6" />
+        <ds-text variant="bodySm">Strong and 2px — the edge of a region, not a row break.</ds-text>
+        <ds-divider [strong]="true" weight="2px" />
+        <ds-text variant="bodySm">After.</ds-text>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="With a word in it"
+    anchor="label"
+    description="A separator's children are presentational — assistive tech will not read them. So the visible word is hidden and the same word becomes the separator's accessible name. One announcement, not two."
+  >
+    <app-doc-example code="{{ labelSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="loading-card">
+        <ds-stack [gap]="3">
+          <ds-button variant="outline" [fullWidth]="true">Continue with email</ds-button>
+        </ds-stack>
+        <ds-divider label="or" />
+        <ds-stack [gap]="3">
+          <ds-button variant="ghost" [fullWidth]="true" iconStart="sparkle">Single sign-on</ds-button>
+        </ds-stack>
+        <ds-divider label="Archived" labelPosition="start" variant="dashed" [spacing]="6" />
+        <ds-text variant="bodySm" tone="muted">Three projects, last touched in 2019.</ds-text>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Vertical"
+    anchor="vertical"
+    description="Stretches to its flex parent and reports aria-orientation. A word will not fit in a 1px rule, so a vertical divider quietly refuses to carry one."
+  >
+    <app-doc-example code="{{ verticalSnippet }}">
+      <ds-flex align="center" [gap]="3" [wrap]="'wrap'">
+        <ds-text variant="bodySm">Draft</ds-text>
+        <ds-divider orientation="vertical" [spacing]="0" />
+        <ds-text variant="bodySm">Edited 2h ago</ds-text>
+        <ds-divider orientation="vertical" [spacing]="0" />
+        <ds-flex align="center" [gap]="2">
+          <ds-avatar name="Ada Lovelace" size="xs" [decorative]="true" />
+          <ds-text variant="bodySm">Ada Lovelace</ds-text>
+        </ds-flex>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Not for spacing"
+    anchor="misuse"
+    description="A divider means “these are different kinds of thing”. Space between things of the same kind is a gap."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="3">
+          <ds-badge tone="danger" variant="soft" icon="close">Don't</ds-badge>
+          <ds-text variant="bodySm" tone="muted">
+            A divider after every row of a list. A screen reader counts every one of them, and the
+            page reads as twelve unrelated regions.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="3">
+          <ds-badge tone="success" variant="soft" icon="check">Do</ds-badge>
+          <ds-text variant="bodySm" tone="muted">
+            <code>&lt;ds-stack [divided]="true"&gt;</code> draws the hairlines between children as
+            part of the layout, with no separator semantics to announce.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+
+    <app-doc-example code="{{ stackSnippet }}" [plain]="true">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="loading-card">
+        <ds-stack [gap]="3" [divided]="true">
+          <ds-text variant="bodySm">Tokens</ds-text>
+          <ds-text variant="bodySm">Icons</ds-text>
+          <ds-text variant="bodySm">Components</ds-text>
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-divider>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

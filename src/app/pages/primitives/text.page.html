@@ -1,0 +1,134 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="type"
+    title="Text"
+    lede="Every string on screen, typed. Text maps Paint's ramp onto Bootstrap's typography classes and keeps the visual level independent from the semantic element."
+    builtOn=".h1–.h4 / .lead / .small / .fw-*"
+    status="Stable"
+  />
+
+  <app-doc-section
+    heading="The ramp"
+    anchor="ramp"
+    description="Eleven variants cover the system. Each one picks a sensible element and a Bootstrap class."
+  >
+    <app-doc-example code="{{ rampSnippet }}" [plain]="true">
+      <ds-box background="surface" [border]="true" radius="lg">
+        <ds-stack [gap]="0" [divided]="true" class="p-5">
+          @for (item of variants; track item.variant) {
+            <ds-flex [direction]="{ base: 'column', md: 'row' }" align="baseline" [gap]="4">
+              <ds-stack [gap]="1" class="ramp-meta">
+                <ds-text variant="code" tone="primary">{{ item.variant }}</ds-text>
+                <ds-text variant="caption">&lt;{{ item.element }}&gt; · {{ item.bootstrap }}</ds-text>
+              </ds-stack>
+              <ds-text [variant]="item.variant" [as]="'p'" class="specimen">{{ item.sample }}</ds-text>
+            </ds-flex>
+          }
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Level vs element"
+    anchor="semantics"
+    description="The look and the outline are separate decisions. Choose the variant for the eye and `as` for the document structure."
+  >
+    <app-doc-example code="{{ semanticSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-text variant="h1" [as]="'p'" class="specimen">Looks like a title, reads as a paragraph</ds-text>
+        <ds-text variant="label" [as]="'h2'">Related projects — an h2 that stays small</ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Tones" anchor="tones" description="Color comes from semantic roles, so tones invert correctly in dark mode.">
+    <app-doc-example code="{{ toneSnippet }}" [plain]="true">
+      <ds-grid [cols]="{ base: 2, md: 4 }" [gap]="3">
+        @for (item of tones; track item.tone) {
+          <ds-box background="surface" [border]="true" radius="md" [padding]="4">
+            <ds-stack [gap]="2">
+              <ds-text variant="h4" [as]="'p'" [tone]="item.tone">Aa</ds-text>
+              <ds-text variant="code" tone="subtle">{{ item.tone }}</ds-text>
+              <ds-text variant="caption">{{ item.usage }}</ds-text>
+            </ds-stack>
+          </ds-box>
+        }
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Weights" anchor="weights" description="Override the variant's weight when emphasis needs to shift without changing size.">
+    <app-doc-example [plain]="true">
+      <ds-flex [gap]="6" [wrap]="'wrap'">
+        @for (weight of weights; track weight) {
+          <ds-stack [gap]="1">
+            <ds-text variant="bodyLg" [weight]="weight">Aa Bb Cc</ds-text>
+            <ds-text variant="code" tone="subtle">{{ weight }}</ds-text>
+          </ds-stack>
+        }
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Overflow"
+    anchor="overflow"
+    description="Truncate for a single line, clamp for a fixed number of lines. Both keep the full text available to assistive tech."
+  >
+    <app-doc-example code="{{ truncateSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+        <ds-box background="surface" [border]="true" radius="md" [padding]="4">
+          <ds-stack [gap]="2">
+            <ds-text variant="caption" [uppercase]="true">truncate</ds-text>
+            <ds-text [truncate]="true">{{ longform }}</ds-text>
+          </ds-stack>
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="md" [padding]="4">
+          <ds-stack [gap]="2">
+            <ds-text variant="caption" [uppercase]="true">lineClamp = 2</ds-text>
+            <ds-text [lineClamp]="2">{{ longform }}</ds-text>
+          </ds-stack>
+        </ds-box>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Inline text" anchor="inline" description="Nest Text inside Text to mark up part of a sentence.">
+    <app-doc-example code="{{ inlineSnippet }}">
+      <ds-text class="specimen">
+        Spacing uses the
+        <ds-text variant="code" [as]="'code'" [inline]="true">--ds-space-*</ds-text>
+        scale, and color always resolves through a
+        <ds-text variant="code" [as]="'code'" [inline]="true">--ds-color-*</ds-text>
+        role — never a raw hex value.
+      </ds-text>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="In context" anchor="context" description="The ramp doing its job: one heading, one lede, supporting metadata.">
+    <app-doc-example [plain]="true">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="{ base: 5, md: 8 }">
+        <ds-stack [gap]="4">
+          <ds-text variant="label" tone="primary" [uppercase]="true">Changelog</ds-text>
+          <ds-text variant="h2">Primitives land</ds-text>
+          <ds-text variant="bodyLg" tone="muted" class="specimen">
+            Button, Text, Box, Flex, Stack and Grid ship together — the smallest set that can build a
+            real screen.
+          </ds-text>
+          <ds-text class="specimen">{{ longform }}</ds-text>
+          <ds-flex [gap]="3" align="center" [wrap]="'wrap'">
+            <ds-text variant="caption">4 March 2025</ds-text>
+            <ds-text variant="caption">·</ds-text>
+            <ds-text variant="caption">6 components</ds-text>
+          </ds-flex>
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-text>.">
+    <app-doc-api-table [rows]="inputs" />
+  </app-doc-section>
+</ds-stack>

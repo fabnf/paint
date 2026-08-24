@@ -1,0 +1,113 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="file"
+    title="FileQueueItem"
+    lede="One file, and how it is doing. The row a multi-file uploader renders once per file: name, size, a progress bar while uploading, a plain-words error when it fails, and the two verbs that belong to a row — remove, and retry."
+    builtOn="ds-progress + ds-button + ds-icon"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Four states"
+    anchor="states"
+    description="Queued, uploading, uploaded, failed. The icon repeats the state; the words carry it. The progress bar exists only while there is progress to report."
+  >
+    <app-doc-example code="{{ statesSnippet }}">
+      <ds-stack [gap]="2" class="demo-form">
+        <ds-file-queue-item name="photo.jpg" [size]="18432" />
+        <ds-file-queue-item name="slides.pdf" [size]="4404019" status="uploading" [progress]="45" />
+        <ds-file-queue-item name="notes.txt" [size]="912" status="success" />
+        <ds-file-queue-item
+          name="video.mp4"
+          [size]="125829120"
+          status="error"
+          error="File is larger than 10 MB."
+        />
+        <ds-file-queue-item
+          name="a-file-with-a-name-long-enough-to-test-what-truncation-actually-does.sketch"
+          [size]="73400320"
+        />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Remove, retry — and who acts"
+    anchor="wiring"
+    description="The row emits and does not act: a component that deletes its own DOM node cannot be undone, and a row that restarts its own upload owns a transport it cannot see. This upload fails the first time; retry it and it finishes."
+  >
+    <app-doc-example code="{{ wiringSnippet }}" language="ts">
+      <ds-stack [gap]="3" class="demo-form">
+        @if (!demoRemoved()) {
+          <ds-file-queue-item
+            name="quarterly-report.pdf"
+            [size]="4404019"
+            [status]="demoStatus()"
+            [progress]="demoProgress()"
+            [error]="demoError()"
+            (remove)="removeDemo()"
+            (retry)="start()"
+          />
+        } @else {
+          <ds-text variant="bodySm" tone="muted">Removed. The page did that — the row only asked.</ds-text>
+        }
+
+        <ds-flex [gap]="2">
+          @if (demoStatus() === 'queued' && !demoRemoved()) {
+            <ds-button size="sm" variant="primary" iconStart="upload" (clicked)="start()">
+              Start the upload
+            </ds-button>
+          } @else {
+            <ds-button size="sm" variant="ghost" iconStart="refresh" (clicked)="resetDemo()">
+              Reset the demo
+            </ds-button>
+          }
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Named for its file, heard when it breaks"
+    anchor="a11y"
+    description="Ten rows mean ten remove buttons. Ten buttons named “Remove” are no names at all."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Buttons carry the filename</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            “Remove quarterly-report.pdf”, “Retry uploading video.mp4” — and mid-upload, remove
+            renames itself “Cancel uploading …”, because that is what it does.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Progress with a name</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The bar is a ds-progress labelled “Uploading {{ '{' }}name{{ '}' }}”, so a screen reader
+            hears whose 45% it is.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Failure is announced</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The error line is a polite live region: in a long queue, the row that broke is rarely
+            the row on screen.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-file-queue-item>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

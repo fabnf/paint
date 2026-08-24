@@ -1,0 +1,255 @@
+<ds-stack [gap]="16" class="page">
+  <!-- ———————————————————————— Hero ———————————————————————— -->
+  <section class="hero">
+    <ds-grid [gap]="8" align="center">
+      <ds-grid-item [span]="{ base: 12, lg: 7 }">
+        <ds-stack [gap]="6">
+          <ds-flex align="center" [gap]="2" [wrap]="'wrap'">
+            <span class="badge hero__badge">
+              <ds-icon name="sparkle" size="xs" />
+              v{{ brand.version }} · {{ brand.releaseName }}
+            </span>
+            <span class="badge hero__badge hero__badge--muted">Angular + Bootstrap</span>
+          </ds-flex>
+
+          <ds-stack [gap]="5">
+            <ds-text variant="display" [as]="'h1'" class="hero__title">
+              Paint it.<br />
+              <span class="ds-marker">Ship it.</span>
+            </ds-text>
+            <ds-text variant="bodyLg" tone="muted" class="hero__lede">
+              {{ brand.description }}
+            </ds-text>
+          </ds-stack>
+
+          <ds-flex [gap]="3" [wrap]="'wrap'">
+            <ds-button variant="primary" size="lg" link="/components/tabs" iconEnd="arrowRight">
+              Explore components
+            </ds-button>
+            <ds-button variant="secondary" size="lg" link="/foundations" iconStart="ruler">
+              View foundations
+            </ds-button>
+          </ds-flex>
+
+          <ds-flex [gap]="8" [wrap]="'wrap'" class="hero__stats">
+            @for (stat of stats; track stat.label) {
+              <ds-stack [gap]="1">
+                <ds-text variant="h2" [as]="'span'" class="hero__stat">{{ stat.value }}</ds-text>
+                <ds-text variant="caption" [uppercase]="true">{{ stat.label }}</ds-text>
+              </ds-stack>
+            }
+          </ds-flex>
+        </ds-stack>
+      </ds-grid-item>
+
+      <!-- The stage: wet paint, and the components living on it -->
+      <ds-grid-item [span]="{ base: 12, lg: 5 }">
+        <div class="stage">
+          <div class="stage__blob ds-grain">
+            <ds-flex justify="between" align="start" [gap]="4">
+              <ds-stack [gap]="4">
+                <!-- mono lockup: the colour mark would disappear into its own gradient -->
+                <ds-logo variant="mark" size="xl" [mono]="true" class="stage__mark" />
+                <ds-text variant="label" class="stage__caption">{{ brand.releaseName }}</ds-text>
+              </ds-stack>
+              <div class="stage__swatches">
+                @for (swatch of palette; track swatch.name) {
+                  <span class="stage__swatch" [style.background]="swatch.value" [title]="swatch.name"></span>
+                }
+              </div>
+            </ds-flex>
+          </div>
+
+          <ds-box background="surface" [border]="true" radius="lg" elevation="lg" [padding]="4" class="stage__card">
+            <ds-stack [gap]="3">
+              <ds-flex justify="between" align="center" [gap]="3">
+                <ds-text variant="label">Invoice #1042</ds-text>
+                <ds-menu
+                  label="Invoice actions"
+                  variant="ghost"
+                  size="sm"
+                  icon="more"
+                  [iconOnly]="true"
+                  [caret]="false"
+                  align="end"
+                  [entries]="[
+                    { id: 'duplicate', label: 'Duplicate', icon: 'copy' },
+                    { id: 'export', label: 'Export', icon: 'download' },
+                    { type: 'divider' },
+                    { id: 'delete', label: 'Delete', icon: 'trash', destructive: true },
+                  ]"
+                  (itemSelect)="demoDialog.set(true)"
+                />
+              </ds-flex>
+
+              <ds-select
+                [options]="labelOptions"
+                [(value)]="demoLabels"
+                [multiple]="true"
+                label="Labels"
+                size="sm"
+                placeholder="Add labels"
+              />
+
+              <ds-flex [gap]="2">
+                <ds-button variant="primary" size="sm" iconStart="check" (clicked)="celebrate()">
+                  Approve
+                </ds-button>
+                <ds-button variant="ghost" size="sm" (clicked)="demoDialog.set(true)">Delete</ds-button>
+              </ds-flex>
+            </ds-stack>
+          </ds-box>
+
+          <span class="stage__note">
+            <ds-text variant="caption">Every piece here is a Paint component. Try it.</ds-text>
+          </span>
+        </div>
+      </ds-grid-item>
+    </ds-grid>
+  </section>
+
+  <ds-dialog
+    [(open)]="demoDialog"
+    title="Delete invoice #1042"
+    description="This cannot be undone."
+    tone="danger"
+    icon="warning"
+  >
+    <ds-text>Dialog, Menu, Select, Toast — all six new components ship in this release.</ds-text>
+    <ds-flex dsDialogActions [gap]="2" justify="end">
+      <ds-button variant="ghost" (clicked)="demoDialog.set(false)">Cancel</ds-button>
+      <ds-button variant="danger" iconStart="trash" (clicked)="demoDialog.set(false)">Delete</ds-button>
+    </ds-flex>
+  </ds-dialog>
+
+  <!-- ———————————————————————— What's new ———————————————————————— -->
+  <app-doc-section
+    heading="New in Wet Paint"
+    anchor="components"
+    description="Six components land together: the smallest set that can carry a real product screen. Each one wraps Bootstrap's markup and supplies the behaviour Bootstrap's JS would have."
+  >
+    <ds-grid [cols]="{ base: 1, sm: 2, xl: 3 }" [gap]="4">
+      @for (component of components; track component.name) {
+        <a class="card-link" [routerLink]="component.path">
+          <ds-box background="surface" [border]="true" radius="lg" [padding]="5" [fullWidth]="true">
+            <ds-stack [gap]="3">
+              <ds-flex justify="between" align="center" [gap]="2">
+                <span class="card-link__icon card-link__icon--new">
+                  <ds-icon [name]="component.icon" size="md" />
+                </span>
+                <ds-icon name="arrowRight" size="sm" class="card-link__arrow" />
+              </ds-flex>
+              <ds-stack [gap]="2">
+                <ds-flex align="center" [gap]="2" [wrap]="'wrap'">
+                  <ds-text variant="h4" [as]="'h3'">{{ component.name }}</ds-text>
+                  <ds-text variant="code" tone="subtle">{{ component.builtOn }}</ds-text>
+                </ds-flex>
+                <ds-text variant="bodySm" tone="muted">{{ component.summary }}</ds-text>
+              </ds-stack>
+            </ds-stack>
+          </ds-box>
+        </a>
+      }
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Atomic map ———————————————————————— -->
+  <app-doc-section
+    heading="The atomic map"
+    anchor="atomic-map"
+    description="Paint is built bottom-up. Each layer may only depend on the layers beneath it, which keeps change local and composition predictable."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2, xl: 4 }" [gap]="4">
+      @for (layer of layers; track layer.layer) {
+        <ds-box
+          background="surface"
+          [border]="true"
+          radius="lg"
+          [padding]="5"
+          class="layer-card"
+          [class.layer-card--active]="layer.status === 'Shipping now'"
+        >
+          <ds-stack [gap]="3">
+            <ds-flex justify="between" align="center" [gap]="2">
+              <span class="card-link__icon">
+                <ds-icon [name]="layer.icon" size="md" />
+              </span>
+              <span
+                class="badge"
+                [class.layer-card__status--now]="layer.status === 'Shipping now'"
+                [class.layer-card__status--done]="layer.status === 'Shipped'"
+                [class.layer-card__status--next]="layer.status === 'Next'"
+              >
+                {{ layer.status }}
+              </span>
+            </ds-flex>
+
+            <ds-stack [gap]="2">
+              <ds-text variant="h4" [as]="'h3'">{{ layer.layer }}</ds-text>
+              <ds-text variant="bodySm" tone="muted">{{ layer.summary }}</ds-text>
+            </ds-stack>
+
+            <ds-flex [gap]="1" [wrap]="'wrap'">
+              @for (item of layer.items; track item) {
+                <span class="badge layer-card__chip">{{ item }}</span>
+              }
+            </ds-flex>
+          </ds-stack>
+        </ds-box>
+      }
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Primitives ———————————————————————— -->
+  <app-doc-section
+    heading="Primitives"
+    anchor="primitives"
+    description="The layer underneath: nineteen typed façades over Bootstrap's utilities and native elements — actions, form controls, display, feedback and layout. Everything above is built from these."
+  >
+    <ds-grid [cols]="{ base: 2, sm: 3, xl: 6 }" [gap]="3">
+      @for (primitive of primitives; track primitive.name) {
+        <a class="card-link card-link--tight" [routerLink]="primitive.path">
+          <ds-box background="surface" [border]="true" radius="lg" [padding]="4" [fullWidth]="true">
+            <ds-stack [gap]="2" align="start">
+              <span class="card-link__icon">
+                <ds-icon [name]="primitive.icon" size="sm" />
+              </span>
+              <ds-text variant="label">{{ primitive.name }}</ds-text>
+              <ds-text variant="code" tone="subtle" class="card-link__meta">{{ primitive.builtOn }}</ds-text>
+            </ds-stack>
+          </ds-box>
+        </a>
+      }
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Principles ———————————————————————— -->
+  <app-doc-section
+    heading="Principles"
+    anchor="principles"
+    description="The rules that decide what gets into Paint — and what stays out."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      @for (principle of principles; track principle.title) {
+        <ds-flex [gap]="4" align="start" class="principle">
+          <span class="card-link__icon">
+            <ds-icon [name]="principle.icon" size="md" />
+          </span>
+          <ds-stack [gap]="2">
+            <ds-text variant="h4" [as]="'h3'">{{ principle.title }}</ds-text>
+            <ds-text variant="bodySm" tone="muted">{{ principle.body }}</ds-text>
+          </ds-stack>
+        </ds-flex>
+      }
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Compose ———————————————————————— -->
+  <app-doc-section
+    heading="Compose something"
+    anchor="compose"
+    description="Import the bundles and build. Primitives for layout and text, components for behaviour, tokens for every value."
+  >
+    <app-doc-code [code]="usageSnippet" language="ts" />
+  </app-doc-section>
+</ds-stack>

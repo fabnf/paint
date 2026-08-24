@@ -1,0 +1,156 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="layers"
+    title="Skeleton"
+    lede="The “what is coming” atom. A grey ghost in the shape of the content that is loading — which means it has to be the size of the real thing, not a polite approximation of it."
+    builtOn=".placeholder / .placeholder-glow / .placeholder-wave"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Shapes"
+    anchor="shapes"
+    description="Three of them: a line of type, a circle, a rectangle. Everything else is a composition."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="6">
+        <ds-stack [gap]="3">
+          <ds-text variant="code" tone="subtle">text</ds-text>
+          <ds-skeleton [lines]="3" />
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-text variant="code" tone="subtle">circle</ds-text>
+          <ds-skeleton variant="circle" width="2.5rem" />
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-text variant="code" tone="subtle">rect</ds-text>
+          <ds-skeleton variant="rect" height="5rem" radius="lg" />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The same shape as the answer"
+    anchor="shape"
+    description="A skeleton that is the wrong size is a page that jumps when the data lands. Compose the ghost out of the same layout primitives as the real thing — here, the same Flex and Stack."
+  >
+    <app-doc-example code="{{ shapeSnippet }}">
+      <ds-stack [gap]="4" class="loading-card">
+        <ds-flex [gap]="3" align="center">
+          <ds-button size="sm" variant="secondary" iconStart="refresh" (clicked)="toggle()">
+            {{ loading() ? 'Show the content' : 'Show the skeleton' }}
+          </ds-button>
+        </ds-flex>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+          <div [attr.aria-busy]="loading()">
+            @if (loading()) {
+              <ds-stack [gap]="4">
+                <ds-flex [gap]="3" align="center">
+                  <ds-skeleton label="Loading the invoice…" variant="circle" width="2.5rem" />
+                  <ds-stack [gap]="2" class="w-100">
+                    <ds-skeleton width="40%" />
+                    <ds-skeleton width="65%" />
+                  </ds-stack>
+                </ds-flex>
+                <ds-skeleton variant="rect" height="4rem" radius="md" />
+                <ds-skeleton [lines]="2" />
+              </ds-stack>
+            } @else {
+              <ds-stack [gap]="4">
+                <ds-flex [gap]="3" align="center">
+                  <ds-avatar name="Ada Lovelace" size="md" [decorative]="true" />
+                  <ds-stack [gap]="0">
+                    <ds-text variant="label">Ada Lovelace</ds-text>
+                    <ds-text variant="caption">Invoice #1042 · $4,200</ds-text>
+                  </ds-stack>
+                </ds-flex>
+                <ds-box background="surface-sunken" radius="md" [padding]="4">
+                  <ds-text variant="bodySm" tone="muted">
+                    Paid on 4 March. Nothing moved when the data arrived.
+                  </ds-text>
+                </ds-box>
+                <ds-text variant="bodySm" tone="muted">
+                  Two lines of prose, exactly where the two grey lines were a moment ago.
+                </ds-text>
+              </ds-stack>
+            }
+          </div>
+        </ds-box>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Say it once"
+    anchor="announcing"
+    description="Skeletons are aria-hidden by default. A dozen announcing rectangles is noise — so the region says it is busy, and exactly one skeleton carries the name."
+  >
+    <app-doc-example code="{{ regionSnippet }}" language="html">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-flex [gap]="2" align="center">
+              <ds-badge tone="success" variant="soft" icon="check">Do</ds-badge>
+            </ds-flex>
+            <ds-text variant="bodySm" tone="muted">
+              One <code>label</code> per loading region, and <code>aria-busy</code> on the region
+              itself. The rest of the ghosts stay silent.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-flex [gap]="2" align="center">
+              <ds-badge tone="danger" variant="soft" icon="close">Don't</ds-badge>
+            </ds-flex>
+            <ds-text variant="bodySm" tone="muted">
+              A <code>label</code> on every line. Twelve live regions announce twelve times, and the
+              user hears “Loading” until the data lands.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Motion"
+    anchor="motion"
+    description="Pulse and wave are Bootstrap's own animations, retimed against one --ds-motion-pulse token so two skeletons never breathe at different speeds. Reduced motion keeps the shape — the shape is the information — and drops the animation."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="6">
+        <ds-stack [gap]="3">
+          <ds-text variant="code" tone="subtle">pulse</ds-text>
+          <ds-skeleton variant="rect" height="3rem" radius="md" animation="pulse" />
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-text variant="code" tone="subtle">wave</ds-text>
+          <ds-skeleton variant="rect" height="3rem" radius="md" animation="wave" />
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-text variant="code" tone="subtle">none</ds-text>
+          <ds-skeleton variant="rect" height="3rem" radius="md" animation="none" />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">DataTable uses this atom</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          <code>&lt;ds-data-table [loading]="true"&gt;</code> used to draw its own pulsing bars with
+          its own keyframes and its own reduced-motion rule. It now renders
+          <code>&lt;ds-skeleton&gt;</code> in each cell: one pulse, one colour, one place to fix it.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-skeleton>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

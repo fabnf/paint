@@ -1,0 +1,181 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="rows"
+    title="Accordion"
+    lede="Disclosures that know about each other. One open at a time, or as many as you like — and one item on its own is a disclosure, which is not a different component."
+    builtOn="a real heading, a real button, a region"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A settings panel"
+    anchor="settings"
+    description="The shape every app ends up with: a card per section, a switch in the header, a badge for the section that needs attention. The panel stays in the DOM when it closes — a form that forgets what you typed because you collapsed its section is a bug."
+  >
+    <app-doc-example code="{{ settingsSnippet }}">
+      <div class="demo-form">
+        <ds-accordion [(expanded)]="open" [multiple]="multiple()" [variant]="variant()">
+          <ds-accordion-item
+            itemId="notifications"
+            label="Notifications"
+            icon="bell"
+            description="What reaches you, and how"
+          >
+            <!-- Beside the header, not inside it. -->
+            <ds-switch dsAccordionTrailing ariaLabel="Notifications" [(checked)]="digests" />
+
+            <ds-stack [gap]="4">
+              <ds-switch label="Weekly digest" hint="A summary every Monday." [(checked)]="digests" />
+              <ds-switch label="Mentions" hint="Only when someone @mentions you." [(checked)]="mentions" />
+            </ds-stack>
+          </ds-accordion-item>
+
+          <ds-accordion-item
+            itemId="security"
+            label="Security"
+            icon="toggle"
+            description="Two-factor authentication and sessions"
+            [badge]="issues() || null"
+            badgeLabel="1 issue"
+            badgeTone="warning"
+          >
+            <ds-stack [gap]="4">
+              @if (!twoFactor()) {
+                <ds-alert tone="warning" title="Two-factor is off">
+                  Anyone with your password has your account.
+                </ds-alert>
+              }
+              <ds-switch label="Two-factor authentication" [(checked)]="twoFactor" />
+            </ds-stack>
+          </ds-accordion-item>
+
+          <ds-accordion-item itemId="appearance" label="Appearance" icon="palette">
+            <ds-radio-group legend="Theme" [options]="themes" [(value)]="theme" />
+          </ds-accordion-item>
+
+          <ds-accordion-item itemId="archived" label="Archived projects" [disabled]="true" />
+        </ds-accordion>
+
+        <ds-flex [gap]="3" align="center" [wrap]="'wrap'" class="mt-4">
+          <ds-switch label="Several at once" size="sm" [(checked)]="multiple" />
+          <ds-text variant="code" tone="primary">expanded = [{{ open().join(', ') }}]</ds-text>
+        </ds-flex>
+      </div>
+    </app-doc-example>
+
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Ids, never indexes</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A panel that opens because the list above it was re-sorted is a bug that takes a
+            fortnight to find.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The switch is outside the button</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            <code>dsAccordionTrailing</code> projects beside the header, not into it. A control inside
+            a control is neither. A <code>badge</code> goes inside, because “2 issues” is part of what
+            the header says.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Closed, not destroyed</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The panel keeps its DOM and its state, and takes <code>visibility: hidden</code> — which
+            is what removes it from the tab order and the accessibility tree.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="One item is a disclosure"
+    anchor="disclosure"
+    description="No wrapper, no ids, no coordination. It owns its own expanded state and wears no box."
+  >
+    <app-doc-example code="{{ disclosureSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="4" class="demo-form">
+        <ds-accordion-item label="Advanced options" [(expanded)]="advanced">
+          <ds-stack [gap]="3">
+            <ds-checkbox label="Minify the output" [checked]="true" />
+            <ds-checkbox label="Generate source maps" />
+          </ds-stack>
+        </ds-accordion-item>
+      </ds-box>
+      <ds-text variant="code" tone="primary" class="mt-3">expanded = {{ advanced() }}</ds-text>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Variants"
+    anchor="variants"
+    description="One box with hairlines, a card per item, or rules only. The item draws its own chrome from the variant the accordion tells it about — the accordion never reaches into a child it does not own."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, lg: 3 }" [gap]="5">
+        @for (option of ['bordered', 'separated', 'flush']; track option) {
+          <ds-stack [gap]="3">
+            <ds-text variant="code" tone="subtle">{{ option }}</ds-text>
+            <ds-accordion [variant]="$any(option)" [expanded]="['a']">
+              <ds-accordion-item itemId="a" label="Open">Panel</ds-accordion-item>
+              <ds-accordion-item itemId="b" label="Closed">Panel</ds-accordion-item>
+            </ds-accordion>
+          </ds-stack>
+        }
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Keyboard and semantics"
+    anchor="keyboard"
+    description="An accordion header is a heading with a button in it. Both halves matter: the heading is how a screen reader user finds the section, the button is how anyone opens it."
+  >
+    <app-doc-example code="{{ keyboardSnippet }}" language="ts" [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">Every header is a tab stop</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Not a roving one. A header is where the content is, and skipping past five of them with
+              one <code>Tab</code> would skip past the page. The arrows are a shortcut, not the only
+              way.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">Disabled, not unreachable</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              A disabled header carries <code>aria-disabled</code>, never <code>disabled</code>. A
+              heading the arrow keys cannot reach is a heading a screen-reader user cannot read.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of the two components.">
+    <ds-stack [gap]="6">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">&lt;ds-accordion&gt;</ds-text>
+        <app-doc-api-table [rows]="accordionInputs" nameHeading="Input" label="Accordion inputs" />
+        <app-doc-api-table [rows]="accordionOutputs" nameHeading="Output" label="Accordion outputs" />
+      </ds-stack>
+      <ds-stack [gap]="3">
+        <ds-text variant="label">&lt;ds-accordion-item&gt;</ds-text>
+        <app-doc-api-table [rows]="itemInputs" nameHeading="Input" label="Accordion item inputs" />
+        <app-doc-api-table [rows]="itemOutputs" nameHeading="Output" label="Accordion item outputs" />
+      </ds-stack>
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

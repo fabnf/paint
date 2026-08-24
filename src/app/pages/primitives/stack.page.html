@@ -1,0 +1,161 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="rows"
+    title="Stack"
+    lede="Rhythm in one axis. Stack owns the space between its children, so nothing inside needs a margin — built on Bootstrap's .vstack and .hstack helpers."
+    builtOn=".vstack / .hstack + .gap-*"
+    status="Stable"
+  />
+
+  <app-doc-section
+    heading="Playground"
+    anchor="playground"
+    description="Stack is the layout primitive you will reach for most. Two inputs cover almost every case."
+  >
+    <ds-box background="surface" [border]="true" radius="lg">
+      <ds-flex class="control-bar" [gap]="5" [wrap]="'wrap'" align="center">
+        <ds-flex align="center" [gap]="2">
+          <ds-text variant="label" tone="muted">orientation</ds-text>
+          <ds-button
+            size="sm"
+            [variant]="orientation() === 'vertical' ? 'primary' : 'secondary'"
+            iconStart="rows"
+            (clicked)="setOrientation('vertical')"
+          >
+            vertical
+          </ds-button>
+          <ds-button
+            size="sm"
+            [variant]="orientation() === 'horizontal' ? 'primary' : 'secondary'"
+            iconStart="columns"
+            (clicked)="setOrientation('horizontal')"
+          >
+            horizontal
+          </ds-button>
+        </ds-flex>
+
+        <ds-flex align="center" [gap]="2" [wrap]="'wrap'">
+          <ds-text variant="label" tone="muted">gap</ds-text>
+          @for (option of gapOptions; track option) {
+            <ds-button
+              size="sm"
+              [variant]="gap() === option ? 'primary' : 'secondary'"
+              (clicked)="setGap(option)"
+            >
+              {{ option }}
+            </ds-button>
+          }
+        </ds-flex>
+
+        <ds-button
+          size="sm"
+          [variant]="divided() ? 'primary' : 'secondary'"
+          [ariaPressed]="divided()"
+          iconStart="minus"
+          (clicked)="toggleDivided()"
+        >
+          divided
+        </ds-button>
+      </ds-flex>
+
+      <div class="playground__stage">
+        <ds-stack
+          [orientation]="orientation()"
+          [gap]="gap()"
+          [divided]="divided()"
+          class="playground__flex"
+        >
+          <div class="demo-block">one</div>
+          <div class="demo-block">two</div>
+          <div class="demo-block">three</div>
+        </ds-stack>
+      </div>
+
+      <div class="p-4 border-top">
+        <app-doc-code [code]="playgroundCode()" />
+      </div>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Vertical"
+    anchor="vertical"
+    description="The default. Most of a page is a stack of stacks."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-text variant="h3" [as]="'h3'">Settings</ds-text>
+        <ds-text tone="muted">Manage how your workspace behaves.</ds-text>
+        <ds-flex [gap]="2">
+          <ds-button variant="primary">Save</ds-button>
+          <ds-button variant="ghost">Cancel</ds-button>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Horizontal" anchor="horizontal" description="Button rows, chip rows, inline metadata.">
+    <app-doc-example code="{{ horizontalSnippet }}">
+      <ds-stack orientation="horizontal" [gap]="2" align="center" [wrap]="true">
+        <ds-button variant="primary">Save</ds-button>
+        <ds-button variant="ghost">Cancel</ds-button>
+        <ds-text variant="caption">Saved 2 minutes ago</ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Divided"
+    anchor="divided"
+    description="A hairline between children, padded to match the gap so the rhythm stays symmetrical."
+  >
+    <app-doc-example code="{{ dividedSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="compose-demo">
+        <ds-stack [gap]="4" [divided]="true">
+          @for (row of rows; track row.label) {
+            <ds-flex justify="between" [gap]="3">
+              <ds-text variant="bodySm" tone="muted">{{ row.label }}</ds-text>
+              <ds-text variant="bodySm" weight="medium">{{ row.value }}</ds-text>
+            </ds-flex>
+          }
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Nesting"
+    anchor="nesting"
+    description="Tight gaps group, wide gaps separate. A nested stack is how hierarchy gets expressed in space."
+  >
+    <app-doc-example code="{{ nestedSnippet }}" [plain]="true">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="{ base: 5, md: 8 }">
+        <ds-stack [gap]="8">
+          <ds-stack [gap]="2">
+            <ds-text variant="h3" [as]="'h3'">Billing</ds-text>
+            <ds-text tone="muted">Invoices and payment method.</ds-text>
+          </ds-stack>
+
+          <ds-stack [gap]="3" [divided]="true">
+            @for (row of rows; track row.label) {
+              <ds-flex justify="between" [gap]="3">
+                <ds-text variant="bodySm" tone="muted">{{ row.label }}</ds-text>
+                <ds-text variant="bodySm" weight="medium">{{ row.value }}</ds-text>
+              </ds-flex>
+            }
+          </ds-stack>
+
+          <ds-stack orientation="horizontal" [gap]="2" [wrap]="true">
+            <ds-button variant="primary" size="sm" iconStart="check">Update plan</ds-button>
+            <ds-button variant="ghost" size="sm">Download invoices</ds-button>
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-stack>.">
+    <app-doc-api-table [rows]="inputs" />
+  </app-doc-section>
+</ds-stack>

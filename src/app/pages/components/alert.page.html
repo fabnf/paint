@@ -1,0 +1,158 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="info"
+    title="Alert"
+    lede="A message that belongs in the page. A callout, not a toast: it sits in the layout, it does not stack, it does not expire, and it is read in the order it appears — which is why it is not, by default, an announcement."
+    builtOn="the tone properties + ds-button"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A callout, in the page"
+    anchor="anatomy"
+    description="A tone, a title, a sentence, and at most two things to do about it. Use it for the state of the thing it is next to."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4" class="demo-form">
+        <ds-alert tone="warning" title="Your trial ends in 3 days">
+          Add a payment method to keep your projects.
+          <ds-flex dsAlertActions [gap]="2">
+            <ds-button size="sm" variant="secondary">Add payment</ds-button>
+            <ds-button size="sm" variant="ghost">Remind me later</ds-button>
+          </ds-flex>
+        </ds-alert>
+
+        <ds-alert tone="info">
+          This project is in beta. Things will move.
+        </ds-alert>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Tones and variants"
+    anchor="tones"
+    description="The same seven tones as every display atom, painted from the same four custom properties. The icon follows the tone; danger borrows the triangle, because it is the same warning, louder."
+  >
+    <app-doc-example [plain]="true">
+      <ds-stack [gap]="3">
+        @for (tone of tones; track tone) {
+          <ds-alert [tone]="tone" [title]="tone">
+            A message in the {{ tone }} tone.
+          </ds-alert>
+        }
+        <ds-alert tone="primary" variant="outline" [accentuated]="true" title="Outline, accentuated">
+          A rule down the leading edge, for an alert that has to be found in a long page.
+        </ds-alert>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="When it is an announcement"
+    anchor="live"
+    description="An alert rendered with the page is not an announcement: a screen reader is already reading the page. live is off by default, polite for an alert that appears in response to something, and assertive only when the user must stop."
+  >
+    <app-doc-example code="{{ liveSnippet }}">
+      <ds-stack [gap]="4" class="demo-form">
+        <ds-button variant="primary" size="sm" (clicked)="save()">Save (and fail)</ds-button>
+
+        @if (saveFailed()) {
+          <!-- role="alert": it interrupts, because the save did not happen. -->
+          <ds-alert
+            tone="danger"
+            live="assertive"
+            title="Could not save"
+            [dismissible]="true"
+            (dismissed)="saveFailed.set(false)"
+          >
+            The server rejected the change. Your text is still here.
+          </ds-alert>
+        }
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">off</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            No role. The alert is part of the page, and the page is read from the top.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">polite → role="status"</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            It appeared in response to something. It waits for a pause in what is being read.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">assertive → role="alert"</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            It interrupts. Reserve it for what the user must know before they do anything else.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Dismissing, and who owns the DOM"
+    anchor="dismiss"
+    description="The alert never removes itself — the same bargain as ds-chip. A component that deletes its own node cannot be undone, re-shown, or animated out by whatever is holding it."
+  >
+    <app-doc-example code="{{ dismissSnippet }}" language="ts">
+      <ds-stack [gap]="3" class="demo-form">
+        @if (visible()) {
+          <ds-alert tone="success" title="Invoice sent" [dismissible]="true" (dismissed)="visible.set(false)">
+            Ada will get an email in a minute.
+          </ds-alert>
+        } @else {
+          <ds-button size="sm" variant="ghost" iconStart="refresh" (clicked)="visible.set(true)">
+            Bring it back
+          </ds-button>
+        }
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Alert or toast?"
+    anchor="or-toast"
+    description="Where it lives, and whether it expires."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-alert&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The state of the thing next to it. It stays until the state changes. It is in the layout,
+            so it moves what is below it — which is the point.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-toast&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Something happened, somewhere else, a moment ago. It stacks, it expires, and it never
+            carries the only copy of a message the user needs.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and slots of <ds-alert>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" label="Alert slots" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

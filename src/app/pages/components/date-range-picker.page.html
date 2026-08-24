@@ -1,0 +1,168 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="calendar"
+    title="DateRangePicker"
+    lede="Two months, one sweep of the pointer. A filter-style trigger opens a dialog where both ends of the range are always on screen — two calendars, a typed field for each edge, and a time apiece when asked. Drag from one end to the other, or click twice; the band follows either way."
+    builtOn="2 × ds-calendar + ds-date-input + ds-time-input"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A filter that says what it holds"
+    anchor="filter"
+    description="The classic job: a toolbar chip that reads “1 Mar 2026 – 15 Mar 2026” and narrows a list. Open it and drag across the grids — across the month boundary too — or pick the edges by click, keyboard or typing. The range only commits whole: the list never sees half a filter."
+  >
+    <app-doc-example code="{{ filterSnippet }}">
+      <ds-stack [gap]="3">
+        <!-- The filter bar lives outside the card: the card clips its overflow,
+             and an anchored panel must not be asked to live inside a clip. -->
+        <ds-flex align="center" justify="between" [wrap]="'wrap'" [gap]="3">
+          <ds-text variant="label">Invoices</ds-text>
+          <ds-date-range-picker
+            label="Issued"
+            size="sm"
+            align="end"
+            [today]="demoToday"
+            [(start)]="from"
+            [(end)]="to"
+          />
+        </ds-flex>
+
+        <ds-box background="surface" [border]="true" radius="lg" class="demo-list">
+        <ul class="demo-list__rows">
+          @for (invoice of filtered(); track invoice.id) {
+            <li class="demo-list__row">
+              <ds-flex align="center" [gap]="3">
+                <ds-text variant="bodySm" class="fw-semibold">{{ invoice.id }}</ds-text>
+                <ds-text variant="bodySm" tone="muted">{{ invoice.project }}</ds-text>
+                <ds-box class="ms-auto">
+                  <ds-flex align="center" [gap]="4">
+                    <ds-text variant="code" tone="muted">{{ invoice.issued }}</ds-text>
+                    <ds-text variant="bodySm">{{ invoice.amount }}</ds-text>
+                  </ds-flex>
+                </ds-box>
+              </ds-flex>
+            </li>
+          } @empty {
+            <li class="demo-list__row">
+              <ds-text variant="bodySm" tone="muted">No invoices in that range.</ds-text>
+            </li>
+          }
+        </ul>
+
+        <ds-flex class="demo-list__footer" justify="between">
+          <ds-text variant="caption">{{ filtered().length }} of {{ invoices.length }}</ds-text>
+          <ds-text variant="caption">{{ from() ?? '…' }} → {{ to() ?? '…' }}</ds-text>
+        </ds-flex>
+        </ds-box>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="With time on each edge"
+    anchor="time"
+    description="withTime adds a ds-time-input to each end — the molecule with the generous parser: 9 is 09:00, 930 is 09:30, 9:30 pm is 21:30. The model stays 24-hour wherever the user lives, and the trigger carries the times once they exist."
+  >
+    <app-doc-example code="{{ timeSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-date-range-picker
+          label="Maintenance window"
+          [withTime]="true"
+          [timeStep]="30"
+          [today]="demoToday"
+          [(start)]="windowStart"
+          [(end)]="windowEnd"
+          [(startTime)]="windowStartTime"
+          [(endTime)]="windowEndTime"
+        />
+        <ds-text variant="code" tone="primary">
+          {{ windowStart() ?? 'null' }} {{ windowStartTime() ?? '' }} → {{ windowEnd() ?? 'null' }}
+          {{ windowEndTime() ?? '' }}
+        </ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="How a range gets made"
+    anchor="selection"
+    description="Every input method ends at the same place: two edges, committed together, in calendar order — whichever way round they were given."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Drag</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Press a day, sweep across the grids — the band follows the pointer, across the month
+            boundary too — and release on the other end. The molecules never knew a drag happened:
+            the organism reads the days from the cells.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Two picks</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Click the start, watch the band follow, click the end. The keyboard does the same with
+            two Enters, and a live region narrates what the band cannot: “Start of range… now
+            choose the end.”
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Typed</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Both edges are ds-date-inputs: 4/3/26 works here too. An end typed before the start is
+            a range read backwards, not an error — the edges swap into order.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The overlay contract"
+    anchor="behaviour"
+    description="The Menu's dismissals, with one refinement a selection-in-progress earns."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Escape, twice if needed</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The first Escape abandons a half-made selection and restores the committed range. The
+            second closes, back to the trigger. A mis-drag never costs the filter.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Commit, then decide</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Completing a range does not slam the dialog shut — times may still be wanted, or a
+            second look. Done closes it; so do Escape, an outside click, and Tab leaving.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Never half a range</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            start and end only move together, on a commit. While the user is mid-gesture the
+            preview is the organism's — the consumer's filter keeps its last whole range.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-date-range-picker>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

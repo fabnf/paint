@@ -1,0 +1,241 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="list"
+    title="Select"
+    lede="One control, single or multiple. A combobox on Bootstrap's form-control and dropdown, with chips, filtering, the full ARIA listbox pattern — and a ControlValueAccessor, so forms just work."
+    builtOn=".form-control / .dropdown-menu / .form-check-input"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Single"
+    anchor="single"
+    description="The default. Picking closes the panel, and the trigger shows the option's icon and label."
+  >
+    <app-doc-example code="{{ singleSnippet }}">
+      <ds-stack [gap]="3" class="demo-field">
+        <!-- The label, the hint and the error belong to the field, not to the
+             Select. Its trigger is a <button>, and a <button> is labelable. -->
+        <ds-form-field label="Owner" hint="Who signs this off.">
+          <ds-select [options]="people" [(value)]="owner" [clearable]="true" placeholder="Assign owner" />
+        </ds-form-field>
+        <ds-text variant="code" tone="primary">value = {{ owner() ?? 'null' }}</ds-text>
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">Label it with a FormField</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          Select still takes <code>label</code>, <code>labelledBy</code> and <code>describedBy</code>
+          for when it stands alone. Inside a <code>&lt;ds-form-field&gt;</code> it adopts the field's
+          id, label, description, required and invalid state — and is named, per the ARIA combobox
+          pattern, by that label <em>and</em> its current value.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Multiple"
+    anchor="multiple"
+    description="One input turns the same component into a tag picker: chips in the trigger, checkboxes in the list, an array for the value."
+  >
+    <app-doc-example code="{{ multipleSnippet }}">
+      <ds-stack [gap]="3" class="demo-field">
+        <ds-text variant="label" [as]="'label'">Labels</ds-text>
+        <ds-select
+          [options]="labels"
+          [(value)]="tags"
+          [multiple]="true"
+          [clearable]="true"
+          label="Labels"
+          placeholder="Add labels"
+        />
+        <ds-text variant="code" tone="primary">value = [{{ tags().join(', ') }}]</ds-text>
+        <ds-text variant="caption">
+          Chips remove on click. Backspace peels the last one off when the filter is empty.
+        </ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Searchable"
+    anchor="searchable"
+    description="Past ~8 options, let people type. The filter matches labels, descriptions and group names."
+  >
+    <app-doc-example code="{{ searchSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-stack [gap]="3">
+          <ds-text variant="label" [as]="'label'">Labels — searchable</ds-text>
+          <ds-select
+            [options]="labels"
+            [(value)]="searchable"
+            [multiple]="true"
+            [searchable]="true"
+            [clearable]="true"
+            label="Searchable labels"
+            placeholder="Add labels"
+            searchPlaceholder="Filter labels…"
+            emptyText="No labels match"
+          />
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-text variant="label" [as]="'label'">People — grouped</ds-text>
+          <ds-select
+            [options]="people"
+            [searchable]="true"
+            label="Grouped people"
+            placeholder="Search people"
+          />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+
+    <app-doc-code [code]="groupSnippet" language="ts" />
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Forms"
+    anchor="forms"
+    description="Select implements ControlValueAccessor. Reactive forms, ngModel, validators and disabled state all work without a wrapper."
+  >
+    <app-doc-example code="{{ formsSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-stack [gap]="3">
+          <ds-text variant="label" [as]="'label'">Owner (required)</ds-text>
+          <ds-select
+            [options]="people"
+            [formControl]="ownerControl"
+            [invalid]="ownerControl.invalid && ownerControl.touched"
+            [required]="true"
+            label="Owner"
+            placeholder="Assign owner"
+          />
+          @if (ownerControl.invalid && ownerControl.touched) {
+            <ds-text variant="caption" tone="danger">An owner is required.</ds-text>
+          } @else {
+            <ds-text variant="code" tone="muted">
+              {{ ownerControl.value ?? 'null' }} · {{ ownerControl.status }}
+            </ds-text>
+          }
+        </ds-stack>
+
+        <ds-stack [gap]="3">
+          <ds-text variant="label" [as]="'label'">Disabled by the form</ds-text>
+          <ds-select [options]="people" [formControl]="disabledControl" label="Disabled owner" />
+          <ds-text variant="caption">control.disable() reaches the control through CVA.</ds-text>
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Sizes & states" anchor="states">
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+        <ds-stack [gap]="2">
+          <ds-text variant="caption" [uppercase]="true">sm</ds-text>
+          <ds-select [options]="sizes" [(value)]="size" size="sm" label="Small select" />
+        </ds-stack>
+        <ds-stack [gap]="2">
+          <ds-text variant="caption" [uppercase]="true">md</ds-text>
+          <ds-select [options]="sizes" [(value)]="size" label="Medium select" />
+        </ds-stack>
+        <ds-stack [gap]="2">
+          <ds-text variant="caption" [uppercase]="true">lg</ds-text>
+          <ds-select [options]="sizes" [(value)]="size" size="lg" label="Large select" />
+        </ds-stack>
+        <ds-stack [gap]="2">
+          <ds-text variant="caption" [uppercase]="true">invalid</ds-text>
+          <ds-select [options]="sizes" [invalid]="true" label="Invalid select" placeholder="Required" />
+        </ds-stack>
+        <ds-stack [gap]="2">
+          <ds-text variant="caption" [uppercase]="true">disabled</ds-text>
+          <ds-select [options]="sizes" [disabled]="true" label="Disabled select" placeholder="Locked" />
+        </ds-stack>
+        <ds-stack [gap]="2">
+          <ds-text variant="caption" [uppercase]="true">empty</ds-text>
+          <ds-select [options]="[]" [(value)]="empty" label="Empty select" placeholder="Nothing to pick" emptyText="No options yet" />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Keyboard" anchor="keyboard" description="The ARIA combobox + listbox pattern.">
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3" [divided]="true">
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">↓ / Enter / Space</ds-text>
+          <ds-text variant="bodySm" tone="muted">Opens, starting on the selected option</ds-text>
+        </ds-flex>
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">↑ ↓ / Home / End</ds-text>
+          <ds-text variant="bodySm" tone="muted">Moves the active option; aria-activedescendant follows</ds-text>
+        </ds-flex>
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">Enter</ds-text>
+          <ds-text variant="bodySm" tone="muted">Picks (single) or toggles (multiple) the active option</ds-text>
+        </ds-flex>
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">Backspace</ds-text>
+          <ds-text variant="bodySm" tone="muted">Multiple + empty filter: removes the last chip</ds-text>
+        </ds-flex>
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">Esc</ds-text>
+          <ds-text variant="bodySm" tone="muted">Closes and returns focus to the trigger</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Accessibility"
+    anchor="accessibility"
+    description="Select is the fiddliest control in the set, so here is exactly what it does."
+  >
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3" [divided]="true">
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Named by label and value</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The combobox points aria-labelledby at both your label and its current value, so a
+            screen reader announces “Owner, Ada Lovelace” — an aria-label alone would hide the
+            selection.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">No control inside a control</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Chips and the clear button are siblings of the combobox, not children, and options are
+            plain list items with drawn checkboxes. Nesting interactive elements breaks both
+            keyboards and screen readers.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">The filter owns the ARIA while it has focus</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            When searchable, the filter field carries role="combobox" and aria-activedescendant,
+            because that attribute only works on the focused element.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Removal without a mouse</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Chip removes stay out of the tab order deliberately — Backspace removes the last chip and
+            the listbox toggles any option, so the tab sequence does not grow with the selection. The
+            field announces that hint via aria-describedby.
+          </ds-text>
+        </ds-stack>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-select>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

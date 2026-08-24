@@ -1,0 +1,12 @@
+/**
+ * Paint — global style entry point.
+ *
+ * 1. bootstrap   Bootstrap configured with Paint's foundations (the substrate
+ *                Paint's primitives are built on).
+ * 2. tokens      Paint's `--ds-*` custom properties, reset and type ramp —
+ *                loaded after Bootstrap so Paint always has the final word.
+ * 3. primitives  The few primitive rules that must reach projected children.
+ */
+@use './design-system/styles/bootstrap';
+@use './design-system/styles/tokens';
+@use './design-system/styles/primitives';

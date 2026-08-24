@@ -1,0 +1,337 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Foundation"
+    icon="success"
+    title="Accessibility"
+    lede="Paint targets WCAG 2.2 AA, and treats it as part of the component rather than a review at the end. This page is the contract — and the measurements behind it."
+    builtOn="ARIA authoring practices"
+    status="Enforced by tests"
+  />
+
+  <!-- ———————————————————————— Principles ———————————————————————— -->
+  <app-doc-section heading="What the system guarantees" anchor="principles">
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      @for (principle of principles; track principle.title) {
+        <ds-flex [gap]="4" align="start">
+          <span class="a11y__icon">
+            <ds-icon [name]="principle.icon" size="md" />
+          </span>
+          <ds-stack [gap]="2">
+            <ds-text variant="h4" [as]="'h3'">{{ principle.title }}</ds-text>
+            <ds-text variant="bodySm" tone="muted">{{ principle.body }}</ds-text>
+          </ds-stack>
+        </ds-flex>
+      }
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Try it ———————————————————————— -->
+  <app-doc-section
+    heading="Try it with the keyboard"
+    anchor="try"
+    description="Put the pointer down. Tab into this panel, then use the arrows, Enter, Escape and Backspace — the focus ring should always be visible, and you should always be able to get back out."
+  >
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="{ base: 5, md: 6 }">
+      <ds-stack [gap]="5">
+        <ds-tabs label="Accessibility demo">
+          <ds-tab label="Pickers" icon="list">
+            <ds-stack [gap]="4">
+              <ds-flex [gap]="3" [wrap]="'wrap'" align="end">
+                <ds-stack [gap]="2" class="a11y__field">
+                  <ds-text variant="label" [as]="'label'" [id]="'a11y-topics'">Topics</ds-text>
+                  <ds-select
+                    [options]="demoOptions"
+                    [(value)]="demoValue"
+                    [multiple]="true"
+                    [searchable]="true"
+                    [clearable]="true"
+                    labelledBy="a11y-topics"
+                    searchLabel="Filter topics"
+                  />
+                </ds-stack>
+
+                <ds-menu label="Actions" [entries]="demoEntries" />
+                <ds-button variant="secondary" iconStart="window" (clicked)="demoDialog.set(true)">
+                  Open dialog
+                </ds-button>
+              </ds-flex>
+
+              <ds-text variant="bodySm" tone="muted">
+                The combobox is named by its label and its value, so a screen reader announces
+                “Topics, Keyboard, Screen reader”. The filter has its own name, because a
+                placeholder is not a label.
+              </ds-text>
+            </ds-stack>
+          </ds-tab>
+
+          <ds-tab label="Announcements" icon="bell">
+            <ds-stack [gap]="4">
+              <ds-flex [gap]="2" [wrap]="'wrap'">
+                <ds-button variant="secondary" iconStart="success" (clicked)="announce()">
+                  Polite announcement
+                </ds-button>
+                <ds-button variant="secondary" iconStart="warning" (clicked)="announceProblem()">
+                  Assertive announcement
+                </ds-button>
+              </ds-flex>
+              <ds-text variant="bodySm" tone="muted">
+                Status messages wait for a pause in speech; problems interrupt. Both are spoken by
+                the toast host’s permanent live regions, so nothing is announced twice.
+              </ds-text>
+            </ds-stack>
+          </ds-tab>
+
+          <ds-tab label="Loading" icon="refresh">
+            <ds-stack [gap]="4">
+              <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+                <ds-button [loading]="true">Saving</ds-button>
+                <ds-button [disabled]="true">Unavailable</ds-button>
+              </ds-flex>
+              <ds-text variant="bodySm" tone="muted">
+                Tab onto the loading button: it keeps focus. It reports aria-disabled and aria-busy
+                rather than going disabled, because a control that disappears from the tab order
+                mid-action takes the user’s place with it.
+              </ds-text>
+            </ds-stack>
+          </ds-tab>
+        </ds-tabs>
+      </ds-stack>
+    </ds-box>
+
+    <ds-dialog
+      [(open)]="demoDialog"
+      title="Focus, trapped and returned"
+      description="Tab around: the page behind this sheet is inert."
+      icon="window"
+    >
+      <ds-stack [gap]="3">
+        <ds-text>
+          Focus starts on the sheet so the title is read first, cycles inside it, and goes back to
+          the button that opened it when you press Escape.
+        </ds-text>
+        <ds-box background="surface-sunken" radius="md" [padding]="4">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" [as]="'label'" [id]="'a11y-dialog-field'">A field to land on</ds-text>
+            <input
+              class="form-control"
+              dsDialogAutofocus
+              aria-labelledby="a11y-dialog-field"
+              value="Mural — March"
+            />
+          </ds-stack>
+        </ds-box>
+      </ds-stack>
+
+      <ds-flex dsDialogActions [gap]="2" justify="end">
+        <ds-button variant="ghost" (clicked)="demoDialog.set(false)">Cancel</ds-button>
+        <ds-button variant="primary" (clicked)="demoDialog.set(false)">Done</ds-button>
+      </ds-flex>
+    </ds-dialog>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Keyboard map ———————————————————————— -->
+  <app-doc-section
+    heading="Keyboard map"
+    anchor="keyboard"
+    description="Every component implements its ARIA authoring-practices pattern. This table is itself a DataTable — sort it from the keyboard."
+  >
+    <ds-data-table
+      caption="Keyboard behaviour by component"
+      [columns]="keyboardColumns"
+      [rows]="keyboardRows"
+      [rowKey]="keyboardRowKey"
+      [rowLabel]="keyboardRowLabel"
+      density="compact"
+      [sort]="{ key: 'component', direction: 'asc' }"
+    >
+      <ng-template dsCell="keys" [dsCellRows]="keyboardRows" let-row>
+        <kbd class="a11y__kbd">{{ row.keys }}</kbd>
+      </ng-template>
+    </ds-data-table>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Screen readers ———————————————————————— -->
+  <app-doc-section
+    heading="Screen readers"
+    anchor="screen-readers"
+    description="Names, roles and state per component — and what gets spoken when something changes."
+  >
+    <ds-stack [gap]="3">
+      @for (note of srNotes; track note.component) {
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+          <ds-flex [direction]="{ base: 'column', md: 'row' }" [gap]="4">
+            <ds-text variant="label" class="a11y__sr-name">{{ note.component }}</ds-text>
+            <ds-text variant="bodySm" tone="muted">{{ note.note }}</ds-text>
+          </ds-flex>
+        </ds-box>
+      }
+    </ds-stack>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Contrast ———————————————————————— -->
+  <app-doc-section
+    heading="Contrast, measured"
+    anchor="contrast"
+    description="Computed from the live theme's tokens at render time — not copied from a spreadsheet. Switch the theme in the brand bar and the numbers change with it."
+  >
+    <ds-stack [gap]="4">
+      <ds-flex [gap]="2" align="center" [wrap]="'wrap'">
+        <span class="badge a11y__badge">{{ mode() }} theme</span>
+        <ds-text variant="bodySm" tone="muted">
+          Text roles need 4.5:1; control boundaries and focus rings need 3:1.
+        </ds-text>
+      </ds-flex>
+
+      <ds-data-table
+        caption="Measured contrast ratios"
+        [columns]="contrastColumns"
+        [rows]="contrastRows()"
+        [rowKey]="contrastRowKey"
+        density="compact"
+      >
+        <ng-template dsCell="ratio" [dsCellRows]="contrastRows()" let-row>
+          <ds-text variant="code" [tone]="verdictTone(row)" [as]="'span'">{{ row.ratio }}:1</ds-text>
+        </ng-template>
+
+        <ng-template dsCell="verdict" [dsCellRows]="contrastRows()" let-row>
+          <ds-text variant="label" [tone]="verdictTone(row)" [as]="'span'">
+            {{ row.ratio >= row.required ? 'Pass' : 'Fail' }}
+          </ds-text>
+        </ng-template>
+      </ds-data-table>
+    </ds-stack>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Motion ———————————————————————— -->
+  <app-doc-section
+    heading="Reduced motion"
+    anchor="motion"
+    description="Components switch off their own transitions, and the foundation backs them up so a future component cannot forget."
+  >
+    <app-doc-code [code]="motionSnippet" language="scss" />
+  </app-doc-section>
+
+  <!-- ———————————————————————— Forced colours ———————————————————————— -->
+  <app-doc-section
+    heading="Forced colours"
+    anchor="forced-colours"
+    description="In Windows High Contrast the system replaces every colour and throws away box-shadows — which is how a lot of design systems draw their focus rings and their borders."
+  >
+    <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="4">
+      <app-doc-code [code]="forcedColorsSnippet" language="scss" />
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="3" [divided]="true">
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Focus survives</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Rings are outlines, not shadows. Where a wrapper draws the ring — Select's field — the
+              control takes its own outline back under forced colours.
+            </ds-text>
+          </ds-stack>
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Edges survive</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Buttons, fields, menus, dialogs and toasts gain a border, so a surface defined only by
+              its shadow does not dissolve into the page.
+            </ds-text>
+          </ds-stack>
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Meaning is never colour alone</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Selected options carry a tick, toasts name their variant in words, sorted columns use
+              aria-sort — so nothing is lost when the palette is taken away.
+            </ds-text>
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Focus ———————————————————————— -->
+  <app-doc-section
+    heading="Focus rules"
+    anchor="focus"
+    description="One visible ring from one token, and a focus that is always somewhere sensible."
+  >
+    <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="3" [divided]="true">
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Visible, always</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Every control shows a 2px ring from --ds-color-focus-ring on :focus-visible, including
+              rows, code blocks and chips.
+            </ds-text>
+          </ds-stack>
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Trapped only while modal</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Dialogs cycle Tab inside the sheet and mark the rest of the page inert. Menus and
+              selects never trap: Tab closes them and moves on.
+            </ds-text>
+          </ds-stack>
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Returned on close</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Overlays remember what opened them and hand focus back, so the page does not jump to
+              the top.
+            </ds-text>
+          </ds-stack>
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Never dropped</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Loading states use aria-disabled, so a control under the user’s finger does not vanish
+              from the tab order.
+            </ds-text>
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+
+      <app-doc-code [code]="focusSnippet" />
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- ———————————————————————— Testing ———————————————————————— -->
+  <app-doc-section
+    heading="How it is enforced"
+    anchor="testing"
+    description="Accessibility that is not tested is accessibility that regresses. Two suites run on every change."
+  >
+    <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="4">
+      <app-doc-code [code]="testingSnippet" language="ts" />
+
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="3" [divided]="true">
+          <ds-stack [gap]="1">
+            <ds-text variant="label">axe-core, in the unit suite</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Each interactive component is scanned in the states it really appears in: open and
+              closed, loading and empty, single and multiple.
+            </ds-text>
+          </ds-stack>
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Contrast, from the tokens</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              111 assertions across both themes. A token edit that breaks a ratio fails the build,
+              not the review.
+            </ds-text>
+          </ds-stack>
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Behaviour, per component</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Keyboard patterns, focus restoration, inert backgrounds and live-region text are
+              asserted in each component’s own spec.
+            </ds-text>
+          </ds-stack>
+          <ds-stack [gap]="1">
+            <ds-text variant="label">What tests cannot do</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Automation catches roughly a third of accessibility. The rest is reading the markup
+              and using the thing with a keyboard, which is what this page is for.
+            </ds-text>
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+</ds-stack>

@@ -1,0 +1,132 @@
+<a class="visually-hidden-focusable skip-link" href="#content">Skip to content</a>
+
+<!-- Brand bar — Bootstrap navbar, Paint tokens -->
+<header class="navbar app-navbar">
+  <div class="app-navbar__inner">
+    <div class="d-flex align-items-center gap-3">
+      <ds-button
+        class="d-lg-none"
+        variant="ghost"
+        size="sm"
+        iconStart="menu"
+        label="Toggle navigation"
+        [ariaExpanded]="navOpen()"
+        ariaControls="app-sidebar"
+        (clicked)="toggleNav()"
+      />
+
+      <a class="app-navbar__brand" routerLink="/" [attr.aria-label]="brand.name + ' home'">
+        <ds-logo size="md" [tagline]="true" />
+      </a>
+
+      <span class="app-navbar__version d-none d-sm-inline-flex">
+        <ds-badge tone="neutral" variant="outline">v{{ brand.version }}</ds-badge>
+        <ds-badge tone="accent">{{ brand.releaseName }}</ds-badge>
+      </span>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <ds-button
+        class="d-none d-md-inline-block"
+        variant="ghost"
+        size="sm"
+        iconStart="book"
+        link="/foundations"
+      >
+        Docs
+      </ds-button>
+
+      <!-- Brand switcher: packs re-pour the tokens; the Paint mark stays. -->
+      <ds-menu
+        [label]="activeBrand().name"
+        icon="palette"
+        variant="ghost"
+        size="sm"
+        align="end"
+        [entries]="brandEntries()"
+        (itemSelect)="setBrand($event)"
+      />
+
+      <ds-button
+        variant="ghost"
+        size="sm"
+        [iconStart]="isDark() ? 'sun' : 'moon'"
+        [label]="themeLabel()"
+        (clicked)="toggleTheme()"
+      />
+    </div>
+  </div>
+</header>
+
+<div class="app-shell">
+  <!-- Atomic-layer navigation -->
+  <aside
+    id="app-sidebar"
+    class="app-sidebar"
+    [class.app-sidebar--open]="navOpen()"
+    (keydown.escape)="closeNav()"
+  >
+    <nav class="app-sidebar__nav" aria-label="Design system sections">
+      @for (section of sections; track section.title) {
+        <div class="app-sidebar__group">
+          <p class="app-sidebar__title">{{ section.title }}</p>
+          @if (section.caption) {
+            <p class="app-sidebar__caption">{{ section.caption }}</p>
+          }
+
+          <ul class="nav nav-pills flex-column gap-1">
+            @for (item of section.items; track item.path) {
+              <li class="nav-item">
+                <a
+                  class="nav-link app-sidebar__link"
+                  [routerLink]="item.path"
+                  routerLinkActive="active"
+                  ariaCurrentWhenActive="page"
+                  [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+                >
+                  <ds-icon [name]="item.icon" size="sm" />
+                  <span class="flex-grow-1">{{ item.label }}</span>
+                  @if (item.badge) {
+                    <ds-badge tone="accent" variant="solid" [pill]="true">{{ item.badge }}</ds-badge>
+                  }
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <div class="app-sidebar__next">
+        <p class="app-sidebar__title">Next up</p>
+        <ul class="app-sidebar__roadmap">
+          <li>Field &amp; Form</li>
+          <li>Card &amp; Alert</li>
+          <li>Patterns</li>
+        </ul>
+      </div>
+    </nav>
+  </aside>
+
+  @if (navOpen()) {
+    <button type="button" class="app-scrim d-lg-none" aria-label="Close navigation" (click)="toggleNav()"></button>
+  }
+
+  <main id="content" class="app-main" tabindex="-1">
+    <router-outlet />
+
+    <footer class="app-footer">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-2">
+          <ds-logo variant="mark" size="sm" />
+          <span class="app-footer__text">
+            {{ brand.name }} v{{ brand.version }} — {{ brand.tagline }}
+          </span>
+        </div>
+        <span class="app-footer__text">Tokens · primitives · components — built on Bootstrap</span>
+      </div>
+    </footer>
+  </main>
+</div>
+
+<!-- Last in the document: notifications must not precede the page they are about -->
+<ds-toast-host placement="bottom-end" />

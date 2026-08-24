@@ -1,0 +1,319 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Foundation"
+    icon="ruler"
+    title="Foundations"
+    lede="Color, type, space, radii, effects and icons — authored as typed tokens, published as CSS custom properties, and inherited by every component."
+    builtOn="CSS custom properties"
+    status="v0.3.0"
+  >
+    <ds-flex [gap]="3" [wrap]="'wrap'" align="center">
+      <ds-button variant="secondary" [iconStart]="isDark() ? 'sun' : 'moon'" (clicked)="toggleTheme()">
+        {{ themeLabel() }} theme
+      </ds-button>
+      <ds-text variant="bodySm" tone="muted">
+        Toggle to watch every token below re-resolve.
+      </ds-text>
+    </ds-flex>
+  </app-doc-page-header>
+
+  <!-- Color -->
+  <app-doc-section
+    heading="Color"
+    anchor="color"
+    description="Primitive scales stay fixed. Semantic roles resolve per theme — components only ever reference roles."
+  >
+    <ds-grid [cols]="{ base: 2, sm: 3, lg: 4 }" [gap]="4">
+      @for (role of colorRoles; track role.name) {
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="3" class="h-100">
+          <ds-stack [gap]="3">
+            <div class="swatch" [style.background]="'var(' + role.var + ')'"></div>
+            <ds-stack [gap]="1">
+              <ds-text variant="label">{{ role.name }}</ds-text>
+              <ds-text variant="code" tone="subtle" class="swatch__var">{{ role.var }}</ds-text>
+              <ds-text variant="caption">{{ role.usage }}</ds-text>
+            </ds-stack>
+          </ds-stack>
+        </ds-box>
+      }
+    </ds-grid>
+
+    <app-doc-example
+      title="Primitive scales"
+      description="Six ramps, 9–11 steps each. Semantic roles are aliases onto these."
+      [plain]="true"
+    >
+      <ds-stack [gap]="4">
+        @for (group of primitiveScales; track group.name) {
+          <ds-stack [gap]="2">
+            <ds-flex justify="between" align="center">
+              <ds-text variant="label">{{ group.name }}</ds-text>
+              <ds-text variant="caption">{{ group.shades.length }} steps</ds-text>
+            </ds-flex>
+            <ds-flex class="ramp">
+              @for (shade of group.shades; track shade.key) {
+                <div
+                  class="ramp__cell"
+                  [style.background]="shade.value"
+                  [title]="group.name + '-' + shade.key + ' · ' + shade.value"
+                >
+                  <span class="ramp__key">{{ shade.key }}</span>
+                </div>
+              }
+            </ds-flex>
+          </ds-stack>
+        }
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <!-- Typography -->
+  <app-doc-section
+    heading="Typography"
+    anchor="typography"
+    description="Three families and a ten-step ramp. ds-text is the only way to put type on screen."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      @for (stack of fontStacks; track stack.name) {
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="muted">{{ stack.name }}</ds-text>
+            <p class="font-sample" [style.font-family]="'var(' + stack.token + ')'">Ag</p>
+            <ds-text variant="h4" [as]="'p'">{{ stack.family }}</ds-text>
+            <ds-text variant="caption">{{ stack.role }}</ds-text>
+            <ds-text variant="code" tone="subtle">{{ stack.token }}</ds-text>
+          </ds-stack>
+        </ds-box>
+      }
+    </ds-grid>
+
+    <app-doc-example title="The ramp" description="Each step maps to a ds-text variant." [plain]="true">
+      <ds-box background="surface" [border]="true" radius="lg">
+        <ds-stack [gap]="0">
+          @for (style of typeStyles; track style.name) {
+            <ds-flex
+              class="ramp-row"
+              [direction]="{ base: 'column', md: 'row' }"
+              align="baseline"
+              [gap]="4"
+            >
+              <ds-stack [gap]="1" class="ramp-row__meta">
+                <ds-text variant="code" tone="primary">{{ style.variant }}</ds-text>
+                <ds-text variant="caption">{{ style.meta }}</ds-text>
+              </ds-stack>
+              <ds-text [variant]="style.variant" [as]="'p'" [truncate]="true" class="ramp-row__sample">
+                {{ style.sample }}
+              </ds-text>
+            </ds-flex>
+          }
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <!-- Spacing -->
+  <app-doc-section
+    heading="Spacing"
+    anchor="spacing"
+    description="A 4px base scale. Primitives accept these keys only — Bootstrap's spacing utilities are generated from the very same values."
+  >
+    <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="4">
+          <ds-text variant="label">Scale</ds-text>
+          <ds-stack [gap]="2">
+            @for (token of spacingTokens; track token.key) {
+              <ds-flex align="center" [gap]="3">
+                <ds-text variant="code" tone="primary" class="space__key">{{ token.key }}</ds-text>
+                <ds-text variant="caption" class="space__value">{{ token.value }}</ds-text>
+                <div class="space__bar" [style.width]="token.value"></div>
+              </ds-flex>
+            }
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+
+      <ds-stack [gap]="4">
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+          <ds-stack [gap]="4">
+            <ds-text variant="label">Semantic aliases</ds-text>
+            <ds-stack [gap]="3" [divided]="true">
+              @for (token of semanticSpacing; track token.key) {
+                <ds-flex justify="between" align="center" [gap]="3">
+                  <ds-text variant="code">{{ token.key }}</ds-text>
+                  <ds-text variant="caption">{{ token.value }}</ds-text>
+                </ds-flex>
+              }
+            </ds-stack>
+          </ds-stack>
+        </ds-box>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+          <ds-stack [gap]="4">
+            <ds-text variant="label">Radii</ds-text>
+            <ds-flex [gap]="4" [wrap]="'wrap'">
+              @for (radius of radii; track radius.key) {
+                <ds-stack [gap]="2" align="center">
+                  <div class="radius" [style.border-radius]="radius.value"></div>
+                  <ds-text variant="code">{{ radius.key }}</ds-text>
+                </ds-stack>
+              }
+            </ds-flex>
+          </ds-stack>
+        </ds-box>
+      </ds-stack>
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- Icons -->
+  <app-doc-section
+    heading="Icons"
+    anchor="icons"
+    description="A stroke set on a 24×24 grid. Color inherits from the parent, size comes from a token."
+  >
+    <app-doc-example title="The set" [description]="icons.length + ' icons, registered inline — no sprite, no font, no request.'" [plain]="true">
+      <ds-grid [cols]="{ base: 3, sm: 4, md: 6, lg: 8 }" [gap]="3">
+        @for (name of icons; track name) {
+          <ds-box background="surface" [border]="true" radius="md" [padding]="3" class="icon-cell">
+            <ds-stack [gap]="2" align="center">
+              <ds-icon [name]="name" size="lg" />
+              <ds-text variant="caption" [truncate]="true" class="icon-cell__name">{{ name }}</ds-text>
+            </ds-stack>
+          </ds-box>
+        }
+      </ds-grid>
+    </app-doc-example>
+
+    <app-doc-example title="Sizes" description="xs · sm · md · lg · xl" [plain]="true">
+      <ds-flex align="center" [gap]="5">
+        <ds-icon name="palette" size="xs" />
+        <ds-icon name="palette" size="sm" />
+        <ds-icon name="palette" size="md" />
+        <ds-icon name="palette" size="lg" />
+        <ds-icon name="palette" size="xl" />
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <!-- Effects -->
+  <app-doc-section
+    heading="Effects"
+    anchor="effects"
+    description="The Wet Paint layer: elevation with a violet cast, three paint mixes, and grain that keeps flat colour from looking like plastic. All tokens, all per theme."
+  >
+    <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="5">
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Elevation</ds-text>
+            <ds-text variant="caption">Shadows are ink-tinted, never grey. Glow is for brand emphasis.</ds-text>
+          </ds-stack>
+          <ds-flex [gap]="5" [wrap]="'wrap'">
+            @for (elevation of elevations; track elevation) {
+              <ds-stack [gap]="2" align="center">
+                <ds-box background="surface" [border]="true" radius="lg" [elevation]="elevation" class="elevation-demo"></ds-box>
+                <ds-text variant="code" tone="subtle">{{ elevation }}</ds-text>
+              </ds-stack>
+            }
+          </ds-flex>
+        </ds-stack>
+      </ds-box>
+
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="5">
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Paint mixes</ds-text>
+            <ds-text variant="caption">Gradients ride on background-image, so they compose with grain.</ds-text>
+          </ds-stack>
+          <ds-stack [gap]="3">
+            @for (mix of mixes; track mix.name) {
+              <ds-flex align="center" [gap]="3">
+                <div class="mix-swatch ds-grain" [style.background-image]="mix.css"></div>
+                <ds-stack [gap]="0">
+                  <ds-text variant="label">{{ mix.name }}</ds-text>
+                  <ds-text variant="code" tone="subtle">{{ mix.token }}</ds-text>
+                </ds-stack>
+              </ds-flex>
+            }
+          </ds-stack>
+        </ds-stack>
+      </ds-box>
+
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="5">
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Texture</ds-text>
+            <ds-text variant="caption">Inline SVG noise — no requests, no assets, decorative only.</ds-text>
+          </ds-stack>
+          <ds-grid [cols]="2" [gap]="3">
+            @for (texture of textures; track texture.name) {
+              <ds-stack [gap]="2">
+                <div class="texture-swatch" [class]="'texture-swatch--' + texture.name"></div>
+                <ds-stack [gap]="0">
+                  <ds-text variant="code">{{ texture.utility }}</ds-text>
+                  <ds-text variant="caption">{{ texture.token }}</ds-text>
+                </ds-stack>
+              </ds-stack>
+            }
+          </ds-grid>
+        </ds-stack>
+      </ds-box>
+
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="5">
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Pigment blend</ds-text>
+            <ds-text variant="caption">
+              How overlapping brand pigment mixes. Light: {{ blend.light }} · Dark: {{ blend.dark }}
+            </ds-text>
+          </ds-stack>
+          <ds-flex align="center" [gap]="4">
+            <div class="blend-demo">
+              <span class="blend-demo__a"></span>
+              <span class="blend-demo__b"></span>
+            </div>
+            <ds-stack [gap]="1">
+              <ds-text variant="code" tone="primary">--ds-blend-pigment</ds-text>
+              <ds-text variant="caption">Flip the theme and watch the overlap change its mind.</ds-text>
+            </ds-stack>
+          </ds-flex>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <!-- Theme -->
+  <app-doc-section
+    heading="Theme"
+    anchor="theme"
+    description="provideTheme() boots ThemeService, writes tokens onto :root, mirrors them onto Bootstrap's variables, and persists the preference."
+  >
+    <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="4">
+      <ds-stack [gap]="4">
+        <app-doc-code [code]="tokenSnippet" language="ts" />
+        <app-doc-code [code]="cssSnippet" language="scss" />
+      </ds-stack>
+
+      <ds-stack [gap]="4">
+        <app-doc-code [code]="bridgeSnippet" language="ts" />
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+          <ds-stack [gap]="4">
+            <ds-flex justify="between" align="center" [gap]="3" [wrap]="'wrap'">
+              <ds-stack [gap]="1">
+                <ds-text variant="label">Active mode</ds-text>
+                <ds-text variant="code" tone="primary">{{ mode() }}</ds-text>
+              </ds-stack>
+              <ds-button variant="secondary" size="sm" iconStart="settings" (clicked)="toggleTheme()">
+                Toggle
+              </ds-button>
+            </ds-flex>
+            <ds-text variant="bodySm" tone="muted">
+              The mode is stored under <ds-text variant="code" [as]="'code'" [inline]="true">paint-theme-mode</ds-text>
+              and falls back to the OS preference on first visit.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+      </ds-stack>
+    </ds-grid>
+  </app-doc-section>
+</ds-stack>

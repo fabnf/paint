@@ -1,0 +1,154 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="window"
+    title="Popover"
+    lede="A small, non-modal panel anchored to the button that opened it. Real content without taking the page hostage: no backdrop, no scroll lock, no inert — the page stays alive, and the popover steps aside the moment attention leaves it."
+    builtOn="ds-button + an anchored role=&quot;dialog&quot;"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="An anchored panel"
+    anchor="anatomy"
+    description="A trigger, a panel, and whatever the panel needs to hold. On open, focus moves in; Escape puts it back on the trigger; clicking elsewhere simply closes it."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-flex [gap]="3" align="center" [wrap]="'wrap'">
+        <ds-popover label="Filters" icon="filter" title="Filter invoices" [dismissible]="true">
+          <ds-stack [gap]="3">
+            <ds-form-field label="Status">
+              <ds-select [options]="statuses" [(value)]="status" placeholder="Any status" />
+            </ds-form-field>
+            <ds-switch label="Overdue only" [(checked)]="overdueOnly" />
+            <ds-button size="sm" (clicked)="apply()">Apply</ds-button>
+          </ds-stack>
+        </ds-popover>
+
+        <ds-popover label="Legend" icon="info" title="What the colours mean" [width]="280">
+          <ds-stack [gap]="2">
+            <ds-flex [gap]="2" align="center">
+              <ds-badge tone="success" [dot]="true">Paid</ds-badge>
+              <ds-text variant="bodySm" tone="muted">settled in full</ds-text>
+            </ds-flex>
+            <ds-flex [gap]="2" align="center">
+              <ds-badge tone="warning" [dot]="true">Sent</ds-badge>
+              <ds-text variant="bodySm" tone="muted">waiting on the client</ds-text>
+            </ds-flex>
+            <ds-flex [gap]="2" align="center">
+              <ds-badge tone="danger" [dot]="true">Overdue</ds-badge>
+              <ds-text variant="bodySm" tone="muted">past its date</ds-text>
+            </ds-flex>
+          </ds-stack>
+        </ds-popover>
+
+        <ds-popover label="Align end" align="end" [caret]="true" [width]="240">
+          <ds-text variant="bodySm">
+            The panel lines up with the trigger's trailing edge — for a trigger that sits at the
+            end of a toolbar.
+          </ds-text>
+        </ds-popover>
+      </ds-flex>
+
+      @if (applied()) {
+        <ds-text variant="bodySm" tone="muted" class="d-block mt-3">{{ applied() }}</ds-text>
+      }
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Where focus goes"
+    anchor="focus"
+    description="The Dialog's reasoning, without the Dialog's lockdown. By default focus lands on the panel itself, so its name is announced before its controls are read. A panel that exists to be typed into marks the control with dsPopoverAutofocus."
+  >
+    <app-doc-example code="{{ autofocusSnippet }}">
+      <ds-flex [gap]="3" align="center" [wrap]="'wrap'">
+        <ds-popover label="Rename" icon="edit" title="Rename project">
+          <ds-stack [gap]="3">
+            <ds-input label="Project name" value="Mural" dsPopoverAutofocus />
+            <ds-button size="sm">Save</ds-button>
+          </ds-stack>
+        </ds-popover>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Non-modal, and what that buys"
+    anchor="dismissal"
+    description="The dismiss contract is the Menu's, because the posture is the Menu's: the popover is an aside, not a conversation."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Escape</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Closes the panel and returns focus to the trigger — the user is exactly where they
+            were before they asked.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Click outside</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Closes the panel and lets the click land. No backdrop means no wasted first click.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Tab, past the end</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Tab is never held. Tabbing past the last control leaves the panel and closes it behind
+            itself, exactly as if it were part of the page.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Popover, menu or dialog?"
+    anchor="or-dialog"
+    description="Three overlays, three postures."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-menu&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A list of actions, one of which will be picked. Arrow keys walk it; choosing closes it.
+            If the content is not a list of verbs, it is not a menu.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-popover&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            An aside with real content — a filter form, a legend, a confirm-in-place. Non-modal:
+            the page stays interactive, and leaving is dismissing.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-dialog&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A conversation the page must wait for. Backdrop, scroll lock, focus trap, inert page —
+            the full apparatus, earned only when the answer is required.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and slots of <ds-popover>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" label="Popover slots" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

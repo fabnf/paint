@@ -1,0 +1,126 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="radio"
+    title="Radio"
+    lede="The one-of-many atom. Radios that share a name are a group in the browser's eyes — one tab stop, arrows to move and select, only the selected one tabbable. That is the entire keyboard pattern, and it is not Paint's code."
+    builtOn=".form-check / .form-check-input"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A group, not a pile"
+    anchor="group"
+    description="Wrap the set in a fieldset with a legend (or role=&quot;radiogroup&quot; with a label). Without it, a screen reader reads three options and never says what the question was."
+  >
+    <app-doc-example code="{{ groupSnippet }}">
+      <fieldset class="demo-fieldset demo-form">
+        <legend><ds-text variant="label" [as]="'span'">Deploy target</ds-text></legend>
+        <ds-stack [gap]="3">
+          <ds-radio name="target" value="staging" label="Staging" [(groupValue)]="target" />
+          <ds-radio
+            name="target"
+            value="prod"
+            label="Production"
+            hint="Visible to customers immediately."
+            [(groupValue)]="target"
+          />
+          <ds-radio
+            name="target"
+            value="archive"
+            label="Archive"
+            [disabled]="true"
+            [(groupValue)]="target"
+          />
+          <ds-text variant="code" tone="primary">groupValue = {{ target() }}</ds-text>
+        </ds-stack>
+      </fieldset>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">Tab once, then arrow</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          Tab moves to the group and stops on the selected radio — or the first, if nothing is
+          selected. Arrow keys move and select within it, wrapping at the ends. Disabled radios are
+          skipped. Paint implements none of this: the browser does, because these are radios.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Ids, never indexes"
+    anchor="values"
+    description="A radio stands for a value, so a reordered or refetched list keeps its selection."
+  >
+    <app-doc-example [plain]="true">
+      <fieldset class="demo-fieldset demo-form">
+        <legend><ds-text variant="label" [as]="'span'">Plan</ds-text></legend>
+        <ds-stack [gap]="3">
+          @for (item of plans; track item.id) {
+            <ds-radio
+              name="plan"
+              [value]="item.id"
+              [label]="item.label"
+              [hint]="item.hint"
+              [(groupValue)]="plan"
+            />
+          }
+          <ds-text variant="code" tone="primary">groupValue = {{ plan() }}</ds-text>
+        </ds-stack>
+      </fieldset>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Reactive forms"
+    anchor="forms"
+    description="Bind the same control to every radio in the group. writeValue checks the one whose value matches; selecting any of them writes that value back."
+  >
+    <app-doc-example code="{{ formsSnippet }}" language="ts">
+      <fieldset class="demo-fieldset demo-form">
+        <legend><ds-text variant="label" [as]="'span'">Delivery</ds-text></legend>
+        <ds-stack [gap]="3">
+          <ds-radio name="delivery" value="standard" label="Standard" [formControl]="deliveryControl" />
+          <ds-radio
+            name="delivery"
+            value="express"
+            label="Express"
+            hint="Arrives tomorrow."
+            [formControl]="deliveryControl"
+          />
+          <ds-text variant="code" tone="primary">control.value = {{ deliveryControl.value }}</ds-text>
+        </ds-stack>
+      </fieldset>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes and states"
+    anchor="states"
+    description="Three indicator sizes from the control scale. A disabled radio is disabled on its own; the group carries on."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-stack [gap]="3">
+          <ds-radio size="sm" name="sizes" value="sm" label="Small" />
+          <ds-radio size="md" name="sizes" value="md" label="Medium" />
+          <ds-radio size="lg" name="sizes" value="lg" label="Large" />
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-radio name="states" value="on" label="Selected" groupValue="on" />
+          <ds-radio name="states-b" value="invalid" label="Invalid" error="Pick an option." />
+          <ds-radio name="states-c" value="off" label="Disabled" [disabled]="true" />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-radio>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

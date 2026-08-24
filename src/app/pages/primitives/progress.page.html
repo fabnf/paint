@@ -1,0 +1,91 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="ruler"
+    title="Progress"
+    lede="The determinate-wait atom. A bar with a value, a name and the full ARIA set — or no value at all, which is itself a thing ARIA knows how to say."
+    builtOn=".progress / .progress-bar"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A value, a name, a number"
+    anchor="value"
+    description="The label is the bar's accessible name; the percentage is the same fact, written down. Both are optional, but a progressbar without a name is a bar a screen reader cannot introduce."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="5" class="loading-card">
+        <ds-progress label="Uploading" [value]="uploaded()" [showValue]="true" />
+        <ds-flex [gap]="3" align="center">
+          <ds-button size="sm" variant="secondary" iconStart="zap" (clicked)="run()" [loading]="running()">
+            Run
+          </ds-button>
+          <ds-text variant="code" tone="primary">value = {{ uploaded() }}</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Numbers need units"
+    anchor="value-text"
+    description="max is not always 100, and a percentage is rarely what the user asked. valueText replaces the number everywhere — on screen, and in aria-valuetext."
+  >
+    <app-doc-example code="{{ valueTextSnippet }}">
+      <ds-stack [gap]="5" class="loading-card">
+        <ds-progress
+          label="Storage"
+          [value]="usedGb()"
+          [max]="20"
+          [valueText]="storageText()"
+          [showValue]="true"
+          [tone]="storageTone()"
+        />
+        <ds-flex [gap]="2" align="center">
+          <ds-button size="sm" variant="ghost" iconStart="minus" label="Use less" (clicked)="useLess()" />
+          <ds-button size="sm" variant="ghost" iconStart="plus" label="Use more" (clicked)="useMore()" />
+          <ds-text variant="caption">The tone changes with the number; the meaning changes with it too.</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Indeterminate"
+    anchor="indeterminate"
+    description="The work is real; its end is not yet known. The bar keeps moving and drops aria-valuenow — which is precisely how ARIA says “in progress, amount unknown”. It never shows a number it does not have."
+  >
+    <app-doc-example code="{{ indeterminateSnippet }}">
+      <ds-stack [gap]="5" class="loading-card">
+        <ds-progress label="Syncing" [indeterminate]="true" />
+        <ds-progress label="Indexing" [indeterminate]="true" size="sm" tone="accent" />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Tones and sizes"
+    anchor="tones"
+    description="Three track heights, and the same seven tones as every other display atom. The track carries a border of its own, so a 2% bar is still visible on a surface that happens to match it."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="6">
+        <ds-stack [gap]="4">
+          <ds-progress label="Small" [value]="40" size="sm" [hideLabel]="true" ariaLabel="Small" />
+          <ds-progress label="Medium" [value]="62" size="md" [hideLabel]="true" ariaLabel="Medium" />
+          <ds-progress label="Large" [value]="84" size="lg" [hideLabel]="true" ariaLabel="Large" />
+        </ds-stack>
+        <ds-stack [gap]="4">
+          <ds-progress ariaLabel="Primary" [value]="70" [hideLabel]="true" tone="primary" />
+          <ds-progress ariaLabel="Success" [value]="100" [hideLabel]="true" tone="success" />
+          <ds-progress ariaLabel="Warning" [value]="88" [hideLabel]="true" tone="warning" />
+          <ds-progress ariaLabel="Danger" [value]="96" [hideLabel]="true" tone="danger" />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-progress>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

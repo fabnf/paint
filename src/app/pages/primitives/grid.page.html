@@ -1,0 +1,214 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="grid"
+    title="Grid"
+    lede="Two-dimensional layout on Bootstrap's 12-column grid. Equal tracks with cols, explicit spans with ds-grid-item, and gutters measured in space tokens."
+    builtOn=".row / .col / .g-*"
+    status="Stable"
+  />
+
+  <app-doc-section
+    heading="Playground"
+    anchor="playground"
+    description="cols sets how many equal tracks a row has. gap is a space token, not a pixel guess."
+  >
+    <ds-box background="surface" [border]="true" radius="lg">
+      <ds-flex class="control-bar" [gap]="5" [wrap]="'wrap'" align="center">
+        <ds-flex align="center" [gap]="2" [wrap]="'wrap'">
+          <ds-text variant="label" tone="muted">cols</ds-text>
+          @for (option of colOptions; track option) {
+            <ds-button
+              size="sm"
+              [variant]="cols() === option ? 'primary' : 'secondary'"
+              (clicked)="setCols(option)"
+            >
+              {{ option }}
+            </ds-button>
+          }
+        </ds-flex>
+
+        <ds-flex align="center" [gap]="2" [wrap]="'wrap'">
+          <ds-text variant="label" tone="muted">gap</ds-text>
+          @for (option of gapOptions; track option) {
+            <ds-button
+              size="sm"
+              [variant]="gap() === option ? 'primary' : 'secondary'"
+              (clicked)="setGap(option)"
+            >
+              {{ option }}
+            </ds-button>
+          }
+        </ds-flex>
+      </ds-flex>
+
+      <div class="playground__stage">
+        <ds-grid [cols]="cols()" [gap]="gap()">
+          @for (cell of cells; track cell) {
+            <div>
+              <div class="demo-block">{{ cell }}</div>
+            </div>
+          }
+        </ds-grid>
+      </div>
+
+      <div class="p-4 border-top">
+        <app-doc-code [code]="playgroundCode()" />
+      </div>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Equal tracks"
+    anchor="cols"
+    description="For card galleries and token swatches: one input, responsive at every tier."
+  >
+    <app-doc-example code="{{ colsSnippet }}" [plain]="true">
+      <ds-grid [cols]="{ base: 1, sm: 2, lg: 4 }" [gap]="4">
+        @for (cell of cells; track cell) {
+          <ds-box background="surface" [border]="true" radius="md" [padding]="4">
+            <ds-stack [gap]="1">
+              <ds-text variant="label">Card {{ cell }}</ds-text>
+              <ds-text variant="caption">1 → 2 → 4 columns</ds-text>
+            </ds-stack>
+          </ds-box>
+        }
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Explicit spans"
+    anchor="spans"
+    description="When the tracks are not equal, ds-grid-item takes a span out of twelve."
+  >
+    <app-doc-example code="{{ spanSnippet }}" [plain]="true">
+      <ds-stack [gap]="3">
+        <ds-grid [gap]="3">
+          <ds-grid-item [span]="{ base: 12, md: 8 }">
+            <div class="demo-block">span 8</div>
+          </ds-grid-item>
+          <ds-grid-item [span]="{ base: 12, md: 4 }">
+            <div class="demo-block">span 4</div>
+          </ds-grid-item>
+        </ds-grid>
+
+        <ds-grid [gap]="3">
+          @for (cell of [3, 3, 3, 3]; track $index) {
+            <ds-grid-item [span]="{ base: 6, md: 3 }">
+              <div class="demo-block">span 3</div>
+            </ds-grid-item>
+          }
+        </ds-grid>
+
+        <ds-grid [gap]="3">
+          <ds-grid-item [span]="{ base: 12, md: 6 }">
+            <div class="demo-block">span 6</div>
+          </ds-grid-item>
+          <ds-grid-item [span]="{ base: 6, md: 3 }">
+            <div class="demo-block">3</div>
+          </ds-grid-item>
+          <ds-grid-item [span]="{ base: 6, md: 3 }">
+            <div class="demo-block">3</div>
+          </ds-grid-item>
+        </ds-grid>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Offsets and order" anchor="offsets" description="Push a cell across the grid, or reorder it per breakpoint.">
+    <app-doc-example code="{{ offsetSnippet }}" [plain]="true">
+      <ds-stack [gap]="3">
+        <ds-grid [gap]="3">
+          <ds-grid-item [span]="6" [offset]="3">
+            <div class="demo-block">span 6 · offset 3</div>
+          </ds-grid-item>
+        </ds-grid>
+        <ds-grid [gap]="3">
+          <ds-grid-item [span]="4" [order]="'last'">
+            <div class="demo-block">order last</div>
+          </ds-grid-item>
+          <ds-grid-item [span]="8">
+            <div class="demo-block">renders first</div>
+          </ds-grid-item>
+        </ds-grid>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Gutters"
+    anchor="gutters"
+    description="Horizontal and vertical gutters are independent — useful when rows need more air than columns."
+  >
+    <app-doc-example code="{{ gutterSnippet }}" [plain]="true">
+      <ds-grid [cols]="3" [columnGap]="3" [rowGap]="10">
+        @for (cell of cells; track cell) {
+          <div>
+            <div class="demo-block">{{ cell }}</div>
+          </div>
+        }
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="In context"
+    anchor="context"
+    description="A real page layout: content and aside, collapsing to one column on small screens."
+  >
+    <app-doc-example code="{{ layoutSnippet }}" [plain]="true">
+      <ds-grid [gap]="6">
+        <ds-grid-item [span]="{ base: 12, lg: 8 }">
+          <ds-stack [gap]="4">
+            <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+              <ds-stack [gap]="2">
+                <ds-text variant="h4" [as]="'h3'">March report</ds-text>
+                <ds-text variant="bodySm" tone="muted">
+                  Grid handles the page skeleton; Stack and Box handle everything inside each cell.
+                </ds-text>
+              </ds-stack>
+            </ds-box>
+            <ds-grid [cols]="{ base: 1, sm: 3 }" [gap]="4">
+              @for (stat of [1, 2, 3]; track stat) {
+                <ds-box background="surface" [border]="true" radius="lg" [padding]="4">
+                  <ds-stack [gap]="1">
+                    <ds-text variant="caption" [uppercase]="true">Metric {{ stat }}</ds-text>
+                    <ds-text variant="h3" [as]="'p'">{{ stat * 42 }}</ds-text>
+                  </ds-stack>
+                </ds-box>
+              }
+            </ds-grid>
+          </ds-stack>
+        </ds-grid-item>
+
+        <ds-grid-item [span]="{ base: 12, lg: 4 }">
+          <ds-box background="primary-muted" radius="lg" [padding]="5">
+            <ds-stack [gap]="3">
+              <ds-text variant="label" tone="primary">Aside</ds-text>
+              <ds-text variant="bodySm">
+                Spans collapse to 12 below lg, so the aside drops beneath the content.
+              </ds-text>
+              <ds-button variant="primary" size="sm" [fullWidth]="true" iconEnd="arrowRight">
+                Open report
+              </ds-button>
+            </ds-stack>
+          </ds-box>
+        </ds-grid-item>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-grid> and <ds-grid-item>.">
+    <ds-stack [gap]="6">
+      <ds-stack [gap]="3">
+        <ds-text variant="label" tone="muted">&lt;ds-grid&gt;</ds-text>
+        <app-doc-api-table [rows]="gridInputs" />
+      </ds-stack>
+      <ds-stack [gap]="3">
+        <ds-text variant="label" tone="muted">&lt;ds-grid-item&gt;</ds-text>
+        <app-doc-api-table [rows]="itemInputs" />
+      </ds-stack>
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

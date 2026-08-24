@@ -1,0 +1,170 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="zap"
+    title="Button"
+    lede="The action atom. Seven intents, three sizes, icon slots, a loading state and an accessible icon-only mode — wrapped around Bootstrap's .btn so the markup stays boring and the behaviour stays right."
+    builtOn=".btn / .spinner-border"
+    status="Stable"
+  />
+
+  <app-doc-section
+    heading="Variants"
+    anchor="variants"
+    description="Intent is semantic, never decorative. One primary per view; danger is reserved for destruction."
+  >
+    <app-doc-example code="{{ variantSnippet }}">
+      <ds-flex [gap]="3" [wrap]="'wrap'" align="center">
+        <ds-button variant="primary">Save changes</ds-button>
+        <ds-button variant="secondary">Cancel</ds-button>
+        <ds-button variant="outline">Duplicate</ds-button>
+        <ds-button variant="ghost">Rename</ds-button>
+        <ds-button variant="success">Approve</ds-button>
+        <ds-button variant="danger">Delete</ds-button>
+        <ds-button variant="link">Learn more</ds-button>
+      </ds-flex>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg">
+      <ds-stack [gap]="0" [divided]="true" class="p-4">
+        @for (item of variants; track item.variant) {
+          <ds-flex
+            [direction]="{ base: 'column', sm: 'row' }"
+            align="start"
+            [gap]="4"
+            class="variant-row"
+          >
+            <div class="variant-row__demo">
+              <ds-button [variant]="item.variant">{{ item.variant }}</ds-button>
+            </div>
+            <ds-stack [gap]="1">
+              <ds-text variant="code" tone="primary">variant="{{ item.variant }}"</ds-text>
+              <ds-text variant="bodySm" tone="muted">{{ item.when }}</ds-text>
+            </ds-stack>
+          </ds-flex>
+        }
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="Sizes" anchor="sizes" description="Three heights from the control scale. Icons scale with the control.">
+    <app-doc-example code="{{ sizeSnippet }}">
+      <ds-flex [gap]="3" [wrap]="'wrap'" align="center">
+        <ds-button size="sm" iconStart="plus">Small</ds-button>
+        <ds-button size="md" iconStart="plus">Medium</ds-button>
+        <ds-button size="lg" iconStart="plus">Large</ds-button>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Icons"
+    anchor="icons"
+    description="Lead with an icon for creation, trail with one for navigation. An icon-only button still needs a name — pass label."
+  >
+    <app-doc-example code="{{ iconSnippet }}">
+      <ds-flex [gap]="3" [wrap]="'wrap'" align="center">
+        <ds-button iconStart="plus">New file</ds-button>
+        <ds-button variant="secondary" iconEnd="arrowRight">Continue</ds-button>
+        <ds-button variant="ghost" iconStart="settings" label="Settings" />
+        <ds-button variant="ghost" iconStart="search" label="Search" />
+        <ds-button variant="secondary" iconStart="copy" label="Copy" />
+        <ds-button variant="danger" iconStart="close" label="Delete" />
+        <ds-button variant="primary" iconStart="check" [pill]="true">Pill</ds-button>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="States"
+    anchor="states"
+    description="Loading keeps the label in place so the control never resizes mid-action. Try it."
+  >
+    <app-doc-example code="{{ stateSnippet }}">
+      <ds-flex [gap]="3" [wrap]="'wrap'" align="center">
+        <ds-button [loading]="saving()" (clicked)="save()" iconStart="check">Save changes</ds-button>
+        <ds-button variant="secondary" [disabled]="true">Unavailable</ds-button>
+        <ds-button variant="ghost" [active]="true" [ariaPressed]="true">Selected</ds-button>
+        <ds-button variant="danger" [loading]="true">Deleting</ds-button>
+        @if (saved()) {
+          <ds-text variant="label" tone="success">Saved ✓</ds-text>
+        }
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Buttons vs links"
+    anchor="links"
+    description="Semantics follow behaviour: actions render <button>, navigation renders <a class=&quot;btn&quot;>. The primitive decides from the inputs you pass."
+  >
+    <app-doc-example code="{{ linkSnippet }}">
+      <ds-flex [gap]="3" [wrap]="'wrap'" align="center">
+        <ds-button (clicked)="save()">Action (button)</ds-button>
+        <ds-button variant="link" link="/foundations" iconEnd="arrowRight">Foundations (router)</ds-button>
+        <ds-button
+          variant="secondary"
+          href="https://getbootstrap.com"
+          target="_blank"
+          iconEnd="externalLink"
+        >
+          Bootstrap (href)
+        </ds-button>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Full width" anchor="full-width" description="For narrow columns, drawers and mobile sheets.">
+    <app-doc-example code="{{ fullWidthSnippet }}">
+      <ds-box [padding]="0" class="mx-auto full-width-demo">
+        <ds-stack [gap]="3">
+          <ds-button variant="primary" [fullWidth]="true" iconStart="check">Confirm and continue</ds-button>
+          <ds-button variant="ghost" [fullWidth]="true">Not now</ds-button>
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Anatomy"
+    anchor="anatomy"
+    description="What Paint adds on top of Bootstrap's .btn."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Tokens</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Every .btn-* variant is re-pointed at --ds-color-* through Bootstrap's --bs-btn-* API, so
+            buttons re-tint with the theme instead of being recompiled.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Accessibility</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Real focus rings from --ds-color-focus-ring, aria-busy while loading, aria-disabled on
+            links, and a required label for icon-only buttons.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Extension</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The ghost variant does not exist in Bootstrap — Paint generates it with Bootstrap's own
+            button-variant mixin, so it inherits identical states.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-button>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

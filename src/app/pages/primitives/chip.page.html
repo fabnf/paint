@@ -1,0 +1,119 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="tag"
+    title="Chip"
+    lede="The value atom. A label standing for something the user put there — a tag, a filter, a recipient — which is exactly why it can be taken away again. A badge is the system's; a chip is theirs."
+    builtOn="Paint tones + a real <button>"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Static chips"
+    anchor="static"
+    description="A plain span. Not focusable, not clickable, and carrying no promise that anything happens if you try."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+          @for (tone of tones; track tone) {
+            <ds-chip [tone]="tone">{{ tone }}</ds-chip>
+          }
+        </ds-flex>
+        <ds-flex [gap]="3" [wrap]="'wrap'" align="center">
+          <ds-chip tone="primary" icon="palette">Brand</ds-chip>
+          <ds-chip tone="accent" variant="solid" size="md">Tokens</ds-chip>
+          <ds-chip tone="info" variant="outline" size="md" icon="book">Docs</ds-chip>
+          <ds-chip [disabled]="true" icon="minus">Frozen</ds-chip>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Dismissible"
+    anchor="dismissible"
+    description="removable grows a real button inside the chip. One tab stop, named after what it removes — a row of chips must not be a row of buttons all called “Remove”."
+  >
+    <app-doc-example code="{{ removableSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-flex [gap]="2" [wrap]="'wrap'" align="center" class="chip-row">
+          @for (tag of tags(); track tag) {
+            <ds-chip
+              tone="primary"
+              [removable]="true"
+              [removeLabel]="'Remove ' + tag"
+              (removed)="remove(tag)"
+            >
+              {{ tag }}
+            </ds-chip>
+          } @empty {
+            <ds-text variant="caption">Every tag removed.</ds-text>
+          }
+        </ds-flex>
+        <ds-flex [gap]="3" align="center">
+          <ds-button size="sm" variant="secondary" iconStart="refresh" (clicked)="reset()">
+            Reset
+          </ds-button>
+          <ds-text variant="code" tone="primary">tags = [{{ tags().join(', ') }}]</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">The chip never removes itself</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          <code>removed</code> is a request. The list that owns the chip decides whether it
+          disappears — which is what lets a removal be undone, confirmed, or rejected by the server
+          without the UI having already lied about it.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Leading content"
+    anchor="leading"
+    description="An icon input for the common case, and a slot for everything else. An avatar inside a chip is decorative: the chip's text already names the person."
+  >
+    <app-doc-example code="{{ leadingSnippet }}">
+      <ds-flex [gap]="3" [wrap]="'wrap'" align="center">
+        @for (person of recipients(); track person) {
+          <ds-chip
+            size="md"
+            [removable]="true"
+            [removeLabel]="'Remove ' + person"
+            (removed)="removeRecipient(person)"
+          >
+            <ds-avatar dsChipLeading [name]="person" size="xs" [decorative]="true" />
+            {{ person }}
+          </ds-chip>
+        } @empty {
+          <ds-text variant="caption">No recipients.</ds-text>
+        }
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Inside a widget that owns the keyboard"
+    anchor="tabbable"
+    description="Paint's own Select puts chips in its trigger. The combobox owns the arrow keys and Backspace, so the remove buttons step out of the tab order rather than add five stops between the field and the next control."
+  >
+    <app-doc-example code="{{ tabbableSnippet }}" language="html">
+      <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+        <ds-chip [removable]="true" [removeTabbable]="false" removeLabel="Remove Ada">Ada</ds-chip>
+        <ds-chip [removable]="true" [removeTabbable]="false" removeLabel="Remove Grace">Grace</ds-chip>
+        <ds-text variant="caption">Tab skips these; Backspace unpicks the last one.</ds-text>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-chip>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

@@ -1,0 +1,286 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="table"
+    title="DataTable"
+    lede="Rows of record, under control. Bootstrap's table plus the parts a real one needs: typed columns, sorting, selection with an indeterminate master, projected cell templates, a skeleton and an empty state."
+    builtOn=".table / .table-responsive / .form-check-input / .placeholder"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="The full thing"
+    anchor="overview"
+    description="Sort a column, select rows, search, open a row menu. Everything here is the component — no page-level table code."
+  >
+    <ds-stack [gap]="4">
+      <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+        <input
+          class="form-control demo-field"
+          type="search"
+          placeholder="Filter by project or owner…"
+          aria-label="Filter invoices"
+          [value]="query()"
+          (input)="setQuery($any($event.target).value)"
+        />
+        <ds-button
+          variant="secondary"
+          size="sm"
+          [iconStart]="density() === 'compact' ? 'rows' : 'list'"
+          (clicked)="density.set(density() === 'compact' ? 'comfortable' : 'compact')"
+        >
+          {{ density() === 'compact' ? 'Comfortable' : 'Compact' }}
+        </ds-button>
+        <ds-button variant="ghost" size="sm" iconStart="refresh" (clicked)="toggleLoading()">
+          Reload
+        </ds-button>
+      </ds-flex>
+
+      <ds-data-table
+        caption="Invoices"
+        [columns]="columns"
+        [rows]="filtered()"
+        [rowKey]="rowKey"
+        [rowLabel]="rowLabel"
+        [selectable]="true"
+        [(selection)]="selection"
+        [(sort)]="sort"
+        [density]="density()"
+        [loading]="loading()"
+        [clickable]="true"
+        (rowClick)="open($event)"
+        [empty]="{
+          icon: 'search',
+          title: 'No invoices match',
+          description: 'Try a different project or owner.',
+        }"
+      >
+        <ds-flex dsTableActions [gap]="2" align="center">
+          @if (selection().length) {
+            <ds-text variant="code" tone="primary">${{ selectedTotal().toLocaleString() }}</ds-text>
+            <ds-button variant="ghost" size="sm" iconStart="close" (clicked)="clearSelection()">
+              Clear
+            </ds-button>
+          }
+          <ds-menu
+            label="Export"
+            variant="secondary"
+            size="sm"
+            icon="download"
+            align="end"
+            [entries]="[
+              { id: 'csv', label: 'Export as CSV', icon: 'download' },
+              { id: 'json', label: 'Export as JSON', icon: 'code' },
+            ]"
+          />
+        </ds-flex>
+
+        <!-- Status: a tone, not a string -->
+        <ng-template dsCell="status" [dsCellRows]="invoices" let-row>
+          <span
+            class="badge status"
+            [class.status--paid]="row.status === 'Paid'"
+            [class.status--due]="row.status === 'Due'"
+            [class.status--overdue]="row.status === 'Overdue'"
+            [class.status--draft]="row.status === 'Draft'"
+          >
+            {{ row.status }}
+          </span>
+        </ng-template>
+
+        <!-- Owner: avatar + name -->
+        <ng-template dsCell="owner" [dsCellRows]="invoices" let-row>
+          <ds-flex align="center" [gap]="2">
+            <!-- Decorative: the owner's name follows it -->
+            <span class="avatar" aria-hidden="true">{{ row.owner.charAt(0) }}</span>
+            <ds-text variant="bodySm" [as]="'span'">{{ row.owner }}</ds-text>
+          </ds-flex>
+        </ng-template>
+
+        <!-- Actions: a Menu per row -->
+        <ng-template dsCell="actions" [dsCellRows]="invoices" let-row>
+          <ds-menu
+            label="Invoice actions"
+            variant="ghost"
+            size="sm"
+            icon="more"
+            [iconOnly]="true"
+            [caret]="false"
+            align="end"
+            [entries]="rowEntries"
+            (itemSelect)="onRowAction($event, row)"
+          />
+        </ng-template>
+
+        <ds-flex dsTableFooter justify="between" align="center" [gap]="3" [wrap]="'wrap'">
+          <ds-text variant="caption">
+            {{ filtered().length }} of {{ invoices.length }} invoices
+            @if (selection().length) {
+              · {{ selection().length }} selected
+            }
+          </ds-text>
+          <ds-flex [gap]="1">
+            <ds-button variant="ghost" size="sm" iconStart="chevronLeft" label="Previous page" [disabled]="true" />
+            <ds-button variant="ghost" size="sm" iconStart="chevronRight" label="Next page" />
+          </ds-flex>
+        </ds-flex>
+      </ds-data-table>
+    </ds-stack>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Columns"
+    anchor="columns"
+    description="A column is data, not markup: key, header, alignment, and the two functions that make it behave — format and sortValue."
+  >
+    <app-doc-code [code]="basicSnippet" language="ts" />
+    <app-doc-code [code]="templateSnippet" />
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sorting"
+    anchor="sorting"
+    description="Click a sortable header: ascending, descending, then off — a sort is always reversible. Sorting is internal until you ask for manualSort."
+  >
+    <app-doc-example code="{{ sortSnippet }}" [plain]="true">
+      <ds-stack [gap]="3">
+        <ds-text variant="caption">
+          sort = {{ sort() ? sort()!.key + ' · ' + sort()!.direction : 'none' }}
+        </ds-text>
+        <ds-data-table [columns]="simpleColumns" [rows]="invoices" [rowKey]="rowKey" [(sort)]="sort" />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Selection"
+    anchor="selection"
+    description="Selection is a list of row keys, so it survives sorting, filtering and refetching. The master checkbox goes indeterminate on a partial selection."
+  >
+    <app-doc-example code="{{ selectionSnippet }}" [plain]="true">
+      <ds-stack [gap]="3">
+        <ds-text variant="code" tone="primary">selection = [{{ selection().join(', ') }}]</ds-text>
+        <ds-data-table
+          caption="Pick a few"
+          [columns]="simpleColumns"
+          [rows]="invoices"
+          [rowKey]="rowKey"
+          [rowLabel]="rowLabel"
+          [selectable]="true"
+          [(selection)]="selection"
+          density="compact"
+        />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Loading & empty"
+    anchor="states"
+    description="The skeleton matches the column shape, so nothing jumps when data lands. The empty state is hatched paper, not a blank slab."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, xl: 2 }" [gap]="5">
+        <ds-stack [gap]="2">
+          <ds-text variant="caption" [uppercase]="true">loading</ds-text>
+          <ds-data-table [columns]="simpleColumns" [rows]="[]" [loading]="true" [loadingRows]="4" />
+        </ds-stack>
+        <ds-stack [gap]="2">
+          <ds-text variant="caption" [uppercase]="true">empty</ds-text>
+          <ds-data-table
+            [columns]="simpleColumns"
+            [rows]="[]"
+            [empty]="{
+              icon: 'filter',
+              title: 'No invoices yet',
+              description: 'Invoices appear here once a project is billed.',
+            }"
+          >
+            <ds-button dsTableEmptyAction variant="primary" size="sm" iconStart="plus">
+              New invoice
+            </ds-button>
+          </ds-data-table>
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sticky header"
+    anchor="sticky"
+    description="Set a maxHeight and the header pins while the body scrolls."
+  >
+    <app-doc-example [plain]="true">
+      <ds-data-table
+        [columns]="simpleColumns"
+        [rows]="invoices"
+        [rowKey]="rowKey"
+        [stickyHeader]="true"
+        maxHeight="13rem"
+        density="compact"
+      />
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Accessibility"
+    anchor="accessibility"
+    description="Tables are where ARIA goes wrong most often, so this one stays close to the native semantics."
+  >
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3" [divided]="true">
+        <ds-stack [gap]="1">
+          <ds-text variant="label">A plain table, named</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            No grid roles, no aria-rowcount, no aria-selected on rows — all of which are invalid on a
+            plain table. The caption names it, and every column has a name even when its header is
+            blank.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Sorting is spoken</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The sorted column carries aria-sort, and a live region says “Sorted by Amount,
+            descending” — the arrow alone is invisible to a screen reader.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Selection names its row</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Pass [rowLabel] and each checkbox is announced as “Select Mural — March”. Select-all
+            announces how many rows it took.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Activatable rows work without a pointer</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            With [clickable], rows are focusable and answer Enter and Space. Where a row leads
+            somewhere, a link in the first cell is still the better pattern.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Loading is not silent</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The skeleton is aria-hidden, the table is aria-busy, and the live region says “Loading
+            rows”. The empty state is a status, so it announces itself when it appears.
+          </ds-text>
+        </ds-stack>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and slots of <ds-data-table>.">
+    <ds-stack [gap]="6">
+      <app-doc-api-table [rows]="tableApi" />
+      <app-doc-api-table [rows]="tableOutputs" nameHeading="Output" />
+      <ds-stack [gap]="3">
+        <ds-text variant="label" tone="muted">DataTableColumn</ds-text>
+        <app-doc-api-table [rows]="columnApi" nameHeading="Field" />
+      </ds-stack>
+      <ds-stack [gap]="3">
+        <ds-text variant="label" tone="muted">Slots</ds-text>
+        <app-doc-api-table [rows]="slots" nameHeading="Slot" />
+      </ds-stack>
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

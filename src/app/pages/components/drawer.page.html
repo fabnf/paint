@@ -1,0 +1,172 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="window"
+    title="Drawer"
+    lede="A page's margin note: the side-anchored sibling of Dialog, for detail that belongs next to a list rather than on top of it. The modal machinery is the Dialog's, verbatim — focus trap, inert page, scroll lock, Escape, backdrop, focus restore — on Bootstrap's offcanvas."
+    builtOn=".offcanvas + .modal-backdrop + the Dialog's machinery"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Detail, from a row"
+    anchor="detail"
+    description="The canonical job: click an invoice, read the whole of it, act on it — without losing the list. Closing restores focus to the row that opened it, so Escape is an undo for attention, not a teleport. Mark one paid and watch the table learn."
+  >
+    <app-doc-example code="{{ detailSnippet }}">
+      <ds-data-table
+        caption="Invoices"
+        [columns]="columns"
+        [rows]="invoices()"
+        [rowKey]="rowKey"
+        [rowLabel]="rowLabel"
+        [clickable]="true"
+        (rowClick)="openDetail($event)"
+      />
+
+      <ds-drawer
+        [(open)]="detailOpen"
+        [title]="selected()?.id ?? ''"
+        description="Invoice detail"
+        icon="file"
+      >
+        @if (selected(); as invoice) {
+          <ds-stack [gap]="4">
+            <ds-flex [gap]="2" align="center">
+              <ds-badge [tone]="statusTone(invoice.status)">{{ invoice.status }}</ds-badge>
+              <ds-text variant="bodySm" tone="muted">issued {{ invoice.issued }}</ds-text>
+            </ds-flex>
+
+            <ds-stack [gap]="3">
+              <ds-flex justify="between" [gap]="3">
+                <ds-text variant="bodySm" tone="muted">Project</ds-text>
+                <ds-text variant="bodySm">{{ invoice.project }}</ds-text>
+              </ds-flex>
+              <ds-divider [decorative]="true" [spacing]="0" />
+              <ds-flex justify="between" [gap]="3">
+                <ds-text variant="bodySm" tone="muted">Owner</ds-text>
+                <ds-text variant="bodySm">{{ invoice.owner }}</ds-text>
+              </ds-flex>
+              <ds-divider [decorative]="true" [spacing]="0" />
+              <ds-flex justify="between" [gap]="3">
+                <ds-text variant="bodySm" tone="muted">Amount</ds-text>
+                <ds-text variant="bodySm" class="fw-semibold">{{ invoice.amount }}</ds-text>
+              </ds-flex>
+            </ds-stack>
+
+            <ds-alert tone="info" [showIcon]="true">
+              Everything here is the row, in full — the table shows what fits, the drawer shows
+              what is true.
+            </ds-alert>
+          </ds-stack>
+        }
+
+        <ds-flex dsDrawerActions [gap]="2" justify="end">
+          <ds-button variant="ghost" (clicked)="detailOpen.set(false)">Close</ds-button>
+          @if (selected()?.status !== 'Paid') {
+            <ds-button variant="primary" iconStart="check" (clicked)="markPaid()">
+              Mark paid
+            </ds-button>
+          }
+        </ds-flex>
+      </ds-drawer>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Edges and sizes"
+    anchor="variants"
+    description="end is where detail panes live; start is for navigation-ish panels. Four widths, and never wider than the viewport leaves — a drawer that swallows the page should have been a page."
+  >
+    <app-doc-example [plain]="true">
+      <ds-flex [gap]="2" [wrap]="'wrap'">
+        <ds-button variant="secondary" size="sm" (clicked)="openVariant('end', 'sm')">end · sm</ds-button>
+        <ds-button variant="secondary" size="sm" (clicked)="openVariant('end', 'md')">end · md</ds-button>
+        <ds-button variant="secondary" size="sm" (clicked)="openVariant('end', 'lg')">end · lg</ds-button>
+        <ds-button variant="secondary" size="sm" (clicked)="openVariant('end', 'xl')">end · xl</ds-button>
+        <ds-button variant="secondary" size="sm" (clicked)="openVariant('start', 'md')">start · md</ds-button>
+      </ds-flex>
+
+      <ds-drawer
+        [(open)]="variantOpen"
+        [title]="position() + ' · ' + size()"
+        description="Escape, the backdrop or the button — any way out works."
+        [position]="position()"
+        [size]="size()"
+      >
+        <ds-text tone="muted">
+          The rest of the page is inert and scroll-locked while this is open — browse, Tab and
+          find-in-page all stay inside, exactly as in a Dialog.
+        </ds-text>
+      </ds-drawer>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="A drawer to type into"
+    anchor="form"
+    description="The default focus target is the panel itself, so its name is announced before its controls are read. A drawer that exists to be typed into marks the field with dsDrawerAutofocus — the Dialog's convention, renamed."
+  >
+    <app-doc-example code="{{ formSnippet }}">
+      <ds-flex [gap]="3" align="center">
+        <ds-button variant="secondary" iconStart="edit" (clicked)="draftName.set(savedName()); formOpen.set(true)">
+          Rename project
+        </ds-button>
+        <ds-text variant="code" tone="primary">{{ savedName() }}</ds-text>
+      </ds-flex>
+
+      <ds-drawer [(open)]="formOpen" title="Rename project" size="sm">
+        <ds-input label="Project name" dsDrawerAutofocus [(value)]="draftName" />
+
+        <ds-flex dsDrawerActions [gap]="2" justify="end">
+          <ds-button variant="ghost" (clicked)="formOpen.set(false)">Cancel</ds-button>
+          <ds-button variant="primary" (clicked)="saveForm()">Save</ds-button>
+        </ds-flex>
+      </ds-drawer>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Drawer, dialog or column?"
+    anchor="or-dialog"
+    description="Three shapes for detail, one question: does the user leave, pause, or stay?"
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-dialog&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A question the page must wait for: confirm, decide, name. Centered, because it is the
+            only thing that matters until it is answered.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-drawer&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Detail about something on the page — a row, a setting, a long form. Side-anchored so the
+            context stays visible, modal so the context stays put.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">A column</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A panel that is always open, resizable, remembered, is not an overlay — it is layout.
+            Build it with ds-grid and save the backdrop for things that close.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and slots of <ds-drawer>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" label="Drawer slots" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

@@ -1,0 +1,258 @@
+.page {
+  max-width: 78rem;
+}
+
+/* ———————————————————————— Hero ———————————————————————— */
+.hero {
+  position: relative;
+  padding-block: var(--ds-space-4) var(--ds-space-8);
+
+  /* A wash of wet pigment behind the headline. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -10rem;
+    inset-inline-start: -14rem;
+    width: 38rem;
+    height: 38rem;
+    border-radius: var(--ds-radius-full);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--ds-color-accent) 16%, transparent),
+      transparent 68%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 2rem;
+    inset-inline-start: 18rem;
+    width: 26rem;
+    height: 26rem;
+    border-radius: var(--ds-radius-full);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--ds-color-primary) 18%, transparent),
+      transparent 65%
+    );
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  font-size: var(--ds-font-size-xs);
+  letter-spacing: var(--ds-letter-spacing-wide);
+  color: var(--ds-color-on-accent);
+  background: var(--ds-color-accent);
+  border-radius: var(--ds-radius-full);
+  padding-inline: var(--ds-space-2_5);
+}
+
+.hero__badge--muted {
+  color: var(--ds-color-text-muted);
+  background: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+}
+
+.hero__title {
+  font-size: clamp(3rem, 7vw, 5rem);
+}
+
+.hero__lede {
+  max-width: 46ch;
+}
+
+.hero__stats {
+  padding-top: var(--ds-space-5);
+  border-top: 1px solid var(--ds-color-border);
+}
+
+.hero__stat {
+  /* Numbers are brand moments: ink them with the mix. */
+  background: var(--ds-gradient-brand);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* ———————————————————————— Stage ———————————————————————— */
+.stage {
+  position: relative;
+  padding-block-end: 5.5rem;
+}
+
+.stage__blob {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--ds-space-6);
+  min-height: 19rem;
+  padding: var(--ds-space-6);
+  border-radius: var(--ds-radius-2xl) var(--ds-radius-2xl) var(--ds-radius-2xl) 30%;
+  background-image: var(--ds-gradient-brand);
+  box-shadow: var(--ds-shadow-glow);
+  color: #fff;
+  rotate: -1.5deg;
+}
+
+.stage__mark {
+  /* The mono mark inherits currentColor: white paint on wet brand. */
+  color: #fff;
+}
+
+.stage__caption {
+  color: rgb(255 255 255 / 75%);
+  text-transform: uppercase;
+  letter-spacing: var(--ds-letter-spacing-wider);
+}
+
+.stage__swatches {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1_5);
+}
+
+.stage__swatch {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--ds-radius-full);
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 45%);
+}
+
+.stage__card {
+  position: absolute;
+  inset-inline: var(--ds-space-5) var(--ds-space-8);
+  inset-block-end: 1rem;
+  rotate: 1deg;
+}
+
+.stage__note {
+  position: absolute;
+  inset-block-end: -1.25rem;
+  inset-inline-start: var(--ds-space-6);
+}
+
+@media (max-width: 991.98px) {
+  .stage {
+    padding-block-end: 4.5rem;
+  }
+
+  .stage__blob {
+    min-height: 14rem;
+  }
+}
+
+/* ———————————————————————— Cards ———————————————————————— */
+.card-link {
+  display: block;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--ds-radius-lg);
+
+  ds-box {
+    height: 100%;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      translate 160ms ease;
+  }
+
+  &:hover ds-box {
+    border-color: color-mix(in srgb, var(--ds-color-primary) 50%, var(--ds-color-border));
+    box-shadow: var(--ds-shadow-md);
+    translate: 0 -2px;
+  }
+
+  &:hover .card-link__arrow {
+    color: var(--ds-color-primary);
+    translate: 3px 0;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ds-color-focus-ring);
+    outline-offset: 3px;
+  }
+}
+
+.card-link__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-color-primary);
+  background: var(--ds-color-primary-muted);
+  flex-shrink: 0;
+}
+
+.card-link--tight .card-link__icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--ds-radius-sm);
+}
+
+/* The new layer wears the brand mix. */
+.card-link__icon--new {
+  color: #fff;
+  background: var(--ds-gradient-brand);
+}
+
+.card-link__arrow {
+  color: var(--ds-color-text-subtle);
+  transition:
+    translate 160ms ease,
+    color 160ms ease;
+}
+
+.card-link__meta {
+  font-size: 0.6875rem;
+}
+
+/* ———————————————————————— Layers ———————————————————————— */
+.layer-card {
+  height: 100%;
+}
+
+.layer-card--active {
+  border-color: color-mix(in srgb, var(--ds-color-primary) 45%, var(--ds-color-border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ds-color-primary) 28%, transparent);
+}
+
+.layer-card__status--now {
+  color: #fff;
+  background: var(--ds-gradient-brand);
+}
+
+.layer-card__status--done {
+  color: var(--ds-color-success);
+  background: var(--ds-color-success-muted);
+}
+
+.layer-card__status--next {
+  color: var(--ds-color-text-muted);
+  background: var(--ds-color-surface-sunken);
+  border: 1px solid var(--ds-color-border);
+}
+
+.layer-card__chip {
+  color: var(--ds-color-text-muted);
+  background: var(--ds-color-surface-sunken);
+  border: 1px solid var(--ds-color-border);
+  font-weight: var(--ds-font-weight-regular);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-link ds-box,
+  .card-link__arrow {
+    transition: none;
+  }
+}

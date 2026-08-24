@@ -1,0 +1,126 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="columns"
+    title="Board"
+    lede="Columns, cards, and the two ways a card travels: drag it, or grab it with Space and steer with the arrows — this board was never mouse-only. The host owns the data; the board emits moves and opens, and Paint detail means a Drawer, not a bespoke modal."
+    builtOn="ds-badge + ds-avatar + tones + the Drawer for detail"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A small release board"
+    anchor="board"
+    description="Drag a card to another lane — or focus one, press Space, and walk it with the arrows; every step is announced. Click (or Enter) opens the card into a ds-drawer, where the same host-owned update powers a move-to-Done button. The Done lane starts honestly empty, and takes cards both ways."
+  >
+    <app-doc-example code="{{ boardSnippet }}">
+      <ds-stack [gap]="3">
+        <ds-board
+          [columns]="columns()"
+          label="Release board"
+          (cardMove)="apply($event)"
+          (cardOpen)="open($event)"
+        />
+        @if (lastMove()) {
+          <ds-text variant="code" tone="primary">(cardMove) → {{ lastMove() }}</ds-text>
+        }
+      </ds-stack>
+    </app-doc-example>
+
+    <ds-drawer
+      [(open)]="detailOpen"
+      [title]="selected()?.title ?? ''"
+      [description]="selectedColumn()?.label ?? ''"
+      icon="columns"
+      size="sm"
+    >
+      @if (selected(); as card) {
+        <ds-stack [gap]="4">
+          <ds-flex [gap]="2" align="center">
+            @if (card.badge) {
+              <ds-badge [tone]="card.badgeTone ?? 'neutral'">{{ card.badge }}</ds-badge>
+            }
+            @if (card.tone) {
+              <ds-badge [tone]="card.tone" variant="outline">{{ card.tone }}</ds-badge>
+            }
+          </ds-flex>
+
+          <ds-stack [gap]="3">
+            <ds-flex justify="between" [gap]="3">
+              <ds-text variant="bodySm" tone="muted">Owner</ds-text>
+              <ds-text variant="bodySm">{{ card.data?.owner }}</ds-text>
+            </ds-flex>
+            <ds-divider [decorative]="true" [spacing]="0" />
+            <ds-flex justify="between" [gap]="3">
+              <ds-text variant="bodySm" tone="muted">Estimate</ds-text>
+              <ds-text variant="bodySm">{{ card.data?.estimate }}</ds-text>
+            </ds-flex>
+            <ds-divider [decorative]="true" [spacing]="0" />
+            <ds-text variant="bodySm" tone="muted">{{ card.data?.notes }}</ds-text>
+          </ds-stack>
+        </ds-stack>
+      }
+
+      <ds-flex dsDrawerActions [gap]="2" justify="end">
+        <ds-button variant="ghost" (clicked)="detailOpen.set(false)">Close</ds-button>
+        @if (selectedColumn()?.id !== 'done') {
+          <ds-button variant="primary" iconStart="check" (clicked)="moveSelectedTo('done'); detailOpen.set(false)">
+            Move to Done
+          </ds-button>
+        }
+      </ds-flex>
+    </ds-drawer>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The keyboard is a first citizen"
+    anchor="keyboard"
+    description="The grab-with-Space protocol, narrated: grabbing, every step (Moved to In progress, position 1 of 2), the edges (Already at the top), the drop. Focus follows the card into its new lane, still grabbed, so a journey is one grab and many arrows."
+  >
+    <app-doc-code [code]="keyboardSnippet" language="text" />
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Who owns what"
+    anchor="ownership"
+    description="The bargain, kept again."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The host: data and detail</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            cardMove and cardOpen are reports. The board never reorders an array it does not own —
+            moveCard() applies a move immutably, in one line, with one arithmetic.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The board: travel and talk</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Drag targets that light up, a grab mode that is visible and audible, focus that follows
+            the card, and lanes that stay honest when empty.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">No new parts</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Badges, avatars, tones, the Drawer for detail — all existing Paint. The organism adds
+            the travel contract, not the pieces.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and helpers of <ds-board>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="helpers" nameHeading="Helper" label="Exported helpers" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

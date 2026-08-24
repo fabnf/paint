@@ -1,0 +1,119 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="externalLink"
+    title="Link"
+    lede="The navigation atom. A real <a href>, so middle-click, ⌘-click, “copy link address” and the browser's own status bar all work. A link goes somewhere; a button does something."
+    builtOn="a real anchor, and nothing else"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Two destinations"
+    anchor="destinations"
+    description="link routes inside the app; href leaves it. Both render an anchor with a real href, because a link that only works on left-click is not a link."
+  >
+    <app-doc-example code="{{ routerSnippet }}">
+      <ds-flex [gap]="5" [wrap]="'wrap'" align="center">
+        <ds-link link="/foundations">Design tokens</ds-link>
+        <ds-link link="/primitives/button" iconEnd="arrowRight">Button</ds-link>
+        <ds-link href="https://angular.dev" target="_blank">Angular</ds-link>
+        <ds-link href="https://getbootstrap.com" [external]="true">Bootstrap</ds-link>
+      </ds-flex>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">Why the input is called <code>link</code></ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          Angular's <code>RouterLink</code> directive matches on the
+          <em>attribute</em> <code>routerLink</code>. An input of that name would also apply the directive to this
+          component's host element, giving every link a second, roleless tab stop and a duplicate
+          navigation handler. <code>&lt;ds-button&gt;</code> takes the same precaution.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Variants and underlines"
+    anchor="variants"
+    description="An underline on hover only is a link nobody can see. It is allowed where the link is unmistakable — a nav item, a card title — and :focus-visible brings it back for the keyboard."
+  >
+    <app-doc-example code="{{ variantSnippet }}">
+      <ds-stack [gap]="5">
+        <ds-flex [gap]="5" [wrap]="'wrap'" align="center">
+          <ds-link href="#variants">Primary</ds-link>
+          <ds-link href="#variants" variant="subtle">Subtle</ds-link>
+          <ds-link href="#variants" variant="subtle" underline="hover" iconEnd="arrowRight">
+            Underline on hover
+          </ds-link>
+          <ds-link href="#variants" underline="none" iconStart="download">No underline</ds-link>
+        </ds-flex>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+          <ds-text>
+            Colour alone cannot carry a link inside a paragraph — so the
+            <ds-link variant="inherit" href="#variants">inherited variant</ds-link> keeps the text's
+            own colour and marks itself with the underline instead. It is the only variant that
+            should ever appear mid-sentence.
+          </ds-text>
+        </ds-box>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Leaving the site"
+    anchor="external"
+    description="target=&quot;_blank&quot; is three decisions, not one: the glyph that warns, the rel that stops the new page reaching back into this one, and the words a screen reader needs."
+  >
+    <app-doc-example code="{{ externalSnippet }}" language="html">
+      <ds-flex [gap]="5" [wrap]="'wrap'" align="center">
+        <ds-link href="https://angular.dev" target="_blank">Angular</ds-link>
+        <ds-link href="https://getbootstrap.com" target="_blank" variant="subtle">Bootstrap</ds-link>
+        <ds-text variant="caption">Screen reader: “Angular, link, (opens in a new tab)”</ds-text>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Link or button?"
+    anchor="or-button"
+    description="If it changes the URL, it is a link. If it changes the page, it is a button."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-link&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Navigation. Enter activates it, ⌘-click opens a tab, and the browser shows where it goes
+            before the user commits.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">&lt;ds-button variant="link"&gt;</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            An action that happens to look like a link — opening a dialog, expanding a section.
+            Space activates it too, and it carries button semantics.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+
+    <app-doc-example code="{{ namingSnippet }}" [plain]="true">
+      <ds-stack [gap]="3">
+        <ds-text variant="bodySm" tone="muted">
+          A list of five “Read more” links is five links with the same name. Name the destination.
+        </ds-text>
+        <ds-link href="#or-button" ariaLabel="Read more about invoice #1042">Read more</ds-link>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-link>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

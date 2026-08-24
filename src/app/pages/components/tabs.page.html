@@ -1,0 +1,216 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="tabs"
+    title="Tabs"
+    lede="One surface, several panels. Built on Bootstrap's nav and tab-content, with the whole ARIA tab pattern on top — roving tabindex, arrow keys, and only the selected panel in the DOM."
+    builtOn=".nav / .nav-pills / .tab-content"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Anatomy"
+    anchor="basic"
+    description="Declare panels as ds-tab children. Tabs handles selection, keyboard and ARIA; you write labels and content."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-tabs label="Project">
+        <ds-tab label="Overview">
+          <ds-stack [gap]="2">
+            <ds-text variant="h4" [as]="'h3'">Overview</ds-text>
+            <ds-text tone="muted">
+              The first enabled tab wins when nothing is selected — no empty state to design.
+            </ds-text>
+          </ds-stack>
+        </ds-tab>
+        <ds-tab label="Activity" [badge]="12">
+          <ds-stack [gap]="2">
+            <ds-text variant="h4" [as]="'h3'">Activity</ds-text>
+            <ds-text tone="muted">Badges take a count. Zero still renders; null hides it.</ds-text>
+          </ds-stack>
+        </ds-tab>
+        <ds-tab label="Archive" [disabled]="true">Never reachable.</ds-tab>
+      </ds-tabs>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Variants"
+    anchor="variants"
+    description="Underline for page-level navigation, pills for filters, segmented for a toolbar switch."
+  >
+    <app-doc-example code="{{ variantSnippet }}" [plain]="true">
+      <ds-grid [cols]="1" [gap]="6">
+        <div class="demo-panel">
+          <ds-stack [gap]="3">
+            <ds-text variant="caption" [uppercase]="true">underline</ds-text>
+            <ds-tabs variant="underline" label="Underline example">
+              <ds-tab label="Palette" icon="palette">
+                <ds-text tone="muted">The active tab wears the brand gradient.</ds-text>
+              </ds-tab>
+              <ds-tab label="Type" icon="type">
+                <ds-text tone="muted">Second panel.</ds-text>
+              </ds-tab>
+              <ds-tab label="Space" icon="ruler">
+                <ds-text tone="muted">Third panel.</ds-text>
+              </ds-tab>
+            </ds-tabs>
+          </ds-stack>
+        </div>
+
+        <div class="demo-panel">
+          <ds-stack [gap]="3">
+            <ds-text variant="caption" [uppercase]="true">pills</ds-text>
+            <ds-tabs variant="pills" label="Pills example">
+              <ds-tab label="All" [badge]="24">
+                <ds-text tone="muted">Pills suit filters and small sets.</ds-text>
+              </ds-tab>
+              <ds-tab label="Open" [badge]="6">
+                <ds-text tone="muted">Second panel.</ds-text>
+              </ds-tab>
+              <ds-tab label="Closed" [badge]="18">
+                <ds-text tone="muted">Third panel.</ds-text>
+              </ds-tab>
+            </ds-tabs>
+          </ds-stack>
+        </div>
+
+        <div class="demo-panel">
+          <ds-stack [gap]="3">
+            <ds-text variant="caption" [uppercase]="true">segmented</ds-text>
+            <ds-tabs variant="segmented" label="Segmented example">
+              <ds-tab label="Day">
+                <ds-text tone="muted">Segmented reads as one inked control.</ds-text>
+              </ds-tab>
+              <ds-tab label="Week">
+                <ds-text tone="muted">Second panel.</ds-text>
+              </ds-tab>
+              <ds-tab label="Month">
+                <ds-text tone="muted">Third panel.</ds-text>
+              </ds-tab>
+            </ds-tabs>
+          </ds-stack>
+        </div>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Controlled selection"
+    anchor="controlled"
+    description="Bind [(selected)] to drive tabs from a route, a query param or anywhere else. Ids are yours; Tabs never leaks indexes."
+  >
+    <app-doc-example code="{{ controlledSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+          <ds-text variant="label">Jump to:</ds-text>
+          <ds-button size="sm" variant="secondary" (clicked)="active.set('palette')">palette</ds-button>
+          <ds-button size="sm" variant="secondary" (clicked)="active.set('type')">type</ds-button>
+          <ds-button size="sm" variant="secondary" (clicked)="active.set('space')">space</ds-button>
+          <ds-text variant="code" tone="primary">selected = {{ active() }}</ds-text>
+        </ds-flex>
+
+        <ds-tabs [(selected)]="active" label="Controlled example">
+          <ds-tab tabId="palette" label="Palette" icon="palette">
+            <ds-text tone="muted">Selected through the signal above.</ds-text>
+          </ds-tab>
+          <ds-tab tabId="type" label="Type" icon="type">
+            <ds-text tone="muted">Still a signal, still two-way.</ds-text>
+          </ds-tab>
+          <ds-tab tabId="space" label="Space" icon="ruler">
+            <ds-text tone="muted">No index arithmetic anywhere.</ds-text>
+          </ds-tab>
+        </ds-tabs>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Fitted & icons"
+    anchor="fitted"
+    description="Fitted tabs split the row evenly — good for two or three peers on narrow surfaces."
+  >
+    <app-doc-example code="{{ iconSnippet }}">
+      <ds-tabs align="fitted" variant="pills" label="Fitted example">
+        <ds-tab label="Inbox" icon="bell" [badge]="3">
+          <ds-text tone="muted">Fitted tabs share the row evenly.</ds-text>
+        </ds-tab>
+        <ds-tab label="Drafts" icon="edit">
+          <ds-text tone="muted">Second panel.</ds-text>
+        </ds-tab>
+        <ds-tab label="Sent" icon="arrowRight">
+          <ds-text tone="muted">Third panel.</ds-text>
+        </ds-tab>
+      </ds-tabs>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Panels are lazy"
+    anchor="lazy"
+    description="ds-tab keeps its content in a template, so an expensive panel costs nothing until it is selected."
+  >
+    <app-doc-code [code]="lazySnippet" />
+  </app-doc-section>
+
+  <app-doc-section heading="Keyboard" anchor="keyboard" description="The ARIA tabs pattern, in full.">
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3" [divided]="true">
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">Tab</ds-text>
+          <ds-text variant="bodySm" tone="muted">Moves into the tab list, then out to the panel</ds-text>
+        </ds-flex>
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">← →</ds-text>
+          <ds-text variant="bodySm" tone="muted">Selects the previous / next enabled tab</ds-text>
+        </ds-flex>
+        <ds-flex justify="between" [gap]="4" [wrap]="'wrap'">
+          <ds-text variant="code">Home / End</ds-text>
+          <ds-text variant="bodySm" tone="muted">Selects the first / last enabled tab</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="Accessibility" anchor="accessibility">
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3" [divided]="true">
+        <ds-stack [gap]="1">
+          <ds-text variant="label">One tab stop, not ten</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The tab list uses a roving tabindex: Tab reaches the selected tab, arrows move between
+            tabs, and the next Tab lands in the panel.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Panels are labelled and focusable</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Each panel is a tabpanel labelled by its tab, with tabindex="0" so keyboard users can
+            reach and scroll content that has no controls of its own.
+          </ds-text>
+        </ds-stack>
+        <ds-stack [gap]="1">
+          <ds-text variant="label">Selection follows focus, deliberately</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Panels are cheap here because they are lazy, so arrowing selects as it moves — the
+            pattern the authoring practices recommend when activation is not expensive.
+          </ds-text>
+        </ds-stack>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-tabs> and <ds-tab>.">
+    <ds-stack [gap]="6">
+      <ds-stack [gap]="3">
+        <ds-text variant="label" tone="muted">&lt;ds-tabs&gt;</ds-text>
+        <app-doc-api-table [rows]="tabsApi" />
+        <app-doc-api-table [rows]="tabsOutputs" nameHeading="Output" />
+      </ds-stack>
+      <ds-stack [gap]="3">
+        <ds-text variant="label" tone="muted">&lt;ds-tab&gt;</ds-text>
+        <app-doc-api-table [rows]="tabApi" />
+      </ds-stack>
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

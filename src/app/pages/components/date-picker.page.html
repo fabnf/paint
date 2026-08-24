@@ -1,0 +1,98 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="calendar"
+    title="DatePicker"
+    lede="The date molecules, finally assembled. A ds-date-input and a ds-calendar in an anchored dialog, with the organism owning exactly what the molecules refused to: the overlay, the focus moves, and the dismissal policy."
+    builtOn="ds-date-input + ds-calendar"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A field first, a picker second"
+    anchor="anatomy"
+    description="Typing stays the fastest way to enter a date anybody already knows — the parser takes 4/3/26 and 20260304 alike. The calendar is for the dates people have to find. Press the trigger, or ArrowDown, the way date fields have opened since Windows 95."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-form-field label="Invoice date" hint="Type it, or press ArrowDown.">
+          <ds-date-picker [(value)]="invoiceDate" />
+        </ds-form-field>
+        <ds-text variant="code" tone="primary">value = {{ invoiceDate() ?? 'null' }}</ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="One set of rules, both views"
+    anchor="rules"
+    description="min, max and dateDisabled are shared: the grid greys a day out and refuses the click; the same day typed into the field is committed and flagged, because the user typed what they typed."
+  >
+    <app-doc-example code="{{ rulesSnippet }}">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-form-field label="Delivery date" hint="Weekdays only, from today.">
+          <ds-date-picker [(value)]="deliveryDate" [min]="today" [dateDisabled]="isWeekend" />
+        </ds-form-field>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="What the organism owns"
+    anchor="behaviour"
+    description="Everything the molecule pages promised it would — the hooks were already there: open, ariaControls, daySelected, and a public focus() on the calendar."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Focus, both ways</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Opening moves focus into the grid, onto the typed day. Picking commits, closes, and
+            puts focus back in the field — where typing happens.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The Menu's dismissals</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Escape closes and restores the field; an outside click just closes; Tab is never held —
+            tabbing past the grid leaves, and the dialog closes behind it.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Honest ARIA</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The trigger promised aria-haspopup="dialog" back when it only asked. Now there is a
+            dialog: named, anchored, and wired to the trigger with aria-controls.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Still no Date"
+    anchor="value"
+    description="The value is yyyy-mm-dd at every layer — the field, the grid, the form control. There is no timestamp anywhere in the API, so there is no time zone to shift the 4th into the 3rd."
+  >
+    <app-doc-example [plain]="true">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-form-field label="Bounded" hint="March 2026 only.">
+          <ds-date-picker [(value)]="bounded" min="2026-03-01" max="2026-03-31" />
+        </ds-form-field>
+        <ds-text variant="code" tone="primary">value = {{ bounded() ?? 'null' }}</ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and methods of <ds-date-picker>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="methods" nameHeading="Method" label="DatePicker methods" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

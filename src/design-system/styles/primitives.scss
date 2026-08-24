@@ -1,0 +1,150 @@
+/**
+ * Primitive layer globals.
+ *
+ * Almost everything the primitives need is expressed with Bootstrap classes and
+ * component-scoped styles. This file only holds the rules that must reach
+ * *projected* children, which live outside a component's style scope.
+ */
+
+/* ds-stack [divided] — a hairline between children, offset by the stack's gap
+   so the rhythm stays symmetrical on both sides of the line. */
+ds-stack.ds-stack--divided.flex-column > * + * {
+  border-top: 1px solid var(--ds-color-border);
+  padding-top: var(--ds-stack-divider-offset, 0);
+}
+
+ds-stack.ds-stack--divided.flex-row > * + * {
+  border-left: 1px solid var(--ds-color-border);
+  padding-left: var(--ds-stack-divider-offset, 0);
+}
+
+/* —— Tones ——
+   One tone, four roles: the text colour, the tint it sits on, the filled block,
+   and the ink that survives on top of it. Badge, Chip, Spinner, Progress and
+   Divider all read these four custom properties, so a `tone="danger"` is the
+   same red everywhere and re-tints with the theme.
+
+   `onSolid` is `onPrimary` on purpose: it is white on paper and ink on a lit
+   canvas, and the token layer asserts it clears 4.5:1 on every filled role
+   (`tokens/colors.a11y.spec.ts`). There is no `onDanger`, because there does
+   not need to be. */
+/* Neutral's tint is mixed from the text colour rather than taken from
+   `surfaceSunken`, which is paper-white in light mode and pure black in dark:
+   a neutral badge should recede from the surface it sits on, in both. */
+.ds-tone--neutral {
+  --ds-tone-fg: var(--ds-color-text);
+  --ds-tone-bg: color-mix(in srgb, var(--ds-color-text) 9%, var(--ds-color-surface));
+  --ds-tone-solid: var(--ds-color-text);
+  --ds-tone-on-solid: var(--ds-color-surface);
+  --ds-tone-border: var(--ds-color-border-strong);
+}
+
+.ds-tone--primary {
+  --ds-tone-fg: var(--ds-color-primary);
+  --ds-tone-bg: var(--ds-color-primary-muted);
+  --ds-tone-solid: var(--ds-color-primary);
+  --ds-tone-on-solid: var(--ds-color-on-primary);
+  --ds-tone-border: var(--ds-color-primary);
+}
+
+.ds-tone--accent {
+  --ds-tone-fg: var(--ds-color-accent);
+  --ds-tone-bg: var(--ds-color-accent-muted);
+  --ds-tone-solid: var(--ds-color-accent);
+  --ds-tone-on-solid: var(--ds-color-on-accent);
+  --ds-tone-border: var(--ds-color-accent);
+}
+
+.ds-tone--success {
+  --ds-tone-fg: var(--ds-color-success);
+  --ds-tone-bg: var(--ds-color-success-muted);
+  --ds-tone-solid: var(--ds-color-success);
+  --ds-tone-on-solid: var(--ds-color-on-primary);
+  --ds-tone-border: var(--ds-color-success);
+}
+
+.ds-tone--warning {
+  --ds-tone-fg: var(--ds-color-warning);
+  --ds-tone-bg: var(--ds-color-warning-muted);
+  --ds-tone-solid: var(--ds-color-warning);
+  --ds-tone-on-solid: var(--ds-color-on-primary);
+  --ds-tone-border: var(--ds-color-warning);
+}
+
+.ds-tone--danger {
+  --ds-tone-fg: var(--ds-color-danger);
+  --ds-tone-bg: var(--ds-color-danger-muted);
+  --ds-tone-solid: var(--ds-color-danger);
+  --ds-tone-on-solid: var(--ds-color-on-primary);
+  --ds-tone-border: var(--ds-color-danger);
+}
+
+.ds-tone--info {
+  --ds-tone-fg: var(--ds-color-info);
+  --ds-tone-bg: var(--ds-color-info-muted);
+  --ds-tone-solid: var(--ds-color-info);
+  --ds-tone-on-solid: var(--ds-color-on-primary);
+  --ds-tone-border: var(--ds-color-info);
+}
+
+/* —— Form atoms: the field ——
+   `ds-input`, `ds-textarea`, `ds-checkbox`, `ds-radio` and `ds-switch` stack a
+   label, a control and its messages. The rhythm and the message styles live
+   here, once, rather than five times in five component stylesheets — the five
+   controls must be indistinguishable above and below the control itself. */
+.ds-field {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Rhythm with margins rather than a flex `gap`, because the messages element is
+   always rendered — its live region has to exist before the error text does, and
+   a gap would reserve space for a region that is usually empty. */
+ds-field-label {
+  display: block;
+  margin-bottom: var(--ds-space-1_5);
+}
+
+.ds-field__messages--spaced {
+  margin-top: var(--ds-space-1_5);
+}
+
+.ds-field__label {
+  /* Bootstrap's label margin is replaced by the field's own rhythm. */
+  margin-bottom: 0;
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-snug);
+}
+
+.ds-field__label--disabled {
+  color: var(--ds-color-text-subtle);
+}
+
+/* Decorative. `required` on the control is what gets announced. */
+.ds-field__required {
+  margin-inline-start: 0.15em;
+  color: var(--ds-color-danger);
+}
+
+.ds-field__hint {
+  margin-bottom: 0;
+  font-size: var(--ds-font-size-xs);
+  line-height: var(--ds-line-height-normal);
+  color: var(--ds-color-text-muted);
+}
+
+.ds-field__error {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  margin-bottom: 0;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+  line-height: var(--ds-line-height-normal);
+  color: var(--ds-color-danger);
+}
+
+.ds-field__hint + .ds-field__live .ds-field__error {
+  margin-top: var(--ds-space-1);
+}

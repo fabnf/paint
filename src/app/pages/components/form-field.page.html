@@ -1,0 +1,232 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="textCursor"
+    title="FormField"
+    lede="The label, the hint, the error — and whatever control you put between them. The atoms can each draw their own; a form of eight fields would then repeat the same four inputs eight times, and the day the asterisk moves it moves in eight places."
+    builtOn="the field chrome + any control"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Anatomy"
+    anchor="anatomy"
+    description="One label, one control, one description. The control inside renders no label and no messages of its own — it adopts the field's id, description, validity and required state."
+  >
+    <app-doc-example code="{{ anatomySnippet }}">
+      <ds-stack [gap]="5" class="demo-field">
+        <ds-form-field label="Email" hint="We only use it to sign you in." [required]="true">
+          <ds-input type="email" autocomplete="email" placeholder="ada@paint.dev" [(value)]="email" />
+        </ds-form-field>
+
+        <ds-form-field label="Notes" [optional]="true" hint="Markdown is supported.">
+          <ds-textarea [rows]="2" [(value)]="notes" />
+        </ds-form-field>
+
+        <ds-form-field label="Email" error="That is not an email address.">
+          <ds-input type="email" value="ada@" />
+        </ds-form-field>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="How it wires"
+    anchor="wiring"
+    description="Through dependency injection, not the DOM. The field publishes a context; the control asks for it, optionally, and folds it into its own state. Nothing is queried after render, and a control written outside a field behaves exactly as it did before."
+  >
+    <app-doc-example code="{{ wiringSnippet }}" language="ts" [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">The field owns the id</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Its <code>&lt;label for&gt;</code> has to point at the control, and only one of them can
+              win. Pass <code>id</code> to the field, never to the control.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">An error is an invalid state</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              The message sets <code>aria-invalid</code> on the control and joins its
+              <code>aria-describedby</code>. The red border and the announcement can never disagree.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">The atom stays dumb</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              <code>&lt;ds-input&gt;</code> does not import the field. It asks whether one is there,
+              and works on its own when it is not.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+      </ds-grid>
+    </app-doc-example>
+
+    <app-doc-api-table [rows]="contextRows" nameHeading="FieldContext" label="Field context" />
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Anything that can adopt an id"
+    anchor="controls"
+    description="Paint's five form controls ask the field for themselves. A Select's trigger is a <button>, which is a labelable element, so it is named the same way. Everything else takes one attribute."
+  >
+    <app-doc-example code="{{ selectSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-form-field label="Owner" [required]="true" hint="Who signs this off.">
+          <ds-select [options]="owners" placeholder="Assign an owner" />
+        </ds-form-field>
+
+        <ds-form-field label="Country" error="Pick a country.">
+          <ds-select [options]="countries" placeholder="Select…" />
+        </ds-form-field>
+      </ds-grid>
+    </app-doc-example>
+
+    <app-doc-example code="{{ nativeSnippet }}">
+      <div class="demo-field">
+        <ds-form-field
+          label="Brand colour"
+          hint="The id, the description and the required state are wired for you."
+          [required]="true"
+        >
+          <input
+            dsFieldControl
+            type="color"
+            class="form-control colour-input"
+            [value]="colour()"
+            (input)="colour.set($any($event.target).value)"
+          />
+        </ds-form-field>
+      </div>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Realistic layouts"
+    anchor="layouts"
+    description="A field is a block. Put it in a Grid, give it a span, and it behaves. Nothing about a form needs a form-specific layout system."
+  >
+    <app-doc-example code="{{ layoutSnippet }}">
+      <form class="demo-panel" [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <ds-stack [gap]="6">
+          <ds-stack [gap]="1">
+            <ds-text variant="h4" [as]="'h3'">Billing details</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Where the invoices go. You can change this at any time.
+            </ds-text>
+          </ds-stack>
+
+          <ds-grid [gap]="5">
+            <ds-grid-item [span]="{ base: 12, md: 6 }">
+              <ds-form-field label="Full name" [required]="true" [error]="nameError()">
+                <ds-input formControlName="name" autocomplete="name" />
+              </ds-form-field>
+            </ds-grid-item>
+
+            <ds-grid-item [span]="{ base: 12, md: 6 }">
+              <ds-form-field label="Email" [required]="true" [error]="emailError()">
+                <ds-input type="email" formControlName="email" autocomplete="email" />
+              </ds-form-field>
+            </ds-grid-item>
+
+            <ds-grid-item [span]="{ base: 12, md: 7 }">
+              <ds-form-field label="Company" [optional]="true">
+                <ds-input formControlName="company" autocomplete="organization" />
+              </ds-form-field>
+            </ds-grid-item>
+
+            <ds-grid-item [span]="{ base: 12, md: 5 }">
+              <ds-form-field label="Country" [required]="true" [error]="countryError()">
+                <ds-select [options]="countries" formControlName="country" placeholder="Select…" />
+              </ds-form-field>
+            </ds-grid-item>
+
+            <ds-grid-item [span]="12">
+              <ds-form-field
+                label="VAT number"
+                [optional]="true"
+                hint="Two letters, then 6–12 digits. We check it with the tax office."
+                [error]="vatError()"
+              >
+                <ds-input formControlName="vat" placeholder="GB123456789" />
+              </ds-form-field>
+            </ds-grid-item>
+
+            <ds-grid-item [span]="12">
+              <ds-form-field label="Notes" [optional]="true">
+                <ds-textarea formControlName="notes" resize="auto" [rows]="3" />
+              </ds-form-field>
+            </ds-grid-item>
+          </ds-grid>
+
+          <ds-divider [spacing]="0" />
+
+          <ds-flex justify="between" align="center" [gap]="3" [wrap]="'wrap'">
+            <ds-text variant="caption">
+              @if (saved()) {
+                <ds-badge tone="success" icon="check">Saved</ds-badge>
+              } @else {
+                Required fields are marked with an asterisk.
+              }
+            </ds-text>
+            <ds-flex [gap]="2">
+              <ds-button variant="ghost" type="button" (clicked)="reset()">Reset</ds-button>
+              <ds-button variant="primary" type="submit">Save details</ds-button>
+            </ds-flex>
+          </ds-flex>
+        </ds-stack>
+      </form>
+    </app-doc-example>
+
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+      <ds-stack [gap]="3">
+        <ds-text variant="label">Errors arrive when the user has had a go</ds-text>
+        <ds-text variant="bodySm" tone="muted">
+          A field that turns red while it is being typed into is a field that shouts at someone for
+          not having finished. Paint's examples show the message once the control is
+          <code>touched</code>, or once Save has been pressed — and then keep it live, because by
+          then the user is fixing it.
+        </ds-text>
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="When not to use it"
+    anchor="limits"
+    description="A label above a control is one layout, not the only one."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="3">
+          <ds-badge tone="danger" variant="soft" icon="close">Don't</ds-badge>
+          <ds-text variant="bodySm" tone="muted">
+            Wrap a checkbox or a switch. Their label belongs <em>beside</em> the control, which is
+            where the atom puts it — and a <code>&lt;label for&gt;</code> above a set of them would
+            name the first and leave the rest anonymous.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="3">
+          <ds-badge tone="success" variant="soft" icon="check">Do</ds-badge>
+          <ds-text variant="bodySm" tone="muted">
+            Use the atom's own <code>label</code> for a single checkbox, and
+            <code>&lt;ds-radio-group&gt;</code> or <code>&lt;ds-checkbox-group&gt;</code> for a set —
+            a <code>&lt;fieldset&gt;</code> with a <code>&lt;legend&gt;</code> is the only markup that
+            attaches a question to its answers.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-form-field>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

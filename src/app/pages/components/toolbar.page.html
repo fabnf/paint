@@ -1,0 +1,149 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="settings"
+    title="Toolbar"
+    lede="A cluster of actions that behaves like one control. Eight icon buttons in a row are eight tab stops, and a keyboard user passes through all of them on the way to the content. This is one tab stop, and the arrows move inside it."
+    builtOn="role=&quot;toolbar&quot; + a roving tabindex"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A simple toolbar"
+    anchor="basics"
+    description="Put atoms in it. It owns their roving tabindex — ds-button, a ds-menu trigger, a plain <button> — without any of them knowing, and a ds-divider between the clusters is a real separator."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-toolbar ariaLabel="Document actions" [bordered]="true" class="demo-toolbar">
+        <ds-button variant="ghost" size="sm" iconStart="edit" label="Rename" (clicked)="run('Rename')" />
+        <ds-button variant="ghost" size="sm" iconStart="copy" label="Duplicate" (clicked)="run('Duplicate')" />
+        <ds-button variant="ghost" size="sm" iconStart="download" label="Download" (clicked)="run('Download')" />
+
+        <ds-divider orientation="vertical" [spacing]="0" />
+
+        <ds-button
+          variant="ghost"
+          size="sm"
+          iconStart="type"
+          label="Bold"
+          [active]="bold()"
+          [ariaPressed]="bold()"
+          (clicked)="bold.set(!bold())"
+        />
+        <ds-button
+          variant="ghost"
+          size="sm"
+          iconStart="code"
+          label="Italic"
+          [active]="italic()"
+          [ariaPressed]="italic()"
+          (clicked)="italic.set(!italic())"
+        />
+
+        <ds-divider orientation="vertical" [spacing]="0" />
+
+        <ds-menu label="Export" variant="ghost" size="sm" icon="download" [entries]="exports" (itemSelect)="run($event)" />
+        <ds-button variant="ghost" size="sm" iconStart="trash" label="Delete" (clicked)="run('Delete')" />
+      </ds-toolbar>
+
+      <ds-text variant="caption" class="mt-3">
+        Tab in, then use ← and →. Tab again and you are past the whole cluster.
+      </ds-text>
+    </app-doc-example>
+
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">It does not own the buttons</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            It reads the DOM and writes one <code>tabindex</code>. Nothing projected into it has to
+            know it is in a toolbar — which is why a <code>ds-menu</code> works, and why your own
+            button does too.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">A menu's items are the menu's</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Controls inside an open <code>[role="menu"]</code>, listbox or dialog belong to that
+            overlay. The toolbar steps around them, and around anything born with
+            <code>tabindex="-1"</code>.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">It is not a filter bar</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            An actions cluster. It does not own the state of the things inside it, and it will not
+            grow a “clear all”. That is an organism, and it is not in this layer.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="With controls that want their own keys"
+    anchor="mixed"
+    description="A text field's arrows are the caret's — until the caret is at the edge it is being pressed towards, which is when the user meant the toolbar. Home and End always belong to the field."
+  >
+    <app-doc-example code="{{ mixedSnippet }}">
+      <ds-toolbar ariaLabel="Invoice list actions" [bordered]="true" [gap]="3" class="demo-toolbar">
+        <ds-search-field
+          class="demo-list__search"
+          label="Filter invoices"
+          [labelHidden]="true"
+          placeholder="Filter…"
+          size="sm"
+          [debounce]="0"
+          [(value)]="query"
+        />
+        <ds-divider orientation="vertical" [spacing]="0" />
+        <ds-button variant="ghost" size="sm" iconStart="filter" label="Filters" (clicked)="run('Filters')" />
+        <ds-button variant="ghost" size="sm" iconStart="refresh" label="Refresh" (clicked)="run('Refresh')" />
+        <ds-menu label="More" variant="ghost" size="sm" icon="more" [iconOnly]="true" [caret]="false" [entries]="exports" (itemSelect)="run($event)" />
+      </ds-toolbar>
+
+      <ds-text variant="caption" class="mt-3">
+        Type in the field, then press → with the caret at the end.
+      </ds-text>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Keyboard"
+    anchor="keyboard"
+    description="The ARIA toolbar pattern. Tab enters and leaves; the arrows move inside and wrap, because a cluster that stops at its ends is a row of buttons again."
+  >
+    <app-doc-example code="{{ keyboardSnippet }}" language="ts" [plain]="true">
+      <ds-flex [gap]="6" [wrap]="'wrap'" align="start">
+        <ds-stack [gap]="3">
+          <ds-text variant="label">Vertical</ds-text>
+          <ds-toolbar ariaLabel="Vertical actions" orientation="vertical" [bordered]="true" [gap]="1">
+            <ds-button variant="ghost" size="sm" iconStart="edit" label="Rename" />
+            <ds-button variant="ghost" size="sm" iconStart="copy" label="Duplicate" />
+            <ds-divider [spacing]="1" />
+            <ds-button variant="ghost" size="sm" iconStart="trash" label="Delete" />
+          </ds-toolbar>
+          <ds-text variant="caption">↑ and ↓, and <code>aria-orientation</code>.</ds-text>
+        </ds-stack>
+
+        <ds-stack [gap]="3">
+          <ds-text variant="label">Wrapping</ds-text>
+          <ds-toolbar ariaLabel="Many actions" [wrap]="true" [bordered]="true" class="demo-toolbar">
+            @for (action of ['edit', 'copy', 'download', 'filter', 'refresh', 'trash', 'settings', 'bell']; track action) {
+              <ds-button variant="ghost" size="sm" [iconStart]="$any(action)" [label]="action" />
+            }
+          </ds-toolbar>
+          <ds-text variant="caption">Eight buttons. One tab stop.</ds-text>
+        </ds-stack>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-toolbar>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

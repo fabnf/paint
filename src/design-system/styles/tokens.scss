@@ -1,0 +1,454 @@
+/**
+ * Design-system CSS custom properties & foundation utilities.
+ * ThemeService applies semantic color vars at runtime; this file
+ * provides static fallbacks, typography classes, and spacing helpers.
+ */
+
+:root {
+  /* —— Color fallbacks (overridden by ThemeService) —— */
+  --ds-color-background: #f0eef6;
+  --ds-color-surface: #ffffff;
+  --ds-color-surface-elevated: #ffffff;
+  --ds-color-surface-sunken: #f8f7fb;
+  --ds-color-border: #e0dcea;
+  --ds-color-border-strong: #c2bcd6;
+  --ds-color-border-control: #8d84ab;
+  --ds-color-text: #141221;
+  --ds-color-text-muted: #5b5375;
+  --ds-color-text-subtle: #6b6285;
+  --ds-color-primary: #6a1bf5;
+  --ds-color-primary-hover: #5811d4;
+  --ds-color-primary-muted: #f4f1ff;
+  --ds-color-on-primary: #ffffff;
+  --ds-color-accent: #c80b6c;
+  --ds-color-accent-hover: #a60a59;
+  --ds-color-accent-muted: #fff0f8;
+  --ds-color-on-accent: #ffffff;
+  --ds-color-success: #047857;
+  --ds-color-success-muted: #ecfdf5;
+  --ds-color-warning: #a84c06;
+  --ds-color-warning-muted: #fffbeb;
+  --ds-color-danger: #be123c;
+  --ds-color-danger-muted: #fff1f2;
+  --ds-color-info: #0369a1;
+  --ds-color-info-muted: #f0f9ff;
+  --ds-color-focus-ring: #7c3dff;
+  --ds-color-overlay: rgb(20 18 33 / 55%);
+
+  /* —— Elevation (ink-tinted, not grey) —— */
+  --ds-shadow-sm: 0 1px 2px rgb(20 18 33 / 6%), 0 1px 3px rgb(20 18 33 / 4%);
+  --ds-shadow-md: 0 4px 12px -2px rgb(20 18 33 / 10%), 0 2px 6px -2px rgb(20 18 33 / 6%);
+  --ds-shadow-lg: 0 16px 32px -8px rgb(20 18 33 / 16%), 0 4px 12px -4px rgb(20 18 33 / 8%);
+  --ds-shadow-xl: 0 32px 64px -16px rgb(20 18 33 / 24%), 0 8px 24px -8px rgb(37 10 92 / 12%);
+  --ds-shadow-glow: 0 12px 32px -8px rgb(106 27 245 / 45%);
+
+  /* —— Texture: inline SVG noise, no requests (tokens/effects.tokens.ts) —— */
+  --ds-texture-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+  --ds-texture-hatch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M-2 2 2-2M0 8 8 0M6 10l4-4' stroke='%238d84ab' stroke-width='1' stroke-opacity='0.45'/%3E%3C/svg%3E");
+
+  /* —— Brand paint mixes —— */
+  --ds-gradient-brand: linear-gradient(135deg, #ef2d92 0%, #7c3dff 52%, #4a12ab 100%);
+  --ds-gradient-wash: linear-gradient(135deg, #7c3dff 0%, #0ea5e9 100%);
+  --ds-gradient-energy: linear-gradient(135deg, #c2fb47 0%, #ef2d92 100%);
+
+  /* How overlapping pigment mixes — see tokens/effects.tokens.ts */
+  --ds-blend-pigment: multiply;
+
+  /* —— Controls (tokens/spacing.tokens.ts → controlSizes) ——
+     One scale for every control, so an input, a button and a checkbox in the
+     same row agree on their height and on the size of their indicator. */
+  --ds-control-height-sm: 2rem;
+  --ds-control-height-md: 2.5rem;
+  --ds-control-height-lg: 3rem;
+  --ds-control-font-size-sm: 0.875rem;
+  --ds-control-font-size-md: 0.9375rem;
+  --ds-control-font-size-lg: 1rem;
+  --ds-control-padding-x-sm: var(--ds-space-2_5);
+  --ds-control-padding-x-md: var(--ds-space-3);
+  --ds-control-padding-x-lg: var(--ds-space-3_5);
+  /* The square of a checkbox / radio, and the height of a switch track. */
+  --ds-control-indicator-sm: 0.875rem;
+  --ds-control-indicator-md: 1.0625rem;
+  --ds-control-indicator-lg: 1.25rem;
+  --ds-control-switch-width-sm: 1.75rem;
+  --ds-control-switch-width-md: 2.125rem;
+  --ds-control-switch-width-lg: 2.5rem;
+  /* The focus ring every control draws, as one value. */
+  --ds-control-focus-ring: 0 0 0 3px
+    color-mix(in srgb, var(--ds-color-focus-ring) 32%, transparent);
+
+  /* —— Avatars (tokens/spacing.tokens.ts → avatarSizes) —— */
+  --ds-avatar-size-xs: 1.5rem;
+  --ds-avatar-size-sm: 2rem;
+  --ds-avatar-size-md: 2.5rem;
+  --ds-avatar-size-lg: 3rem;
+  --ds-avatar-size-xl: 4rem;
+
+  /* —— Feedback ——
+     Skeletons and indeterminate bars share one tempo: two atoms pulsing at
+     different speeds on the same screen read as two separate problems. */
+  --ds-motion-pulse: 1.4s;
+  --ds-skeleton-color: color-mix(in srgb, var(--ds-color-text) 13%, var(--ds-color-surface));
+}
+
+/* Subtree themes (the dsTheme directive) need the blend mode too: wet paint
+   darkens on paper, but multiply turns to mud on a lit dark canvas. */
+[data-theme='dark'] {
+  --ds-blend-pigment: screen;
+
+  /* —— Typography —— */
+  --ds-font-sans: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  --ds-font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --ds-font-mono: 'IBM Plex Mono', 'SFMono-Regular', ui-monospace, monospace;
+
+  --ds-font-size-xs: 0.75rem;
+  --ds-font-size-sm: 0.875rem;
+  --ds-font-size-md: 1rem;
+  --ds-font-size-lg: 1.125rem;
+  --ds-font-size-xl: 1.25rem;
+  --ds-font-size-2xl: 1.5rem;
+  --ds-font-size-3xl: 1.875rem;
+  --ds-font-size-4xl: 2.25rem;
+  --ds-font-size-5xl: 3rem;
+  --ds-font-size-6xl: 3.75rem;
+  --ds-font-size-7xl: 4.5rem;
+
+  --ds-font-weight-regular: 400;
+  --ds-font-weight-medium: 500;
+  --ds-font-weight-semibold: 600;
+  --ds-font-weight-bold: 700;
+  --ds-font-weight-black: 900;
+
+  --ds-line-height-none: 1;
+  --ds-line-height-tight: 1.2;
+  --ds-line-height-snug: 1.35;
+  --ds-line-height-normal: 1.5;
+  --ds-line-height-relaxed: 1.65;
+
+  --ds-letter-spacing-tightest: -0.055em;
+  --ds-letter-spacing-tighter: -0.04em;
+  --ds-letter-spacing-tight: -0.02em;
+  --ds-letter-spacing-normal: 0;
+  --ds-letter-spacing-wide: 0.02em;
+  --ds-letter-spacing-wider: 0.04em;
+
+  /* —— Spacing (4px base) —— */
+  --ds-space-0: 0;
+  --ds-space-px: 1px;
+  --ds-space-0_5: 0.125rem;
+  --ds-space-1: 0.25rem;
+  --ds-space-1_5: 0.375rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-2_5: 0.625rem;
+  --ds-space-3: 0.75rem;
+  --ds-space-3_5: 0.875rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.25rem;
+  --ds-space-6: 1.5rem;
+  --ds-space-7: 1.75rem;
+  --ds-space-8: 2rem;
+  --ds-space-9: 2.25rem;
+  --ds-space-10: 2.5rem;
+  --ds-space-12: 3rem;
+  --ds-space-14: 3.5rem;
+  --ds-space-16: 4rem;
+  --ds-space-20: 5rem;
+  --ds-space-24: 6rem;
+
+  --ds-space-control-gap: var(--ds-space-1_5);
+  --ds-space-inline-gap: var(--ds-space-2);
+  --ds-space-control-padding-x: var(--ds-space-3);
+  --ds-space-control-padding-y: var(--ds-space-2);
+  --ds-space-stack-sm: var(--ds-space-3);
+  --ds-space-stack-md: var(--ds-space-4);
+  --ds-space-stack-lg: var(--ds-space-6);
+  --ds-space-stack-xl: var(--ds-space-8);
+  --ds-space-page-gutter: var(--ds-space-6);
+  --ds-space-page-gutter-lg: var(--ds-space-10);
+  --ds-space-surface-padding: var(--ds-space-5);
+  --ds-space-surface-padding-lg: var(--ds-space-8);
+
+  /* —— Radii —— */
+  --ds-radius-none: 0;
+  --ds-radius-sm: 0.375rem;
+  --ds-radius-md: 0.625rem;
+  --ds-radius-lg: 0.875rem;
+  --ds-radius-xl: 1.25rem;
+  --ds-radius-2xl: 1.75rem;
+  --ds-radius-full: 9999px;
+  --ds-radius-blob: 62% 38% 54% 46% / 52% 56% 44% 48%;
+}
+
+/* —— Base reset tied to tokens —— */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--ds-font-sans);
+  font-size: 100%;
+  line-height: var(--ds-line-height-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--ds-color-background);
+  color: var(--ds-color-text);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-regular);
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ds-color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* —— Typography utilities (atomic type ramp) ——
+   Angular consumers should reach for <ds-text>, which resolves the same ramp
+   and picks a semantic element. These classes stay for CSS-only contexts
+   (emails, static pages, third-party embeds). —— */
+.ds-display {
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-font-size-6xl);
+  font-weight: var(--ds-font-weight-black);
+  line-height: var(--ds-line-height-none);
+  letter-spacing: var(--ds-letter-spacing-tightest);
+}
+
+.ds-h1 {
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-font-size-4xl);
+  font-weight: var(--ds-font-weight-bold);
+  line-height: var(--ds-line-height-tight);
+  letter-spacing: var(--ds-letter-spacing-tighter);
+}
+
+.ds-h2 {
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
+  line-height: var(--ds-line-height-snug);
+  letter-spacing: var(--ds-letter-spacing-tight);
+}
+
+.ds-h3 {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-snug);
+}
+
+.ds-h4 {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-snug);
+}
+
+.ds-body {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+}
+
+.ds-body-lg {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-size-lg);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-relaxed);
+}
+
+.ds-body-sm {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+}
+
+.ds-label {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-snug);
+  letter-spacing: var(--ds-letter-spacing-wide);
+}
+
+.ds-caption {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+  letter-spacing: var(--ds-letter-spacing-wide);
+  color: var(--ds-color-text-muted);
+}
+
+.ds-code {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
+}
+
+/* —— Brand texture utilities ——
+   The "Wet Paint" direction asks for surfaces that look printed. These are
+   decorative only: they never carry meaning and never swallow pointer events. —— */
+
+/* Film grain over any surface — pairs with .bg-brand / .bg-wash / .bg-energy. */
+.ds-grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.ds-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--ds-texture-grain);
+  background-size: 120px 120px;
+  mix-blend-mode: soft-light;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* Pencil hatching for empty wells and placeholder areas. */
+.ds-hatch {
+  background-image: var(--ds-texture-hatch);
+  background-size: 8px 8px;
+}
+
+/* Highlighter swipe behind inline text. Ends are feathered like a real marker. */
+.ds-marker {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in srgb, var(--ds-color-accent) 24%, transparent) 3%,
+    color-mix(in srgb, var(--ds-color-accent) 24%, transparent) 97%,
+    transparent 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 38%;
+  background-position: 0 82%;
+}
+
+/* Same idea, brushed in primary. */
+.ds-marker--primary {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in srgb, var(--ds-color-primary) 20%, transparent) 3%,
+    color-mix(in srgb, var(--ds-color-primary) 20%, transparent) 97%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ds-reveal {
+    animation: ds-reveal 520ms cubic-bezier(0.16, 0.84, 0.44, 1) both;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* —— Forced colours (Windows High Contrast) ——
+   The system palette replaces ours, and box-shadows are dropped entirely. Paint
+   draws focus with `outline`, which survives — but anything that leans on a
+   shadow or a background to carry meaning needs a border to fall back on. */
+@media (forced-colors: active) {
+  :focus-visible {
+    /* Let the system pick the colour; keep the geometry. */
+    outline: 2px solid;
+    outline-offset: 2px;
+  }
+
+  .btn,
+  .form-control,
+  .form-check-input,
+  .dropdown-menu,
+  .modal-content,
+  .toast {
+    border: 1px solid;
+  }
+}
+
+/* —— Reduced motion: the backstop ——
+   Components disable their own transitions individually, but a design system
+   cannot rely on every future component remembering to. Anyone who asks for
+   less motion gets it system-wide: animations collapse to a single frame
+   instead of being removed, so animation-driven state (and any `animationend`
+   listener) still resolves. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+@keyframes ds-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* —— Spacing utilities ——
+   The <ds-stack> / <ds-flex> / <ds-box> primitives cover these patterns with
+   tokens; these classes remain the CSS-only equivalent. —— */
+.ds-stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-stack-sm);
+}
+
+.ds-stack-md {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-stack-md);
+}
+
+.ds-stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-stack-lg);
+}
+
+.ds-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-inline-gap);
+}
+
+.ds-page {
+  padding: var(--ds-space-page-gutter);
+}
+
+@media (min-width: 768px) {
+  .ds-page {
+    padding: var(--ds-space-page-gutter-lg);
+  }
+}
