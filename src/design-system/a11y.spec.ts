@@ -128,6 +128,24 @@ const ENTRIES: readonly MenuEntry[] = [
       <ds-link href="https://angular.dev" target="_blank">Angular</ds-link>
       <ds-link link="/foundations" variant="subtle" iconEnd="arrowRight">Tokens</ds-link>
 
+      <!-- Keycaps: projected, combined, glyph-spoken -->
+      <ds-flex [gap]="2" align="center">
+        <ds-kbd>Esc</ds-kbd>
+        <ds-kbd keys="Ctrl+Enter" size="md" />
+        <ds-kbd keys="⌘K" />
+        <ds-kbd [keys]="['Shift', '?']" srLabel="Shift question mark" />
+      </ds-flex>
+
+      <!-- Pictures: loaded, missing, failed, decorative, custom fallback -->
+      <ds-flex [gap]="3" [wrap]="'wrap'">
+        <ds-image src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="A single pixel" ratio="1/1" />
+        <ds-image [src]="null" alt="Floor plan" fallbackText="No plan uploaded" ratio="16/9" />
+        <ds-image [src]="null" alt="" [decorative]="true" ratio="4/3" radius="full" />
+        <ds-image [src]="null" alt="Cover" ratio="1/1">
+          <ds-avatar dsImageFallback name="Wet Paint" shape="square" [decorative]="true" />
+        </ds-image>
+      </ds-flex>
+
       <!-- Form-control atoms: labelled, hinted, errored, disabled -->
       <ds-input label="Email" type="email" hint="Work addresses only." [(value)]="email" />
       <ds-input label="Search" type="search" iconStart="search" [clearable]="true" [(value)]="query" />
@@ -155,6 +173,37 @@ const ENTRIES: readonly MenuEntry[] = [
       <ds-switch label="Dark mode" [(checked)]="dark" />
       <ds-switch label="Email digests" hint="A summary every Monday." labelPlacement="start" />
       <ds-switch label="Unavailable" [disabled]="true" />
+
+      <!-- The range-style atoms: a track, a quantity, and a rating both ways -->
+      <ds-slider label="Volume" [value]="40" [showValue]="true" hint="Louder is not better." />
+      <ds-slider label="Opacity" [min]="0" [max]="1" [step]="0.05" [value]="0.6" valueText="60%" size="sm" />
+      <ds-slider label="Broken" [value]="10" error="Too loud for the room." />
+      <ds-slider label="Locked" [value]="70" [disabled]="true" />
+      <ds-form-field label="Budget" hint="In whole hundreds.">
+        <ds-slider [max]="5000" [step]="100" [value]="1200" />
+      </ds-form-field>
+      <ds-number-input label="Seats" [min]="1" [max]="12" [value]="3" hint="Up to twelve." />
+      <ds-number-input label="Price" [min]="0" [step]="0.01" prefix="$" [value]="19.99" size="lg" />
+      <ds-number-input label="Empty" [value]="null" error="Pick at least one." [required]="true" />
+      <ds-number-input label="Frozen" [value]="2" [disabled]="true" />
+      <ds-form-field label="Quantity" hint="Per line.">
+        <ds-number-input [min]="1" [value]="1" />
+      </ds-form-field>
+      <ds-star-rating label="Average rating" [value]="3.5" [readOnly]="true" [showValue]="true" />
+      <ds-star-rating [value]="4" [readOnly]="true" ariaLabel="Service" tone="warning" />
+      <ds-star-rating label="Your rating" [value]="3" [clearable]="true" hint="Tap a star." />
+      <ds-star-rating
+        label="Service"
+        [value]="null"
+        [starLabels]="['Terrible', 'Poor', 'OK', 'Good', 'Great']"
+        [showValue]="true"
+        error="Please rate the service."
+        [required]="true"
+      />
+      <ds-star-rating label="Closed" [value]="2" [disabled]="true" />
+      <ds-form-field label="Food" hint="Honestly.">
+        <ds-star-rating [value]="5" />
+      </ds-form-field>
 
       <!-- Tabs -->
       <ds-tabs label="Harness tabs" [variant]="tabsVariant()">
@@ -682,7 +731,7 @@ describe('accessibility (axe-core)', () => {
   it('has no violations across the form molecules', async () => {
     // A field that labels a Select's button, a field that labels a native input,
     // a password toggle, a search landmark, and two groups in a fieldset.
-    expect(fixture.nativeElement.querySelectorAll('ds-form-field').length).toBe(8);
+    expect(fixture.nativeElement.querySelectorAll('ds-form-field').length).toBe(11);
     expect(fixture.nativeElement.querySelectorAll('fieldset legend').length).toBe(4);
 
     await scan(fixture.nativeElement.querySelector('main'));
@@ -714,11 +763,32 @@ describe('accessibility (axe-core)', () => {
   it('has no violations across the display & feedback atoms, in every tone', async () => {
     // Solid badges on every tone, a named progress bar, a silent skeleton, a
     // separator with a word in it, and a link that opens a new tab.
-    expect(fixture.nativeElement.querySelectorAll('ds-badge').length).toBe(23);
+    // 22 in the tone grid above, one in the accordion item, one on a board card.
+    expect(fixture.nativeElement.querySelectorAll('ds-badge').length).toBe(24);
     expect(fixture.nativeElement.querySelector('[role="progressbar"]')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('[role="separator"]')).toBeTruthy();
 
     await scan(fixture.nativeElement.querySelector('main'));
+  });
+
+  it('has no violations across the range-style atoms, in every state', async () => {
+    const main = fixture.nativeElement.querySelector('main') as HTMLElement;
+    expect(main.querySelectorAll('input[type="range"]').length).toBe(5);
+    expect(main.querySelectorAll('ds-number-input input[type="number"]').length).toBe(5);
+    expect(main.querySelectorAll('ds-star-rating [role="radiogroup"]').length).toBe(4);
+    expect(main.querySelectorAll('ds-star-rating [role="img"]').length).toBe(2);
+    const steppers = Array.from(main.querySelectorAll('.ds-number__step')) as HTMLButtonElement[];
+    expect(steppers.length).toBe(10);
+    expect(steppers.every((button) => button.getAttribute('aria-label') && button.tabIndex === -1)).toBeTrue();
+    await scan(main);
+  });
+
+  it('has no violations across the keycaps and the pictures', async () => {
+    const main = fixture.nativeElement.querySelector('main') as HTMLElement;
+    expect(main.querySelectorAll('ds-kbd kbd').length).toBeGreaterThan(4);
+    expect(main.querySelectorAll('ds-image [role="img"]').length).toBe(2);
+    expect(main.querySelectorAll('ds-image [aria-hidden="true"].ds-image').length).toBe(1);
+    await scan(main);
   });
 
   it('has no violations across the form-control atoms, in every state', async () => {

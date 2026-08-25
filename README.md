@@ -3,7 +3,15 @@
 Paint turns design decisions into typed, themeable code for Angular. Foundations at the
 bottom, primitives and components on top, products on the shoulders of all of it.
 
-**Next** — `Feed`: the activity list and the notification inbox as one organism — a rail of
+**Next** — the small atoms apps keep inventing by hand: `Kbd`, `StarRating`, `Slider`,
+`NumberInput` and `Image`. A keycap that is a real `<kbd>` and never a tab stop; stars that are one
+`role="img"` when read and a native radio group when given; a range on Bootstrap's `.form-range` with
+six keys stated in one place; a quantity field that clamps and snaps when you step or leave, not while
+you type; and a picture with a shape, a radius and a fallback that still has a name. Three more
+`ControlValueAccessor`s on the same field contract, two more display atoms on the same tones — and a
+Playwright suite that presses the real keys on the real pages.
+
+**Then** — `Feed`: the activity list and the notification inbox as one organism — a rail of
 moments with avatar/icon nodes, relative time off an injectable clock (absolute for screen
 readers), unread as weight + dot + a word, host-owned bodies via `[dsFeedBody]`, and an empty state
 with a way out. Vertical by default, horizontal for the feeds that earn it. The inbox is the same
@@ -96,26 +104,23 @@ ink-tinted elevation, grain, and a mark that looks like paint.
 | Theme provider | `src/design-system/theme/` | `provideTheme()`, `ThemeService`, Bootstrap bridge |
 | Brand | `src/design-system/brand/` | Brand tokens + `<ds-logo>` |
 | Primitives | `src/design-system/primitives/` | Button, Text, Box, Flex, Stack, Grid |
-| **Form controls** | `src/design-system/primitives/` | **Input, Textarea, Checkbox, Radio, Switch** |
-| **Display & feedback** | `src/design-system/primitives/` | **Badge, Chip, Avatar, Spinner, Progress, Skeleton, Divider, Link** |
+| **Form controls** | `src/design-system/primitives/` | **Input, Textarea, Checkbox, Radio, Switch, Slider, NumberInput, StarRating** |
+| **Display & feedback** | `src/design-system/primitives/` | **Badge, Chip, Avatar, Spinner, Progress, Skeleton, Divider, Link, Kbd, Image** |
 | **Form molecules** | `src/design-system/molecules/` | **FormField, SearchField, PasswordField, RadioGroup, CheckboxGroup** |
 | **Date entry** | `src/design-system/molecules/` | **Calendar, DateInput, TimeInput** |
 | **Structure** | `src/design-system/molecules/` | **Accordion, Breadcrumb, Pagination, EmptyState, Alert, Toolbar** |
 | **Overlays & files** | `src/design-system/molecules/` | **Tooltip, Popover, FileDropzone, FileQueueItem** |
-| **Form molecules** | `src/design-system/molecules/` | **FormField, SearchField, PasswordField, RadioGroup, CheckboxGroup** |
-| **Display & feedback** | `src/design-system/primitives/` | **Badge, Chip, Avatar, Spinner, Progress, Skeleton, Divider, Link** |
-| **Form molecules** | `src/design-system/molecules/` | **FormField, SearchField, PasswordField, RadioGroup, CheckboxGroup** |
 | Molecules | `src/design-system/molecules/` | Tabs, Menu, Select, Toast |
-| **Form molecules** | `src/design-system/molecules/` | **FormField, SearchField, PasswordField, RadioGroup, CheckboxGroup** |
 | Organisms | `src/design-system/organisms/` | Dialog, DataTable, DatePicker, DateRangePicker, Drawer, FileUploader, DataGrid, FilterBar, CommandPalette, MapViewer, **Feed** |
-| Utils | `src/design-system/utils/` | ARIA ids, focus trap, roving index, scroll lock, calendar arithmetic |
+| Utils | `src/design-system/utils/` | ARIA ids, focus trap, roving index, scroll lock, calendar and step arithmetic |
 
 ## Quick start
 
 ```bash
 npm install
 npm start          # showcase at http://localhost:4200
-npm test           # 854 unit tests
+npm test           # 1,300+ unit tests (Karma; set CHROME_BIN to your Chromium in CI)
+npm run e2e        # Playwright, against the showcase (starts `ng serve` itself)
 npm run build      # production build
 ```
 
@@ -164,6 +169,85 @@ Decisions worth knowing:
   *Save*, it is a `<ds-checkbox>`.
 - **One control scale.** `sm | md | lg` comes from `controlSizes` in the token layer, shared with
   `<ds-button>`, so a field and the button beside it line up.
+
+## The range-style atoms
+
+Three more form controls, one more contract. Each is a `ControlValueAccessor` on `FormControlBase` —
+the same label / hint / error / disabled / `size` plumbing as Input, the same `<ds-form-field>`
+adoption — and each owns a number that has *rules*.
+
+| Atom | Built on | Brings |
+| --- | --- | --- |
+| `<ds-slider>` | `.form-range` | A filled track, `valueText` as `aria-valuetext`, and six keys stated in one place: arrows step, `Page` keys jump ten, `Home`/`End` hit the ends |
+| `<ds-number-input>` | `.form-control` + two real `<button>`s | − / + steppers that are not tab stops, typing that is never corrected mid-thought, and a value that is clamped and snapped when you step or leave |
+| `<ds-star-rating>` | native radios, or one `role="img"` | Stars to read (half stars, one announcement) and stars to give (a radio group, every star named); `clearable` adds `Backspace` |
+
+```html
+<ds-slider label="Volume" [(value)]="volume" [showValue]="true" />
+<ds-slider label="Budget" [max]="5000" [step]="100" [valueText]="'$' + budget()" formControlName="budget" />
+
+<ds-number-input label="Seats" [min]="1" [max]="12" [(value)]="seats" />
+<ds-number-input label="Price" [min]="0" [step]="0.01" prefix="$" formControlName="price" />
+
+<ds-star-rating [value]="3.5" [readOnly]="true" ariaLabel="Average rating" />
+<ds-star-rating label="Your rating" [(value)]="rating" [clearable]="true" />
+<ds-star-rating label="Service" [starLabels]="['Terrible', 'Poor', 'OK', 'Good', 'Great']" formControlName="service" />
+```
+
+Decisions worth knowing:
+
+- **One arithmetic.** `utils/number.ts` — `clamp`, `snapToGrid`, `stepValue`, `roundToStep` — is the
+  only place a step is computed. The grid is anchored at `min`, as HTML anchors it (`min=1 step=2`
+  steps 1, 3, 5), and every result is written with the step's own precision, so `0.1 × 3` is `0.3`.
+  Slider and NumberInput cannot disagree, because neither has an opinion.
+- **The keyboard is stated, not hoped for.** Browsers do not agree about `Home`, `End` and the `Page`
+  keys on a range input, so the Slider re-states all six keys in one `keydown` and the suite asserts
+  them — in Karma with synthetic events, and in Playwright with real ones. The pointer, the drag and
+  forced colours stay the platform's.
+- **When the quantity rules apply.** Typing is free: `"1"` on the way to `"12"` is not yet out of
+  range, and a field that corrected it would fight the caret. Stepping is always on the grid and
+  inside the bounds, and the buttons disable at the ends. Leaving the field — blur or `Enter` — clamps
+  and snaps. A `min` of `1` does not stop anyone typing `0`; it stops them leaving with it.
+- **The steppers are not tab stops.** Keyboard users step with `↑`/`↓`; the buttons are pointer
+  affordances, the way the clear button of `<ds-input>` is. They are still real, named buttons.
+- **A rating is two controls.** Read-only is one `role="img"` named *"Average rating, 3.5 of 5
+  stars"* — one announcement, not five. Editable is five visually-hidden native radios with the stars
+  as their labels: `Tab` lands on the chosen star, the arrows move and choose, `Space` chooses, and
+  every radio is named (*"4 stars, Good"* with `starLabels`). Paint adds only what a radio group
+  cannot do natively — un-choosing — behind `clearable`. No rating library; no slider pretending.
+- **Whole stars when giving, halves when reading.** Nobody means three and a half. A `3.7` written
+  in by a form checks the fourth radio; the same `3.7` in read-only draws three and a half.
+
+## The display atoms that were missing
+
+| Atom | Built on | Brings |
+| --- | --- | --- |
+| `<ds-kbd>` | a real `<kbd>` | A keycap: one per key, `+` between them, mono type, an edge. Never a tab stop, never a listener |
+| `<ds-image>` | a real `<img>`, framed | `aspect-ratio`, `object-fit` / `position`, the radius tokens, native lazy loading, and a fallback with a name |
+
+```html
+<ds-kbd>Esc</ds-kbd>
+<ds-kbd keys="Ctrl+Enter" size="md" />
+<ds-kbd keys="⌘K" />                                  <!-- announced "Command K" -->
+
+<ds-image src="/covers/wet-paint.jpg" alt="Cover of Wet Paint" ratio="16/9" radius="lg" />
+<ds-image [src]="null" alt="Floor plan" fallbackText="No plan uploaded" ratio="4/3" />
+<ds-image [src]="texture" alt="" [decorative]="true" ratio="21/9" />
+<ds-image [src]="cover()" alt="Cover" ratio="1/1">
+  <ds-avatar dsImageFallback name="Wet Paint" shape="square" [decorative]="true" />
+</ds-image>
+```
+
+- **Glyphs for eyes, words for ears.** `⌘` is announced as *"place of interest sign"*. When `keys`
+  contain a glyph Paint knows, the keycaps are hidden and the words are spoken instead (`srLabel`
+  overrides). `Ctrl+Enter` already reads as words and is left alone.
+- **Every picture says what it is, or says it is decoration.** `alt` is the name; `decorative` is the
+  explicit way out, and it empties the alt *and* hides the fallback. A picture with neither is a
+  mistake, and Paint warns in development. A missing `src` and a failed one look the same — a quiet,
+  textured block — and the frame is still `role="img"` with the alt as its name, so a screen reader
+  hears *"Cover of Wet Paint"*, not a file name, and not nothing.
+- **Nothing jumps.** `ratio` is CSS `aspect-ratio`; the frame holds its space from the first paint.
+  Outcomes are remembered *per source*, so a new `src` is a fresh attempt with nothing to reset.
 
 ## The display & feedback atoms
 
@@ -932,11 +1016,12 @@ tokens/          ← foundations: color, type, space, radii, effects
 styles/          ← CSS variables + the Bootstrap substrate
 icons/           ← <ds-icon> + registry
 brand/           ← brand tokens + <ds-logo>
-utils/           ← focus trap, roving index, scroll lock, ARIA ids
+utils/           ← focus trap, roving index, scroll lock, ARIA ids, date/time/step arithmetic
 primitives/      ← Button, Text, Box, Flex, Stack, Grid
-                 ← Input, Textarea, Checkbox, Radio, Switch         (form controls)
+                 ← Input, Textarea, Checkbox, Radio, Switch,
+                   Slider, NumberInput, StarRating                  (form controls)
                  ← Badge, Chip, Avatar, Spinner, Progress,
-                   Skeleton, Divider, Link                          (display & feedback)
+                   Skeleton, Divider, Link, Kbd, Image              (display & feedback)
 molecules/       ← Tabs, Menu, Select, Toast
                  ← FormField, SearchField, PasswordField,
                    RadioGroup, CheckboxGroup                        (forms)
@@ -970,8 +1055,12 @@ breaking change for anything that reached past the semantic roles:
   imports** (`design-system/theme`, `design-system/primitives/button`, …) rather than reaching for
   the barrel: `export *` plus the `DS_*` bundle arrays means one import from `design-system/` pulls
   every component into the main chunk, where almost none of them are used. Doing that correctly took
-  the initial bundle from 820 kB to 586 kB. The pages are lazy; each one pays for what it renders. The nineteen atoms cost
-  ~60 kB of it, raw — about 9 kB over the wire.
+  the initial bundle from 820 kB to 586 kB. The pages are lazy; each one pays for what it renders. The twenty-four atoms cost
+  ~75 kB of it, raw — about 11 kB over the wire.
+- **Tests need a Chromium.** Karma runs `ChromeHeadlessCI` (`karma.conf.js`: `--no-sandbox`, no
+  `/dev/shm`) and Playwright launches the same binary; both read `CHROME_BIN` when it is set, so a
+  container needs one browser, not two. `npm run e2e` starts `ng serve` on port 4273 on its own
+  (`E2E_PORT` to change it) and reuses a running one outside CI.
 - Overlays (Dialog, Menu, Select panels) render in place rather than in a portal. Avoid
   putting them inside a `transform`ed or `backdrop-filter`ed ancestor; a portal arrives with
   the overlay service.

@@ -398,6 +398,43 @@ export const iconRegistry = {
     ],
     stroke: true,
   },
+  star: {
+    viewBox: '0 0 24 24',
+    paths: [
+      'M12 2.5l2.94 6.2 6.8.78-5.03 4.66 1.34 6.71L12 17.5l-6.05 3.35 1.34-6.71L2.26 9.48l6.8-.78z',
+    ],
+  },
+  image: {
+    viewBox: '0 0 24 24',
+    paths: [
+      'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z',
+      'M9 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2z',
+      'm21 15-5-5L5 21',
+    ],
+    stroke: true,
+  },
+  keyboard: {
+    viewBox: '0 0 24 24',
+    paths: [
+      'M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z',
+      'M6 10h.01',
+      'M10 10h.01',
+      'M14 10h.01',
+      'M18 10h.01',
+      'M8 14h8',
+    ],
+    stroke: true,
+  },
+  sliders: {
+    viewBox: '0 0 24 24',
+    paths: ['M4 21v-7', 'M4 10V3', 'M12 21v-9', 'M12 8V3', 'M20 21v-5', 'M20 12V3', 'M1 14h6', 'M9 8h6', 'M17 16h6'],
+    stroke: true,
+  },
+  hash: {
+    viewBox: '0 0 24 24',
+    paths: ['M4 9h16', 'M4 15h16', 'M10 3 8 21', 'M16 3l-2 18'],
+    stroke: true,
+  },
 } as const satisfies Record<string, IconDefinition>;
 
 export type IconName = keyof typeof iconRegistry;

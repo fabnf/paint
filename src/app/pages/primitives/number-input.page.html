@@ -1,0 +1,153 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="hash"
+    title="NumberInput"
+    lede="The quantity atom. A real <input type=&quot;number&quot;> between a − and a + button, in the Input's own chrome. Typing is the platform's; the arithmetic is Paint's: a value never leaves [min, max], stepping lands on the step grid, and 0.1 + 0.2 is 0.3."
+    builtOn=".form-control + two real <button>s"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Anatomy"
+    anchor="anatomy"
+    description="Label, a − button, the number, a + button, a hint. The buttons are real, named buttons — and not tab stops: the arrow keys already step, so one tab stop per field. Clicking a button keeps the caret in the field."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-number-input label="Seats" [min]="1" [max]="12" [(value)]="seats" hint="Up to twelve." />
+        <ds-text variant="code" tone="primary">value = {{ seats() ?? 'null' }}</ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="When the rules apply"
+    anchor="rules"
+    description="While typing, nothing is corrected — “1” on the way to “12” is not yet out of range. Stepping is always on the grid and inside the bounds, and the buttons disable at the ends. Leaving the field (blur, Enter) clamps and snaps whatever was typed. Try typing 240 into Opacity and pressing Tab."
+  >
+    <app-doc-example code="{{ rulesSnippet }}">
+      <ds-stack [gap]="5" class="demo-field">
+        <ds-number-input label="Opacity" [min]="0" [max]="100" [step]="5" suffix="%" [(value)]="opacity" hint="Steps of five. Type anything; leave with a multiple." />
+        <ds-number-input label="Price" [min]="0" [step]="0.01" prefix="$" [(value)]="price" hint="Two decimals, without the floating-point dust." />
+        <ds-number-input label="Temperature" [min]="-30" [max]="45" suffix="°C" [(value)]="temperature" hint="Can go below zero, so the keypad keeps its minus." />
+        <ds-text variant="code" tone="primary">
+          opacity = {{ opacity() ?? 'null' }} · price = {{ price() ?? 'null' }} · temperature = {{ temperature() ?? 'null' }}
+        </ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="A line item"
+    anchor="line"
+    description="The small size, no visible label (the row is the label), and button names that say what they do to this row — when six quantity fields share a screen, six buttons called “Increase” are six buttons called the same thing."
+  >
+    <app-doc-example code="{{ lineSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="4" class="demo-form">
+        <ds-flex justify="between" align="center" [gap]="4">
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Wet Paint — the poster</ds-text>
+            <ds-text variant="caption">${{ unitPrice }}.00 each</ds-text>
+          </ds-stack>
+          <ds-flex align="center" [gap]="4">
+            <ds-number-input
+              ariaLabel="Quantity"
+              size="sm"
+              [min]="1"
+              [max]="99"
+              [(value)]="quantity"
+              decrementLabel="One fewer poster"
+              incrementLabel="One more poster"
+              class="line-quantity"
+            />
+            <ds-text variant="label" class="line-total">${{ total() }}</ds-text>
+          </ds-flex>
+        </ds-flex>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="In a form"
+    anchor="forms"
+    description="ControlValueAccessor, like every form atom. The form gets numbers, never numeric strings; a reset empties the field. The error is the invalid state and joins aria-describedby."
+  >
+    <app-doc-example code="{{ formSnippet }}" language="ts">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-number-input label="Guests" [min]="1" [max]="20" [formControl]="control" [error]="liveError()" [required]="true" />
+        <ds-flex [gap]="2" align="center">
+          <ds-button size="sm" variant="secondary" (clicked)="control.markAsTouched()">Validate</ds-button>
+          <ds-button size="sm" variant="ghost" (clicked)="control.reset()">Reset</ds-button>
+          <ds-text variant="code" tone="primary">{{ control.valid ? 'valid' : 'invalid' }} · value = {{ control.value ?? 'null' }}</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes and states"
+    anchor="states"
+    description="Three heights from the control scale, shared with Input and Button. Disabled disables the buttons with the field; read-only keeps the number copyable and the buttons quiet."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-stack [gap]="4">
+          <ds-number-input size="sm" label="Small" [value]="1" />
+          <ds-number-input size="md" label="Medium" [value]="2" />
+          <ds-number-input size="lg" label="Large" [value]="3" />
+        </ds-stack>
+        <ds-stack [gap]="4">
+          <ds-number-input label="Empty" [value]="null" placeholder="0" />
+          <ds-number-input label="Invalid" [value]="0" [min]="1" error="At least one." />
+          <ds-number-input label="Read-only" [value]="7" [readOnly]="true" />
+          <ds-number-input label="Disabled" [value]="4" [disabled]="true" />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Not just type=“number”"
+    anchor="why"
+    description="<ds-input type=&quot;number&quot;> hands back whatever parses. This atom hands back a value that honours its constraints — which is a different promise, and the reason it is a different component."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The grid</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Anchored at min, as HTML anchors it: min=1 step=2 steps 1, 3, 5 — never 0, 2, 4. An
+            off-grid value lands on the grid in the direction of travel, as the native spin buttons do.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The precision</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Every result is written with the step's own decimal places, which is what turns 0.1 × 3
+            back into 0.3. The arithmetic is a pure, tested helper the Slider shares.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">The platform</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Still a native number input: the caret, selection, the keypad, autofill and forced colours
+            are the browser's. Only the spin buttons are replaced — by buttons you can see.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and methods of <ds-number-input>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="methods" nameHeading="Method" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

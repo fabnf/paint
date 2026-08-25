@@ -1,0 +1,139 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="keyboard"
+    title="Kbd"
+    lede="The keyboard-hint atom. A keycap for a shortcut — ⌘K beside a search field, Ctrl+Enter in a tooltip, Esc in a dialog's corner. A real <kbd>, repainted from the tokens, and never a tab stop: it tells the user which key, and the component that owns the behaviour owns the keydown."
+    builtOn="a real <kbd>"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A key, or a combination"
+    anchor="keys"
+    description="Project one key as content, or pass a combination through keys and get one keycap per key with a + between them. The combination is itself a <kbd>, which is how HTML has always nested them."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-flex [gap]="4" align="center" [wrap]="'wrap'">
+        <ds-kbd>Esc</ds-kbd>
+        <ds-kbd>Enter</ds-kbd>
+        <ds-kbd keys="Ctrl+Enter" />
+        <ds-kbd keys="⌘⇧P" />
+        <ds-kbd keys="Alt+F4" />
+        <ds-kbd [keys]="['Ctrl', '+']" />
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Glyphs for eyes, words for ears"
+    anchor="spoken"
+    description="⌘, ⇧ and ⌥ are what the eye expects, and a screen reader reads them as Unicode trivia. When keys contain a glyph Paint knows, the visible keycaps are hidden and the words are spoken instead. Ctrl+Enter already reads as words, so it is left alone — hiding it to say the same thing again would be noise."
+  >
+    <app-doc-example code="{{ spokenSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-flex [gap]="6" align="center" [wrap]="'wrap'">
+          <ds-flex [gap]="2" align="center">
+            <ds-kbd keys="⌘K" />
+            <ds-text variant="caption">announced “Command K”</ds-text>
+          </ds-flex>
+          <ds-flex [gap]="2" align="center">
+            <ds-kbd keys="⇧⇥" />
+            <ds-text variant="caption">announced “Shift Tab”</ds-text>
+          </ds-flex>
+          <ds-flex [gap]="2" align="center">
+            <ds-kbd keys="↑" />
+            <ds-kbd keys="↓" />
+            <ds-text variant="caption">“Up arrow”, “Down arrow”</ds-text>
+          </ds-flex>
+          <ds-flex [gap]="2" align="center">
+            <ds-kbd srLabel="Escape">Esc</ds-kbd>
+            <ds-text variant="caption">projected, so the words are yours</ds-text>
+          </ds-flex>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Inline and in toolbars"
+    anchor="inline"
+    description="Two sizes, and a third has not earned its keep. md sits in running text at the text's own rhythm; sm sits beside a label in a menu row, a tooltip or a search field, where it should be read second."
+  >
+    <app-doc-example code="{{ inlineSnippet }}">
+      <ds-stack [gap]="5">
+        <ds-text class="specimen">
+          Press <ds-kbd size="md">Tab</ds-kbd> to move between fields, and
+          <ds-kbd size="md" keys="⇧⇥" /> to move back. <ds-kbd size="md">Esc</ds-kbd> closes the dialog
+          without saving.
+        </ds-text>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="2" class="demo-field">
+          <ds-stack [gap]="0">
+            <ds-flex justify="between" align="center" class="kbd-row">
+              <ds-flex align="center" [gap]="2">
+                <ds-icon name="search" size="sm" />
+                <ds-text variant="bodySm">Search</ds-text>
+              </ds-flex>
+              <ds-kbd keys="⌘K" />
+            </ds-flex>
+            <ds-flex justify="between" align="center" class="kbd-row">
+              <ds-flex align="center" [gap]="2">
+                <ds-icon name="copy" size="sm" />
+                <ds-text variant="bodySm">Duplicate</ds-text>
+              </ds-flex>
+              <ds-kbd keys="⌘D" />
+            </ds-flex>
+            <ds-flex justify="between" align="center" class="kbd-row">
+              <ds-flex align="center" [gap]="2">
+                <ds-icon name="trash" size="sm" />
+                <ds-text variant="bodySm">Delete</ds-text>
+              </ds-flex>
+              <ds-kbd keys="⌫" />
+            </ds-flex>
+          </ds-stack>
+        </ds-box>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="What it refuses to do"
+    anchor="refuses"
+    description="Three things a keycap is often asked for, and why it says no."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Listen for the key</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The component that owns the behaviour owns the keydown. A hint that also acted would be a
+            second, invisible place where a shortcut is defined.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Be pressed</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            It looks like a key, and it is not one. No tab stop, no role, no hover. A clickable
+            shortcut is a <ds-text variant="code" [as]="'code'">&lt;ds-button&gt;</ds-text> with a Kbd inside it.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Guess the platform</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            It shows the keys you give it. Whether that is ⌘ or Ctrl is a decision about the user's
+            machine, made by the host — and Paint will not make it twice.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-kbd>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

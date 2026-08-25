@@ -415,6 +415,9 @@ $utilities: map.merge(
 @import 'bootstrap/scss/forms/form-text';
 @import 'bootstrap/scss/forms/form-control';
 @import 'bootstrap/scss/forms/form-check';
+// Slider -> form-range: Bootstrap resets the native range input across
+// browsers; Paint paints the track fill and the thumb from its own tokens.
+@import 'bootstrap/scss/forms/form-range';
 @import 'bootstrap/scss/toasts';
 
 // Display & feedback atoms: Badge / Chip -> badge, Progress -> progress,

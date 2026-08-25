@@ -65,44 +65,21 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/primitives/switch.page').then((m) => m.SwitchPage),
       },
       {
-        path: 'badge',
-        title: title('Badge'),
-        loadComponent: () => import('./pages/primitives/badge.page').then((m) => m.BadgePage),
+        path: 'slider',
+        title: title('Slider'),
+        loadComponent: () => import('./pages/primitives/slider.page').then((m) => m.SliderPage),
       },
       {
-        path: 'chip',
-        title: title('Chip'),
-        loadComponent: () => import('./pages/primitives/chip.page').then((m) => m.ChipPage),
+        path: 'number-input',
+        title: title('NumberInput'),
+        loadComponent: () =>
+          import('./pages/primitives/number-input.page').then((m) => m.NumberInputPage),
       },
       {
-        path: 'avatar',
-        title: title('Avatar'),
-        loadComponent: () => import('./pages/primitives/avatar.page').then((m) => m.AvatarPage),
-      },
-      {
-        path: 'spinner',
-        title: title('Spinner'),
-        loadComponent: () => import('./pages/primitives/spinner.page').then((m) => m.SpinnerPage),
-      },
-      {
-        path: 'progress',
-        title: title('Progress'),
-        loadComponent: () => import('./pages/primitives/progress.page').then((m) => m.ProgressPage),
-      },
-      {
-        path: 'skeleton',
-        title: title('Skeleton'),
-        loadComponent: () => import('./pages/primitives/skeleton.page').then((m) => m.SkeletonPage),
-      },
-      {
-        path: 'divider',
-        title: title('Divider'),
-        loadComponent: () => import('./pages/primitives/divider.page').then((m) => m.DividerPage),
-      },
-      {
-        path: 'link',
-        title: title('Link'),
-        loadComponent: () => import('./pages/primitives/link.page').then((m) => m.LinkPage),
+        path: 'star-rating',
+        title: title('StarRating'),
+        loadComponent: () =>
+          import('./pages/primitives/star-rating.page').then((m) => m.StarRatingPage),
       },
       {
         path: 'badge',
@@ -143,6 +120,16 @@ export const routes: Routes = [
         path: 'link',
         title: title('Link'),
         loadComponent: () => import('./pages/primitives/link.page').then((m) => m.LinkPage),
+      },
+      {
+        path: 'kbd',
+        title: title('Kbd'),
+        loadComponent: () => import('./pages/primitives/kbd.page').then((m) => m.KbdPage),
+      },
+      {
+        path: 'image',
+        title: title('Image'),
+        loadComponent: () => import('./pages/primitives/image.page').then((m) => m.ImagePage),
       },
       {
         path: 'text',

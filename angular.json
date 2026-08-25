@@ -114,16 +114,9 @@
             "stylePreprocessorOptions": {
               "includePaths": [
                 "node_modules"
-              ],
-              "sass": {
-                "silenceDeprecations": [
-                  "import",
-                  "global-builtin",
-                  "color-functions",
-                  "mixed-decls"
-                ]
-              }
-            }
+              ]
+            },
+            "karmaConfig": "karma.conf.js"
           }
         }
       }

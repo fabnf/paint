@@ -1,0 +1,131 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="star"
+    title="StarRating"
+    lede="Stars, for reading a rating and for giving one. Two different controls wearing the same paint: read-only is one image that says the number; editable is a native radio group, so the keyboard, the focus and the form submission are the platform's."
+    builtOn="native radios, or one role=&quot;img&quot;"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Reading a rating"
+    anchor="read-only"
+    description="readOnly renders one role=&quot;img&quot; named “3.5 of 5 stars” — one announcement, not five. Half stars are drawn when the value has a half in it; anything finer rounds to the nearest half. Nothing is focusable, because there is nothing to do."
+  >
+    <app-doc-example code="{{ readOnlySnippet }}">
+      <ds-stack [gap]="5">
+        <ds-flex [gap]="6" align="center" [wrap]="'wrap'">
+          <ds-star-rating [value]="3.5" [readOnly]="true" ariaLabel="Average rating" />
+          <ds-star-rating [value]="4" [readOnly]="true" ariaLabel="Service" tone="warning" />
+          <ds-star-rating [value]="2.5" [readOnly]="true" ariaLabel="Value" size="sm" />
+          <ds-star-rating [value]="null" [readOnly]="true" ariaLabel="Delivery" size="lg" />
+        </ds-flex>
+
+        <ds-stack [gap]="3" class="demo-field">
+          <ds-star-rating
+            label="Average"
+            [value]="average()"
+            [readOnly]="true"
+            [showValue]="true"
+            [valueText]="averageText()"
+          />
+          <ds-flex [gap]="2" align="center">
+            <ds-button size="sm" variant="ghost" iconStart="minus" label="Lower the average" (clicked)="nudge(-0.3)" />
+            <ds-button size="sm" variant="ghost" iconStart="plus" label="Raise the average" (clicked)="nudge(0.3)" />
+            <ds-text variant="caption">{{ averageText() }}</ds-text>
+          </ds-flex>
+        </ds-stack>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Giving one"
+    anchor="editable"
+    description="Five visually-hidden radios, each labelled by its star. Tab lands on the chosen star (or the first), the arrow keys move and choose, Space chooses, and every radio has a clear name: “3 stars”. Hovering previews the rating a click would give, paler. Paint adds one key the platform has no word for: Backspace clears, when clearable."
+  >
+    <app-doc-example code="{{ editableSnippet }}">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-star-rating
+          label="Your rating"
+          [(value)]="rating"
+          [clearable]="true"
+          hint="Click the chosen star again to clear."
+        />
+        <ds-text variant="code" tone="primary">value = {{ rating() === null ? 'null' : rating() }}</ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Words for the stars"
+    anchor="labels"
+    description="Nobody agrees what three stars means. starLabels gives each star a word: it joins the radio's name — “4 stars, Good” — and, with showValue, it is what appears beside the stars as you hover."
+  >
+    <app-doc-example code="{{ labelsSnippet }}">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-star-rating
+          label="Service"
+          [starLabels]="words"
+          [showValue]="true"
+          [(value)]="service"
+          tone="warning"
+          size="lg"
+        />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="In a form"
+    anchor="forms"
+    description="ControlValueAccessor, like every form atom. The error is the invalid state: it sets aria-invalid on the group and joins aria-describedby, and the group is aria-required when the control is. A form reset takes every star back."
+  >
+    <app-doc-example code="{{ formSnippet }}" language="ts">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-star-rating
+          label="Food"
+          [formControl]="control"
+          [error]="liveError()"
+          [required]="true"
+          hint="Tab to the stars and press an arrow key."
+        />
+        <ds-flex [gap]="2" align="center">
+          <ds-button size="sm" variant="secondary" (clicked)="control.markAsTouched()">Validate</ds-button>
+          <ds-button size="sm" variant="ghost" (clicked)="control.reset()">Reset</ds-button>
+          <ds-text variant="code" tone="primary">{{ control.valid ? 'valid' : 'invalid' }} · value = {{ control.value ?? 'null' }}</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes, tones and states"
+    anchor="states"
+    description="Three sizes from the control scale, any tone from the shared vocabulary. Disabled radios are disabled, not just faded; the pointer preview stops too."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-stack [gap]="3">
+          <ds-star-rating size="sm" label="Small" [value]="4" />
+          <ds-star-rating size="md" label="Medium" [value]="4" />
+          <ds-star-rating size="lg" label="Large" [value]="4" />
+        </ds-stack>
+        <ds-stack [gap]="3">
+          <ds-star-rating label="Accent" [value]="3" tone="accent" />
+          <ds-star-rating label="Success" [value]="5" tone="success" />
+          <ds-star-rating label="Disabled" [value]="2" [disabled]="true" />
+          <ds-star-rating label="Invalid" [value]="null" error="Please pick a rating." />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-star-rating>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

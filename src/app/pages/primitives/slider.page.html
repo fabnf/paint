@@ -1,0 +1,161 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="sliders"
+    title="Slider"
+    lede="The range atom. A native <input type=&quot;range&quot;> with a label, a value and a track that shows how much of the range is behind the thumb. For when the position is the point — volume, opacity, a budget — and the exact number is secondary."
+    builtOn=".form-range"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A track, a thumb, a number"
+    anchor="basic"
+    description="The label is a real <label for>, the value is the control's own (aria-valuenow), and the visible number is the same fact written down. Drag it, or focus it and use the keys."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-slider label="Volume" [(value)]="volume" [showValue]="true" />
+        <ds-text variant="code" tone="primary">value = {{ volume() }}</ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The keyboard"
+    anchor="keyboard"
+    description="Six keys, from one place, so every browser agrees. The platform owns the pointer and the drag; Paint re-states the keys because Home, End and the Page keys work in some browsers and not others."
+  >
+    <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="3">
+          <ds-flex [gap]="3" align="center">
+            <ds-kbd keys="←" /><ds-kbd keys="↓" />
+            <ds-text variant="bodySm">one step down</ds-text>
+          </ds-flex>
+          <ds-flex [gap]="3" align="center">
+            <ds-kbd keys="→" /><ds-kbd keys="↑" />
+            <ds-text variant="bodySm">one step up</ds-text>
+          </ds-flex>
+          <ds-flex [gap]="3" align="center">
+            <ds-kbd>PgDn</ds-kbd><ds-kbd>PgUp</ds-kbd>
+            <ds-text variant="bodySm">ten steps</ds-text>
+          </ds-flex>
+          <ds-flex [gap]="3" align="center">
+            <ds-kbd>Home</ds-kbd><ds-kbd>End</ds-kbd>
+            <ds-text variant="bodySm">min / max</ds-text>
+          </ds-flex>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Why not leave it to the browser?</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Because the browsers do not agree with each other about Home, End, Page Up and Page Down
+            on a range input. Stating all six in one place costs twenty lines and means the
+            behaviour can be asserted, in a test, rather than hoped for.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Steps, bounds and what the number means"
+    anchor="steps"
+    description="min, max and step are the native attributes; a value written from outside lands on the grid and inside the bounds. valueText replaces the number everywhere — on screen, and in aria-valuetext — so a screen reader hears “60%”, not “0.6”."
+  >
+    <app-doc-example code="{{ stepSnippet }}">
+      <ds-stack [gap]="5" class="demo-field">
+        <ds-slider
+          label="Opacity"
+          [min]="0"
+          [max]="1"
+          [step]="0.05"
+          [(value)]="opacity"
+          [valueText]="opacityText()"
+          [showValue]="true"
+        />
+        <ds-slider
+          label="Budget"
+          [max]="5000"
+          [step]="100"
+          [(value)]="budget"
+          [valueText]="budgetText()"
+          [showValue]="true"
+          hint="In whole hundreds."
+          tone="accent"
+        />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="With a number input"
+    anchor="pair"
+    description="When people need the position and the exact number, the two atoms share a model. The slider for the gesture, the number input for the digit — and one label between them, so the pair is one field to a screen reader."
+  >
+    <app-doc-example code="{{ pairSnippet }}">
+      <ds-flex [gap]="4" align="end" class="demo-form">
+        <ds-slider class="flex-grow-1" label="Quality" [(value)]="quality" [showValue]="false" />
+        <ds-number-input
+          ariaLabel="Quality"
+          [min]="0"
+          [max]="100"
+          [(value)]="quality"
+          suffix="%"
+          class="pair-number"
+        />
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="In a form"
+    anchor="forms"
+    description="ControlValueAccessor, like every form atom. A null from the form sits at the minimum; disabling the control disables the native input."
+  >
+    <app-doc-example code="{{ formSnippet }}" language="ts">
+      <ds-stack [gap]="4" class="demo-field">
+        <ds-slider label="Brightness" [formControl]="control" [showValue]="true" />
+        <ds-flex [gap]="2" align="center">
+          <ds-button size="sm" variant="ghost" (clicked)="control.setValue(80)">Set 80</ds-button>
+          <ds-button size="sm" variant="ghost" (clicked)="control.reset()">Reset</ds-button>
+          <ds-button size="sm" variant="ghost" (clicked)="control.disabled ? control.enable() : control.disable()">
+            {{ control.disabled ? 'Enable' : 'Disable' }}
+          </ds-button>
+          <ds-text variant="code" tone="primary">value = {{ control.value ?? 'null' }}</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes, tones and states"
+    anchor="states"
+    description="Three sizes from the control scale, any tone from the shared vocabulary. An error is the invalid state; a disabled track is visibly out of reach."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-stack [gap]="4">
+          <ds-slider size="sm" label="Small" [value]="30" />
+          <ds-slider size="md" label="Medium" [value]="50" />
+          <ds-slider size="lg" label="Large" [value]="70" />
+        </ds-stack>
+        <ds-stack [gap]="4">
+          <ds-slider label="Success" [value]="100" tone="success" />
+          <ds-slider label="Warning" [value]="85" tone="warning" />
+          <ds-slider label="Invalid" [value]="95" error="Too loud for the room." />
+          <ds-slider label="Disabled" [value]="40" [disabled]="true" />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-slider>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

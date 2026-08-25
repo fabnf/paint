@@ -173,3 +173,31 @@
 .stat-row {
   min-width: 12rem;
 }
+
+/* Kbd page: a menu-like row with the shortcut on the far side. */
+.kbd-row {
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border-radius: var(--ds-radius-md);
+}
+
+/* Image page: a gallery tile is a column, not a canvas-wide block. */
+.image-tile {
+  width: 100%;
+}
+
+.image-row > ds-image {
+  flex: 1 1 0;
+  min-width: 8rem;
+}
+
+/* Slider page: a range beside a number field. */
+.range-row {
+  align-items: end;
+}
+
+.range-row ds-slider,
+.range-row ds-number-input {
+  flex: 1 1 0;
+  min-width: 10rem;
+}
+

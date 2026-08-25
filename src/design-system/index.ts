@@ -6,9 +6,10 @@
  *   icons/       SVG registry + <ds-icon>
  *   brand/       brand tokens + <ds-logo>
  *   primitives/  Button, Text, Box, Flex, Stack, Grid
- *                Input, Textarea, Checkbox, Radio, Switch       (form controls)
+ *                Input, Textarea, Checkbox, Radio, Switch,
+ *                Slider, NumberInput, StarRating                (form controls)
  *                Badge, Chip, Avatar, Spinner, Progress,
- *                Skeleton, Divider, Link                        (display & feedback)
+ *                Skeleton, Divider, Link, Kbd, Image            (display & feedback)
  *   molecules/   Tabs, Menu, Select, Toast
  *                FormField, SearchField, PasswordField,
  *                RadioGroup, CheckboxGroup                       (forms)

@@ -21,7 +21,7 @@ export interface NavSection {
  * foundations → primitives → molecules → organisms.
  *
  * The primitives are split into three groups — layout & action, form controls,
- * display & feedback — because nineteen atoms in one list is not an list, it is
+ * display & feedback — because twenty-four atoms in one list is not a list, it is
  * a wall. They are all the same layer.
  */
 export const NAV_SECTIONS: readonly NavSection[] = [
@@ -62,6 +62,9 @@ export const NAV_SECTIONS: readonly NavSection[] = [
       { label: 'Checkbox', path: '/primitives/checkbox', icon: 'checkbox' },
       { label: 'Radio', path: '/primitives/radio', icon: 'radio' },
       { label: 'Switch', path: '/primitives/switch', icon: 'toggle' },
+      { label: 'Slider', path: '/primitives/slider', icon: 'sliders', badge: 'New' },
+      { label: 'NumberInput', path: '/primitives/number-input', icon: 'hash', badge: 'New' },
+      { label: 'StarRating', path: '/primitives/star-rating', icon: 'star', badge: 'New' },
     ],
   },
   {
@@ -76,6 +79,8 @@ export const NAV_SECTIONS: readonly NavSection[] = [
       { label: 'Skeleton', path: '/primitives/skeleton', icon: 'layers', badge: 'New' },
       { label: 'Divider', path: '/primitives/divider', icon: 'minus', badge: 'New' },
       { label: 'Link', path: '/primitives/link', icon: 'externalLink', badge: 'New' },
+      { label: 'Kbd', path: '/primitives/kbd', icon: 'keyboard', badge: 'New' },
+      { label: 'Image', path: '/primitives/image', icon: 'image', badge: 'New' },
     ],
   },
   {

@@ -1,0 +1,137 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Primitive"
+    icon="image"
+    title="Image"
+    lede="The picture atom. A real <img> in a frame that knows its proportions: the space is reserved before the bytes arrive, the corners come from the radius tokens, and a missing or broken picture looks like a decision rather than the browser's broken-image glyph."
+    builtOn="a real <img>, framed"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A picture with a shape"
+    anchor="basic"
+    description="ratio is CSS aspect-ratio with the handful of proportions product UI actually uses. The frame holds its space from the first paint, so nothing below it jumps when the picture lands — and it is lazy by default, which is the native attribute and nothing more."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="3" class="demo-form">
+        <ds-image [src]="wide" alt="Wet Paint: a violet wash with a magenta bleed and a lime sun" ratio="16/9" radius="lg" (loaded)="onLoaded()" />
+        @if (loadedAt()) {
+          <ds-text variant="caption">loaded at {{ loadedAt() }}</ds-text>
+        }
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Ratios"
+    anchor="ratios"
+    description="The same picture, six frames. The frame decides the shape; the picture fills it (cover) and gives up whatever does not fit."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 2, md: 3 }" [gap]="4">
+        @for (ratio of ratios; track ratio) {
+          <ds-stack [gap]="2" align="start">
+            <ds-image [src]="wide" [ratio]="ratio" alt="" [decorative]="true" class="image-tile" />
+            <ds-text variant="code" tone="muted">{{ ratio }}</ds-text>
+          </ds-stack>
+        }
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Fit and position"
+    anchor="fit"
+    description="cover crops, contain letterboxes, and the rest are CSS object-fit by its own names. position says which part survives the crop: a portrait cropped to a square should keep the face, not the shoulders."
+  >
+    <app-doc-example code="{{ fitSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-flex [gap]="2" [wrap]="'wrap'">
+          @for (option of fits; track option) {
+            <ds-button size="sm" [variant]="fit() === option ? 'primary' : 'outline'" (clicked)="fit.set(option)">
+              {{ option }}
+            </ds-button>
+          }
+        </ds-flex>
+        <ds-flex [gap]="4" [wrap]="'wrap'" class="image-row">
+          <ds-image [src]="tall" ratio="1/1" [fit]="fit()" alt="A tall picture, fitted to a square" />
+          <ds-image [src]="tall" ratio="1/1" [fit]="fit()" position="top" alt="The same picture, keeping the top" />
+          <ds-image [src]="wide" ratio="1/1" [fit]="fit()" alt="A wide picture, fitted to a square" />
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="When there is no picture"
+    anchor="fallback"
+    description="A missing src and a failed one look the same: a quiet, textured block with an icon, or your own content. Either way the frame is still an image with a name — a screen reader hears “Cover of Wet Paint”, not a file name, and not nothing."
+  >
+    <app-doc-example code="{{ fallbackSnippet }}">
+      <ds-stack [gap]="5">
+        <ds-flex [gap]="4" [wrap]="'wrap'" class="image-row">
+          <ds-image [src]="null" alt="Floor plan" fallbackText="No plan uploaded" ratio="4/3" />
+          <ds-image [src]="missing" alt="Cover of a book that has not been scanned" ratio="4/3" />
+          <ds-image [src]="cover()" alt="Cover of Wet Paint" ratio="4/3">
+            <ds-avatar dsImageFallback name="Wet Paint" shape="square" size="lg" [decorative]="true" />
+          </ds-image>
+        </ds-flex>
+        <ds-flex [gap]="2" align="center">
+          <ds-button size="sm" variant="secondary" (clicked)="breakIt()">
+            {{ cover() === missing ? 'Fix the third one' : 'Break the third one' }}
+          </ds-button>
+          <ds-button size="sm" variant="ghost" (clicked)="removeIt()">
+            {{ cover() === null ? 'Give it back' : 'Take it away' }}
+          </ds-button>
+          <ds-text variant="caption">A new src is a fresh attempt; nothing has to be reset.</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Meaningful, or decorative"
+    anchor="alt"
+    description="Every picture says what it is, or says it is decoration. alt is the name; decorative is the explicit way out, and it empties the alt and hides the fallback. A picture with neither is a mistake, and Paint says so in the console while you develop."
+  >
+    <app-doc-example code="{{ altSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="4">
+        <ds-stack [gap]="2">
+          <ds-image [src]="square" alt="Wet Paint: a violet-to-sky wash with a magenta drop" ratio="4/3" />
+          <ds-text variant="caption">Meaningful: alt says what it shows.</ds-text>
+        </ds-stack>
+        <ds-stack [gap]="2">
+          <ds-image [src]="wide" alt="" [decorative]="true" ratio="4/3" radius="xl" />
+          <ds-text variant="caption">Decorative: texture behind a heading, and silent.</ds-text>
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Radii"
+    anchor="radii"
+    description="The radius tokens, including full for a circle — which is how an Avatar's photo would look if it were not already an Avatar. Use <ds-avatar> for people; this is for everything else."
+  >
+    <app-doc-example [plain]="true">
+      <ds-flex [gap]="4" [wrap]="'wrap'" align="center">
+        <ds-image [src]="square" ratio="1/1" radius="none" alt="" [decorative]="true" class="swatch-image" />
+        <ds-image [src]="square" ratio="1/1" radius="sm" alt="" [decorative]="true" class="swatch-image" />
+        <ds-image [src]="square" ratio="1/1" radius="md" alt="" [decorative]="true" class="swatch-image" />
+        <ds-image [src]="square" ratio="1/1" radius="lg" alt="" [decorative]="true" class="swatch-image" />
+        <ds-image [src]="square" ratio="1/1" radius="xl" alt="" [decorative]="true" class="swatch-image" />
+        <ds-image [src]="square" ratio="1/1" radius="2xl" alt="" [decorative]="true" class="swatch-image" />
+        <ds-image [src]="square" ratio="1/1" radius="full" alt="" [decorative]="true" class="swatch-image" />
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and slots of <ds-image>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

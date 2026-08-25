@@ -24,7 +24,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     <label
       class="form-label ds-field__label"
       [attr.id]="labelId() || null"
-      [attr.for]="for()"
+      [attr.for]="for() || null"
       [class.ds-field__label--disabled]="disabled()"
     >
       {{ text() }}
@@ -43,7 +43,11 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   `,
 })
 export class FieldLabelComponent {
-  /** Id of the control this label names. */
+  /**
+   * Id of the control this label names. Leave it empty for a control that is
+   * named by `aria-labelledby` instead (a star rating's radio group, say): a
+   * `for` pointing at a `<div>` is an attribute that points at nothing.
+   */
   readonly for = input<string>('');
   /** Id of the label itself, for controls named by `aria-labelledby`. */
   readonly labelId = input<string>('');
