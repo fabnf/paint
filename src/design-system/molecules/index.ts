@@ -29,6 +29,10 @@
  * | `ds-popover`         | an anchored, non-modal `role="dialog"`                  |
  * | `ds-file-dropzone`   | a native file input, stretched over a drop target       |
  * | `ds-file-queue-item` | `ds-progress`, `ds-button`, and one file's status       |
+ * | `ds-range-control`   | `ds-slider` + `ds-number-input`, one value, one label    |
+ * | `ds-figure`          | `<figure>` + `ds-image` + a `<figcaption>`              |
+ * | `ds-rating-summary`  | `ds-star-rating`, a score and a count, said once        |
+ * | `ds-shortcut-hint`   | a label and a `ds-kbd`, for a row of shortcuts          |
  */
 export * from './tabs';
 export * from './menu';
@@ -50,6 +54,10 @@ export * from './toolbar';
 export * from './tooltip';
 export * from './popover';
 export * from './file-upload';
+export * from './range-control';
+export * from './figure';
+export * from './rating-summary';
+export * from './shortcut-hint';
 
 import { AccordionComponent, AccordionItemComponent } from './accordion';
 import { AlertComponent } from './alert';
@@ -67,6 +75,10 @@ import { SearchFieldComponent } from './search-field';
 import { TooltipComponent } from './tooltip';
 import { PopoverComponent } from './popover';
 import { FileDropzoneComponent, FileQueueItemComponent } from './file-upload';
+import { FigureCaptionDirective, FigureComponent } from './figure';
+import { RangeControlComponent } from './range-control';
+import { RatingSummaryComponent } from './rating-summary';
+import { ShortcutHintComponent } from './shortcut-hint';
 
 /**
  * The form molecules, as one import: everything that stops a product wiring a
@@ -86,6 +98,24 @@ export const DS_FORM_MOLECULES = [
   CheckboxGroupComponent,
   DateInputComponent,
   TimeInputComponent,
+  RangeControlComponent,
+] as const;
+
+/**
+ * The small display compositions: a picture with its words, a rating with its
+ * count, a shortcut with its label. None of them is interactive on its own;
+ * each says one thing, once.
+ *
+ * @example
+ * ```ts
+ * @Component({ imports: [DS_DISPLAY, DS_DISPLAY_MOLECULES], … })
+ * ```
+ */
+export const DS_DISPLAY_MOLECULES = [
+  FigureComponent,
+  FigureCaptionDirective,
+  RatingSummaryComponent,
+  ShortcutHintComponent,
 ] as const;
 
 /**

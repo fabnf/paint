@@ -201,6 +201,29 @@ export const routes: Routes = [
           import('./pages/components/choice-group.page').then((m) => m.ChoiceGroupPage),
       },
       {
+        path: 'range-control',
+        title: title('RangeControl'),
+        loadComponent: () =>
+          import('./pages/components/range-control.page').then((m) => m.RangeControlPage),
+      },
+      {
+        path: 'figure',
+        title: title('Figure'),
+        loadComponent: () => import('./pages/components/figure.page').then((m) => m.FigurePage),
+      },
+      {
+        path: 'rating-summary',
+        title: title('RatingSummary'),
+        loadComponent: () =>
+          import('./pages/components/rating-summary.page').then((m) => m.RatingSummaryPage),
+      },
+      {
+        path: 'shortcut-hint',
+        title: title('ShortcutHint'),
+        loadComponent: () =>
+          import('./pages/components/shortcut-hint.page').then((m) => m.ShortcutHintPage),
+      },
+      {
         path: 'calendar',
         title: title('Calendar'),
         loadComponent: () => import('./pages/components/calendar.page').then((m) => m.CalendarPage),
@@ -293,6 +316,33 @@ export const routes: Routes = [
         title: title('AppShell'),
         loadComponent: () =>
           import('./pages/components/app-shell.page').then((m) => m.AppShellPage),
+      },
+      {
+        path: 'chart',
+        title: title('Chart'),
+        loadComponent: () => import('./pages/components/chart.page').then((m) => m.ChartPage),
+      },
+      {
+        path: 'workspace',
+        title: title('Inbox & Scheduler'),
+        loadComponent: () =>
+          import('./pages/components/workspace.page').then((m) => m.WorkspacePage),
+      },
+      {
+        path: 'tour',
+        title: title('Tour'),
+        loadComponent: () => import('./pages/components/tour.page').then((m) => m.TourPage),
+      },
+      {
+        path: 'interstitial',
+        title: title('Interstitial'),
+        loadComponent: () =>
+          import('./pages/components/interstitial.page').then((m) => m.InterstitialPage),
+      },
+      {
+        path: 'gallery',
+        title: title('Gallery'),
+        loadComponent: () => import('./pages/components/gallery.page').then((m) => m.GalleryPage),
       },
       {
         path: 'board',

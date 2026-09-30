@@ -1,0 +1,108 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="bell"
+    title="Inbox & Scheduler"
+    lede="Two organisms, one workspace — and deliberately not merged. A support queue is a master–detail reading surface; a calendar is four views over events with start and end times. They share Paint's chrome, the Drawer and the tokens; they do not share a data model."
+    builtOn="Avatar, Badge, EmptyState, Spinner, Textarea, Drawer"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="An operations workspace"
+    anchor="workspace"
+    description="Mail and Calendar over the same week: a queue with unread threads, replies and a closed thread you cannot open, and a calendar with meetings that overlap. Switch modes with the tabs; everything below is live."
+  >
+    <ds-box background="surface" [border]="true" radius="lg" class="frame" id="workspace-frame">
+      <ds-flex class="frame__bar" justify="between" align="center" [gap]="3" [wrap]="'wrap'">
+        <ds-flex align="center" [gap]="2" id="modes" role="group" aria-label="Workspace mode">
+          <ds-button size="sm" [variant]="mode() === 'mail' ? 'primary' : 'outline'" [ariaPressed]="mode() === 'mail'" (clicked)="mode.set('mail')">
+            Mail
+            @if (unreadCount()) {
+              <ds-badge tone="accent" [pill]="true">{{ unreadCount() }}</ds-badge>
+            }
+          </ds-button>
+          <ds-button size="sm" [variant]="mode() === 'calendar' ? 'primary' : 'outline'" [ariaPressed]="mode() === 'calendar'" (clicked)="mode.set('calendar')">
+            Calendar
+          </ds-button>
+        </ds-flex>
+
+        <ds-flex align="center" [gap]="2" [wrap]="'wrap'">
+          @if (mode() === 'mail') {
+            <ds-button size="sm" variant="ghost" id="mail-load" (clicked)="loadMail()">Reload</ds-button>
+            <ds-button size="sm" variant="ghost" id="mail-empty" (clicked)="emptyMail()">Empty it</ds-button>
+            <ds-switch label="Narrow (drawer)" labelPlacement="start" [(checked)]="narrow" />
+            <ds-switch label="Bulk" labelPlacement="start" [(checked)]="bulk" />
+          } @else {
+            <ds-button size="sm" variant="ghost" id="cal-load" (clicked)="loadCalendar()">Reload</ds-button>
+            <ds-button size="sm" variant="ghost" id="cal-empty" (clicked)="emptyCalendar()">Empty the range</ds-button>
+          }
+        </ds-flex>
+      </ds-flex>
+
+      <div class="workspace__body">
+        @if (mode() === 'mail') {
+          <ds-inbox
+            id="mail"
+            [threads]="threads()"
+            [(selected)]="openThread"
+            [loading]="mailLoading()"
+            [narrow]="narrow()"
+            [bulk]="bulk()"
+            [composer]="true"
+            [sending]="sending()"
+            label="Support queue"
+            emptyTitle="The queue is clear"
+            emptyDescription="Nothing is waiting on the team."
+            (reply)="onReply($event)"
+            (readChange)="onReadChange($event)"
+          />
+        } @else {
+          <ds-scheduler
+            id="calendar"
+            [events]="events()"
+            [(view)]="view"
+            [(date)]="anchor"
+            [today]="today"
+            [views]="['month', 'week', 'day', 'agenda']"
+            [loading]="calendarLoading()"
+            (eventOpen)="onEventOpen($event)"
+          />
+        }
+      </div>
+
+      <ds-flex class="browser__status" justify="between" [gap]="3" [wrap]="'wrap'">
+        <ds-text variant="caption" id="workspace-status">
+          @if (mode() === 'mail') {
+            {{ unreadCount() }} unread · {{ threads().length }} threads
+          } @else {
+            {{ events().length }} events · {{ view() }} view
+          }
+        </ds-text>
+        <ds-text variant="code" tone="subtle" id="workspace-last">
+          {{ mode() === 'calendar' && lastEvent() ? lastEvent() : '—' }}
+        </ds-text>
+      </ds-flex>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Two item types, on purpose"
+    anchor="contracts"
+    description="A thread and an event are not the same thing, and forcing one collection model to be both is how a component ends up with ten optional fields nobody can read. What they share is the chrome: density tokens, EmptyState, Skeleton, Spinner, Avatar, Badge and the Drawer."
+  >
+    <app-doc-api-table [rows]="contractRows" nameHeading="Decision" />
+  </app-doc-section>
+
+  <app-doc-section heading="Inbox API" anchor="inbox-api" description="Inputs and outputs of <ds-inbox>.">
+    <app-doc-example code="{{ inboxSnippet }}" [plain]="true">
+      <app-doc-api-table [rows]="inboxRows" nameHeading="Input / output" />
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="Scheduler API" anchor="scheduler-api" description="Inputs and outputs of <ds-scheduler>.">
+    <app-doc-example code="{{ schedulerSnippet }}" [plain]="true">
+      <app-doc-api-table [rows]="schedulerRows" nameHeading="Input / output" />
+    </app-doc-example>
+  </app-doc-section>
+</ds-stack>

@@ -435,6 +435,10 @@ export const iconRegistry = {
     paths: ['M4 9h16', 'M4 15h16', 'M10 3 8 21', 'M16 3l-2 18'],
     stroke: true,
   },
+  play: {
+    viewBox: '0 0 24 24',
+    paths: ['M7 4.5 19.5 12 7 19.5z'],
+  },
 } as const satisfies Record<string, IconDefinition>;
 
 export type IconName = keyof typeof iconRegistry;

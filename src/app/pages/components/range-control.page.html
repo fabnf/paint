@@ -1,0 +1,94 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="sliders"
+    title="RangeControl"
+    lede="A slider and a number field sharing one value. The volume-control pattern: drag for the gesture, type for the digit — with one label, one hint, one min / max / step, and no way for the two to disagree."
+    builtOn="ds-slider + ds-number-input"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="One value, two ways in"
+    anchor="basic"
+    description="Drag the thumb and the digits follow; type the digits and the thumb follows. The molecule owns the label: a <label for> on the slider, and the same text naming the number field through aria-labelledby — two controls called “Volume”, which is what they are."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4" class="demo-form">
+        <ds-range-control label="Volume" [(value)]="volume" suffix="%" />
+        <ds-text variant="code" tone="primary">value = {{ volume() }}</ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The rules, once"
+    anchor="rules"
+    description="min, max and step are set on the molecule and reach both controls. Typing is still free — “1” on the way to “12” is not rewritten — but the model is clamped on every keystroke, so the slider and any form only ever see a legal value. Type 240 into the budget and press Tab."
+  >
+    <app-doc-example code="{{ rulesSnippet }}">
+      <ds-stack [gap]="5" class="demo-form">
+        <ds-range-control label="Opacity" [min]="0" [max]="1" [step]="0.05" [(value)]="opacity" />
+        <ds-range-control
+          label="Budget"
+          [max]="5000"
+          [step]="100"
+          prefix="$"
+          [(value)]="budget"
+          hint="In whole hundreds."
+          tone="accent"
+        />
+        <ds-text variant="code" tone="primary">opacity = {{ opacity() }} · budget = {{ budget() }}</ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="In a form"
+    anchor="forms"
+    description="One ControlValueAccessor for the pair. Inside a <ds-form-field> the field owns the label, and the molecule makes sure its id lands on the slider only — two controls cannot share one id."
+  >
+    <app-doc-example code="{{ formSnippet }}" language="ts">
+      <ds-stack [gap]="5" class="demo-form">
+        <ds-form-field label="Brightness" hint="Of the backlight.">
+          <ds-range-control [formControl]="control" suffix="%" />
+        </ds-form-field>
+        <ds-flex [gap]="2" align="center">
+          <ds-button size="sm" variant="ghost" (clicked)="control.setValue(80)">Set 80</ds-button>
+          <ds-button size="sm" variant="ghost" (clicked)="control.reset()">Reset</ds-button>
+          <ds-button size="sm" variant="ghost" (clicked)="control.disabled ? control.enable() : control.disable()">
+            {{ control.disabled ? 'Enable' : 'Disable' }}
+          </ds-button>
+          <ds-text variant="code" tone="primary">value = {{ control.value ?? 'null' }}</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes and states"
+    anchor="states"
+    description="The control scale reaches both atoms, so the thumb and the field agree on their height. An error marks both invalid; disabled disables both."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="5">
+        <ds-stack [gap]="4">
+          <ds-range-control size="sm" label="Small" [value]="30" />
+          <ds-range-control size="md" label="Medium" [value]="50" />
+          <ds-range-control size="lg" label="Large" [value]="70" />
+        </ds-stack>
+        <ds-stack [gap]="4">
+          <ds-range-control label="Invalid" [value]="95" error="Too loud for the room." suffix="%" />
+          <ds-range-control label="Disabled" [value]="40" [disabled]="true" />
+        </ds-stack>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-range-control>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

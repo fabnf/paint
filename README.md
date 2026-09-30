@@ -3,7 +3,56 @@
 Paint turns design decisions into typed, themeable code for Angular. Foundations at the
 bottom, primitives and components on top, products on the shoulders of all of it.
 
-**Next** — the small atoms apps keep inventing by hand: `Kbd`, `StarRating`, `Slider`,
+
+**Shipped** — `Inbox` and `Scheduler`: two organisms, one Ops workspace (Mail / Calendar). Host-owned
+threads and events; narrow inbox detail is a Drawer; scheduler covers month, week, day and agenda.
+The intro tour stops at Chart, Inbox and Scheduler on real routes.
+
+**Next** — `Chart`: Highcharts behind a Paint adapter, and **ten types on one component** — line,
+spline, area, column, bar, stacked-column, pie, donut, scatter and gauge. The host passes a `type`,
+`categories` and named series of plain numbers (no engine types, anywhere); Paint owns the chrome
+products keep rebuilding: series colours from the live tokens, loading and empty states, a legend
+that is real buttons, and a visually-hidden data table. The engine is a seam: `provideCharts({ highcharts })`
+is deep-imported, the host owns the licence and the megabyte, and without it the organism draws a
+token-styled preview plate. The showcase is a metrics dashboard of all ten.
+
+**Then** — `Tour`: a guided walkthrough that points at the **real** UI. The host passes ordered steps
+(`id`, `title`, `body`, a CSS `target`, and a `route` when the step lives on another page); the tour
+goes there, *waits for the target to exist*, cuts a spotlight around it and opens a card beside it —
+Next, Back, Skip, Done. While a step is open the page is treated the way Dialog treats it: everything
+outside the card `inert`, the body scroll locked through the same reference-counted service, focus on
+the card and back again at the end. `Escape` skips when the tour allows it, and an optional
+"don't show again" keeps that `tourId` away for good. The showcase runs a real nine-step tour of
+Paint itself across its own pages — foundations, a primitive, a molecule, Chart,
+Inbox, Scheduler, and brand packs.
+
+**Then** — `Interstitial`: the full-page interruption, once per user per item. A content API returns
+zero or more things the product wants to say (`id`, `title`, optional body, picture and learn-more
+link); everything already **seen or dismissed** is dropped, and whatever is left opens in the
+Gallery's viewer — one item alone, several as a deck you can walk. Dismissal is permanent, and
+following the link counts as seen. The wire is a seam: `provideInterstitials()` takes a source, the
+default one is `fetch` over three endpoints, and the repo ships the **WireMock** stub that serves
+them (`npm run mock:api`, proxied at `/api`) — so the showcase and the Playwright suite do a real
+`GET`, not a fake adapter.
+
+**Then** — `Gallery`: the product- and marketing-page gallery, and an organism rather than a grid of
+thumbnails. One `items` array feeds everything — thumbnails (`grid` or a snapping `strip`, three
+sizes, `<ds-image>` ratios and radii), a lightbox, and a slideshow over the *same* list, because
+"clicked a thumb" and "start the deck" are one viewer in two modes. The big view is a `<ds-figure>`
+when the item has words about it and a plain picture when it does not. The modal behaviour is
+`<ds-dialog>`'s note for note — focus trap, scroll lock, the rest of the page `inert`, `Escape`
+closes, focus goes back to the thumbnail. Arrows and `Home`/`End` walk the set, the position sits in
+a polite live region, and filtering works both ways: the gallery's own `aria-pressed` tag control, or
+a host that passes a shorter list.
+
+**Then** — four small compositions on top of the new atoms: `RangeControl` (a slider and a number
+field sharing one value, one label and one `min`/`max`/`step`), `Figure` (a real `<figure>` around
+`<ds-image>`, with a `<figcaption>` for the caption and the credit — a figure, not a card),
+`RatingSummary` (stars, score and review count said to a screen reader **once**) and `ShortcutHint`
+(a label and a `<ds-kbd>` in a row — never a tab stop). The atoms inside keep their own chrome; the
+molecules only own the label where one label genuinely names two things.
+
+**Then** — the small atoms apps keep inventing by hand: `Kbd`, `StarRating`, `Slider`,
 `NumberInput` and `Image`. A keycap that is a real `<kbd>` and never a tab stop; stars that are one
 `role="img"` when read and a native radio group when given; a range on Bootstrap's `.form-range` with
 six keys stated in one place; a quantity field that clamps and snaps when you step or leave, not while
@@ -110,8 +159,9 @@ ink-tinted elevation, grain, and a mark that looks like paint.
 | **Date entry** | `src/design-system/molecules/` | **Calendar, DateInput, TimeInput** |
 | **Structure** | `src/design-system/molecules/` | **Accordion, Breadcrumb, Pagination, EmptyState, Alert, Toolbar** |
 | **Overlays & files** | `src/design-system/molecules/` | **Tooltip, Popover, FileDropzone, FileQueueItem** |
+| **Compositions** | `src/design-system/molecules/` | **RangeControl, Figure, RatingSummary, ShortcutHint** |
 | Molecules | `src/design-system/molecules/` | Tabs, Menu, Select, Toast |
-| Organisms | `src/design-system/organisms/` | Dialog, DataTable, DatePicker, DateRangePicker, Drawer, FileUploader, DataGrid, FilterBar, CommandPalette, MapViewer, **Feed** |
+| Organisms | `src/design-system/organisms/` | Chart, Tour, Interstitial, Gallery, Dialog, DataTable, DatePicker, DateRangePicker, Drawer, FileUploader, DataGrid, FilterBar, CommandPalette, MapViewer, **Feed** |
 | Utils | `src/design-system/utils/` | ARIA ids, focus trap, roving index, scroll lock, calendar and step arithmetic |
 
 ## Quick start
@@ -120,7 +170,8 @@ ink-tinted elevation, grain, and a mark that looks like paint.
 npm install
 npm start          # showcase at http://localhost:4200
 npm test           # 1,300+ unit tests (Karma; set CHROME_BIN to your Chromium in CI)
-npm run e2e        # Playwright, against the showcase (starts `ng serve` itself)
+npm run mock:api   # WireMock, for the Interstitial's content API (:8088)
+npm run e2e        # Playwright (starts `ng serve` *and* WireMock itself)
 npm run build      # production build
 ```
 
@@ -169,6 +220,198 @@ Decisions worth knowing:
   *Save*, it is a `<ds-checkbox>`.
 - **One control scale.** `sm | md | lg` comes from `controlSizes` in the token layer, shared with
   `<ds-button>`, so a field and the button beside it line up.
+
+## The tour
+
+```ts
+readonly steps: TourStep[] = [
+  { id: 'welcome', layer: 'Overview', title: 'This is Paint', body: 'A design system in layers.' },
+  {
+    id: 'tokens',
+    layer: 'Foundation',
+    title: 'Colour is a role, not a hex',
+    body: 'A component asks for “danger”; the theme decides what that is.',
+    route: '/foundations',   // another page: the tour goes there…
+    target: '#color',        // …and waits for this to exist before opening
+  },
+];
+```
+
+```html
+<!-- In the app shell, not in a page -->
+<ds-tour #tour tourId="paint-intro" [steps]="steps" [dontShowAgain]="true" (ended)="log($event)" />
+<ds-button (clicked)="tour.start()">Take the tour</ds-button>
+```
+
+- **It points at the product, not at a mock-up.** `target` is a CSS selector resolved against the
+  live document. A walkthrough of three fake buttons teaches three fake buttons.
+- **It waits.** After a navigation the target may not have rendered; the tour polls, says so in the
+  card, and opens the step when it arrives. If the selector has really gone it opens **centred** after
+  `targetTimeout` rather than stranding the user in a tour that cannot advance.
+- **Dialog's modality, again.** `inert` outside the card, the shared reference-counted scroll lock,
+  focus to the card, focus back at the end — and when "back" no longer exists (six routes later), the
+  main landmark instead of `<body>`.
+- **One spotlight element** with a hole cut around the target (`box-shadow: 0 0 0 9999px`), so the
+  target stays at full contrast and there are no four overlay panels to keep in sync.
+- **It takes no for an answer.** Skip and `Escape` end it (unless `dismissible` is false);
+  `dontShowAgain` ticks a box that `TourMemory` remembers per `tourId`, so a second tour later is
+  unaffected. `localStorage` by default, `MemoryTourMemory` in tests, `provideTour()` to choose.
+- **A cross-route tour must live outside the router outlet** — the router would destroy it on the
+  first `Next`. The showcase's own tour lives in the app shell for exactly that reason, which is the
+  kind of thing a design system should find out before its users do.
+
+## The interstitial
+
+`<ds-interstitial>` is the interruption a product shows a user *once*: a release note, a brand
+announcement, an onboarding card. The hard parts are not the panel — they are "who has already seen
+this" and "never show it again".
+
+```ts
+// the seam, once, at the root
+provideInterstitials({ baseUrl: '/api/interstitials' });
+
+// in a page
+private readonly interstitials = inject(InterstitialService);
+
+async ngOnInit() {
+  // Zero eligible items is the normal case: nothing renders.
+  if ((await this.interstitials.load()).length) this.showing.set(true);
+}
+```
+
+```html
+<ds-interstitial
+  [items]="interstitials.eligible()"
+  [(open)]="showing"
+  (seen)="interstitials.markSeen($event.item.id)"
+  (dismissed)="interstitials.markDismissed($event.item.id)"
+  (learnMore)="interstitials.markSeen($event.item.id)"
+/>
+```
+
+- **It is the Gallery underneath.** One eligible item opens alone; several become a deck with the
+  Gallery's counter, dots, two buttons and keyboard — driven through `[thumbnails]="false"` and a
+  host-owned `[dsGallerySlide]` template (new, and the reason the Gallery did not have to learn what
+  an announcement is). So the modality is the Dialog's note for note: focus trap, reference-counted
+  scroll lock, the rest of the page `inert`, `Escape` closes, focus returns.
+- **Seen and dismissed are different promises with the same effect.** Showing an item marks it seen —
+  and so does following its link, because it has been put in front of the user. `Dismiss` is the
+  stronger, permanent one. Both are *outputs*: the organism never owns the user's history.
+- **The rule is a function.** `eligibleItems(items, seen, dismissed)` — readable and tested without a
+  component or a network. `InterstitialService` is load + that rule + the record store.
+- **The deck is taken when it opens.** Marking the current slide seen removes it from `eligible()`;
+  reading the input live would delete the slide under the user's eyes.
+- **The wire is someone else's.** `InterstitialSource` is `load` / `markSeen` / `markDismissed`.
+  `HttpInterstitialSource` (the default) is plain `fetch` over `GET {base}`,
+  `POST {base}/{id}/seen`, `POST {base}/{id}/dismissed` — no `HttpClient` dependency for a content
+  stub. `StaticInterstitialSource` is the offline double the unit suite uses.
+- **WireMock is the mock, committed.** `mock/wiremock/` holds the mappings and the payload;
+  `npm run mock:api` runs it on `:8088`, `proxy.conf.json` points the dev server's `/api` at it, and
+  Playwright starts it as a second web server — the e2e suite asserts the real `GET` response and
+  reads WireMock's request journal to prove the `seen`/`dismissed` POSTs happened. With the stub
+  down, the showcase shows the organism's failure path and says so.
+- **Records survive a reload.** `LocalInterstitialStore` keeps seen/dismissed in `localStorage`
+  (`MemoryInterstitialStore` for tests), so a dismissal is not undone by a refresh.
+
+## The gallery
+
+`<ds-gallery>` is the organism for a set of pictures: thumbnails, a way to see one properly, and a
+way to walk all of them — over **one** `items` array.
+
+```html
+<ds-gallery
+  label="Product shots"
+  [items]="shots"
+  layout="grid"
+  thumbSize="md"
+  ratio="4/3"
+  [filterable]="true"
+  [presentable]="true"
+  (itemOpen)="selected.set($event.item)"
+  (itemChange)="selected.set($event.item)"
+/>
+
+<!-- The same viewer, from anywhere -->
+<ds-gallery #deck [items]="shots" />
+<ds-button iconStart="play" (clicked)="deck.present()">Play the deck</ds-button>
+```
+
+| Item field | For |
+| --- | --- |
+| `src`, `alt` | the picture, and the thumbnail button's name |
+| `thumb` | a smaller source, when the host has one |
+| `caption`, `credit` | words about the picture — either one makes the big view a `<ds-figure>` |
+| `href` / `link` | where the picture goes; offered as a link *inside* the viewer |
+| `tags` | what makes filtering mean something |
+| `data` | whatever the host wants back on `itemOpen` / `itemChange` |
+
+- **One list, one viewer.** Lightbox and slideshow are `mode` on the same overlay over the same
+  array, so they cannot drift apart — and `next` always means "next in what is on screen", which is
+  why the viewer walks the *filtered* list.
+- **Nothing new was invented.** Thumbnails are `<ds-image>` in the existing ratio and radius tokens;
+  the big view is a `<ds-figure>` when there are words and a `<ds-image>` when there is only a
+  photograph and its alt. Three thumbnail sizes, two layouts (`grid`, and a snapping `strip`).
+- **The Dialog's modality, note for note.** Focus trap, reference-counted scroll lock, everything
+  outside `inert`, `Escape` to close, focus back to the thumbnail that opened it. Opening is treated
+  as a *render* event (an effect, as in Dialog), because the sheet does not exist at click time.
+- **Every thumbnail is a real button**, named by the picture's alt, with the picture inside it
+  decorative — never an `<img>` with a click handler. The position line ("3 of 6 — The mug") is a
+  polite live region, so moving is heard without leaving the viewer, and it is the *only* thing
+  announced: the picture's name travels with the picture.
+- **Filtering, two ways that compose.** `filterable` builds one `aria-pressed` toggle per tag found
+  in the items, with `[(activeTag)]`; or the host filters and passes a shorter `items` — the right
+  answer when the filter is shared with the rest of the page.
+- **No autoplay.** A picture that moves on its own is a picture nobody finished reading.
+
+## The small compositions
+
+Four molecules made of the new atoms, each the size of a pattern apps draw by hand. Bundled as
+`DS_DISPLAY_MOLECULES` (Figure, RatingSummary, ShortcutHint); RangeControl joins `DS_FORM_MOLECULES`.
+
+| Molecule | Composed from | Brings |
+| --- | --- | --- |
+| `<ds-range-control>` | `ds-slider` + `ds-number-input` | One value, one label, one `min`/`max`/`step`. A `ControlValueAccessor` for the pair |
+| `<ds-figure>` | `<figure>` + `ds-image` + `<figcaption>` | Caption, credit (optionally a link), and the picture as a link — named by its alt |
+| `<ds-rating-summary>` | `ds-star-rating` + one sentence | Stars, score and count for the eye; *"4.3 out of 5 stars, 1,204 reviews"* for the ear, once |
+| `<ds-shortcut-hint>` | a label + `ds-kbd` | The settings-row / shortcuts-sheet row. No role, no tab stop, no listener |
+
+```html
+<ds-range-control label="Volume" [(value)]="volume" suffix="%" />
+<ds-form-field label="Brightness" hint="Of the backlight.">
+  <ds-range-control formControlName="brightness" />
+</ds-form-field>
+
+<ds-figure src="/plates/3.jpg" alt="A violet wash with a magenta bleed" ratio="16/9"
+           caption="Plate 3 — the first swatch." credit="Photo: Ada Lovelace" creditHref="/ada" />
+
+<ds-rating-summary [value]="4.3" [count]="1204" reviewsHref="#reviews" />
+
+<ds-stack [gap]="0" [divided]="true">
+  <ds-shortcut-hint label="Search" keys="⌘K" />
+  <ds-shortcut-hint label="Save" description="Also saves drafts." keys="⌘S" />
+</ds-stack>
+```
+
+Decisions worth knowing:
+
+- **The atoms keep their chrome; the molecule owns the label only when it must.** Slider, NumberInput
+  and StarRating already draw a label, a hint and an error. RangeControl is the one case where a
+  single label genuinely names two controls, so it draws the chrome once and hands the atoms none:
+  a `<label for>` on the slider, the same element through `aria-labelledby` on the number field, one
+  hint and one error describing both. Inside a `<ds-form-field>` the molecule adopts the field and
+  **shields the atoms from it** (`viewProviders` blank `DS_FIELD`; the molecule reads it with
+  `skipSelf`), because two controls cannot share the field's one id.
+- **Typing stays free in the pair.** The model is clamped on every keystroke so the slider and any
+  form only see a legal value; the digits are rewritten only when the field settles.
+- **A figure is named by its caption, a picture by its alt, and they are different words.** A
+  caption that says everything may come with `alt=""` — the picture is then decorative and the figure
+  is still named. The picture link is a plain `<a>` around the image (named by the alt, nothing
+  added); the credit link is a `<ds-link>`.
+- **A summary is one sentence.** The stars, the number and the count are `aria-hidden`; one
+  visually-hidden sentence says them. When the count is a link it has to be reachable, so it moves
+  out of the sentence and speaks for itself — two things, because two things is what they are.
+- **A shortcut hint does nothing.** It shows a key; the component that owns the behaviour owns the
+  keydown. `alternatives` exists for the rare action with two real shortcuts, not for ⌘ vs Ctrl.
 
 ## The range-style atoms
 
@@ -1027,8 +1270,11 @@ molecules/       ← Tabs, Menu, Select, Toast
                    RadioGroup, CheckboxGroup                        (forms)
                  ← Calendar, DateInput, TimeInput                   (date entry)
                  ← Accordion, Breadcrumb, Pagination,
-                   EmptyState, Alert, Toolbar                       (this phase)
-organisms/       ← Dialog, DataTable
+                   EmptyState, Alert, Toolbar                       (structure)
+                 ← Tooltip, Popover, FileDropzone, FileQueueItem    (overlays & files)
+                 ← RangeControl, Figure, RatingSummary,
+                   ShortcutHint                                     (compositions)
+organisms/       ← Chart, Tour, Interstitial, Gallery, Dialog, DataTable
                  ← DatePicker, Form, Card, FilterBar                (next)
 ```
 

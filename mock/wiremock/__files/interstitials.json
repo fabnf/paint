@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "id": "wet-paint-2",
+      "title": "Wet Paint 0.4 is here",
+      "body": "Twenty-four atoms, four new compositions and a gallery — all re-poured from the same tokens. Nothing you already use has moved.",
+      "imageSrc": "/showcase/wet-paint-wide.svg",
+      "imageAlt": "A violet wash with a magenta bleed and a lime sun",
+      "learnMoreHref": "/components/gallery",
+      "learnMoreLabel": "See what shipped"
+    },
+    {
+      "id": "brand-packs",
+      "title": "Your brand, our components",
+      "body": "Brand packs re-pour every token at runtime: Tidewater and Ember ship beside Paint, and both clear the same AA contrast table.",
+      "imageSrc": "/showcase/wet-paint-square.svg",
+      "imageAlt": "A violet-to-sky wash with a magenta drop",
+      "learnMoreLink": "/brand-packs",
+      "learnMoreLabel": "Try the packs"
+    },
+    {
+      "id": "keyboard-audit",
+      "title": "Every control, from the keyboard",
+      "body": "Sliders, ratings and quantities now state their keys in one place each, and the suite presses them in a real browser."
+    }
+  ]
+}

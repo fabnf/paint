@@ -1,0 +1,84 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="keyboard"
+    title="ShortcutHint"
+    lede="What it does on the left, which key does it on the right. The row a settings page, a shortcuts sheet and a docs table all draw by hand — composed from <ds-kbd>, so the glyphs are spoken as words and nothing here is a tab stop."
+    builtOn="a label + ds-kbd"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A sheet of shortcuts"
+    anchor="basic"
+    description="Rows in a divided stack: the labels take the room, the keycaps sit at the far edge, every row aligned. Nothing here listens for the key or performs the action — the component that owns the behaviour does."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="4" class="shortcut-sheet">
+        <ds-stack [gap]="0" [divided]="true">
+          <ds-shortcut-hint label="Search" keys="⌘K" />
+          <ds-shortcut-hint label="New file" keys="⌘N" />
+          <ds-shortcut-hint label="Save" description="Also saves drafts." keys="⌘S" />
+          <ds-shortcut-hint label="Find in page" keys="⌘F" />
+          <ds-shortcut-hint label="Move back" keys="⇧⇥" />
+          <ds-shortcut-hint label="Close" keys="Esc" />
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Settings rows"
+    anchor="settings"
+    description="The md size, with an icon and a second line, for a settings page. alternatives is for the rare action that genuinely has two shortcuts — not for ⌘ versus Ctrl, which is a decision about the user's machine the host makes once."
+  >
+    <app-doc-example code="{{ settingsSnippet }}">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="demo-form">
+        <ds-stack [gap]="0" [divided]="true">
+          <ds-shortcut-hint size="md" icon="search" label="Open the command palette" keys="⌘K" [alternatives]="['/']" />
+          <ds-shortcut-hint size="md" icon="sun" label="Toggle theme" description="Light, dark, or the system's." keys="⌘⇧L" />
+          <ds-shortcut-hint size="md" icon="bell" label="Notifications" description="Open the inbox." keys="⌘I" />
+        </ds-stack>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="What a screen reader hears"
+    anchor="spoken"
+    description="Each row reads as its label, then the words for its keys: “Search, Command K”. The glyphs are aria-hidden; the words come from <ds-kbd>. There is no role and no tab stop, because there is nothing to do."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Not a list item</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The row is plain text. Put several in a <ds-text variant="code" [as]="'code'">&lt;ds-stack [divided]&gt;</ds-text>,
+            or in a <ds-text variant="code" [as]="'code'">&lt;dl&gt;</ds-text> of your own if the page is a reference.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Not a control</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            A shortcut the user can change is a form. This only tells them what the shortcut is.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Not a listener</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The component that owns the behaviour owns the keydown. A hint that also acted would be a
+            second place where the shortcut is defined.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-shortcut-hint>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

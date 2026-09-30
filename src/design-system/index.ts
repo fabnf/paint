@@ -18,9 +18,12 @@
  *                EmptyState, Alert, Toolbar                      (structure)
  *                Tooltip, Popover                                (overlays)
  *                FileDropzone, FileQueueItem                     (files)
+ *                RangeControl, Figure, RatingSummary,
+ *                ShortcutHint                                    (compositions)
  *   organisms/   Dialog, Drawer, DataTable, DataGrid,
  *                DatePicker, DateRangePicker, FileUploader,
- *                FilterBar, CommandPalette, MapViewer, Feed, Board, AppShell
+ *                FilterBar, CommandPalette, MapViewer, Feed, Board,
+ *                Gallery, Interstitial, Tour, Chart, Inbox, Scheduler, AppShell
  */
 export * from './tokens';
 export * from './theme';
@@ -47,6 +50,10 @@ import { SearchFieldComponent } from './molecules/search-field';
 import { TooltipComponent } from './molecules/tooltip';
 import { PopoverComponent } from './molecules/popover';
 import { FileDropzoneComponent, FileQueueItemComponent } from './molecules/file-upload';
+import { RangeControlComponent } from './molecules/range-control';
+import { FigureCaptionDirective, FigureComponent } from './molecules/figure';
+import { RatingSummaryComponent } from './molecules/rating-summary';
+import { ShortcutHintComponent } from './molecules/shortcut-hint';
 import { DataTableCellDirective } from './organisms/data-table/data-table-cell.directive';
 import {
   DataTableActionsDirective,
@@ -66,6 +73,13 @@ import { MapDetailDirective } from './organisms/map-viewer/map-detail.directive'
 import { FeedComponent } from './organisms/feed/feed.component';
 import { FeedBodyDirective, FeedEmptyActionDirective } from './organisms/feed/feed-slots';
 import { BoardComponent } from './organisms/board/board.component';
+import { GalleryComponent } from './organisms/gallery/gallery.component';
+import { GallerySlideDirective } from './organisms/gallery/gallery-slots';
+import { InterstitialComponent } from './organisms/interstitial/interstitial.component';
+import { TourComponent } from './organisms/tour/tour.component';
+import { ChartComponent } from './organisms/chart/chart.component';
+import { InboxComponent } from './organisms/inbox/inbox.component';
+import { SchedulerComponent } from './organisms/scheduler/scheduler.component';
 import { AppShellComponent } from './organisms/app-shell/app-shell.component';
 import { DateRangePickerComponent } from './organisms/date-range-picker/date-range-picker.component';
 import { MenuComponent } from './molecules/menu/menu.component';
@@ -109,6 +123,11 @@ export const DS_COMPONENTS = [
   PopoverComponent,
   FileDropzoneComponent,
   FileQueueItemComponent,
+  RangeControlComponent,
+  FigureComponent,
+  FigureCaptionDirective,
+  RatingSummaryComponent,
+  ShortcutHintComponent,
   ToastComponent,
   ToastHostComponent,
   DialogComponent,
@@ -125,6 +144,13 @@ export const DS_COMPONENTS = [
   FeedBodyDirective,
   FeedEmptyActionDirective,
   BoardComponent,
+  GalleryComponent,
+  GallerySlideDirective,
+  InterstitialComponent,
+  TourComponent,
+  ChartComponent,
+  InboxComponent,
+  SchedulerComponent,
   AppShellComponent,
   DataTableComponent,
   DataTableCellDirective,

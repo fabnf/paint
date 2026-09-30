@@ -1,0 +1,12 @@
+{
+  "name": "interstitials — the catalogue for the current user",
+  "request": {
+    "method": "GET",
+    "urlPath": "/api/interstitials"
+  },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "bodyFileName": "interstitials.json"
+  }
+}

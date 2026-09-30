@@ -3,8 +3,10 @@ import {
   Component,
   ElementRef,
   computed,
+  effect,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
@@ -19,6 +21,8 @@ import { BadgeComponent } from '../design-system/primitives/badge';
 import { ButtonComponent } from '../design-system/primitives/button';
 import { MenuComponent, type MenuEntry } from '../design-system/molecules/menu';
 import { ThemeService } from '../design-system/theme';
+import { TourComponent } from '../design-system/organisms/tour';
+import { ShowcaseTourService } from './showcase-tour';
 import { NAV_SECTIONS } from './nav';
 
 /**
@@ -38,6 +42,7 @@ import { NAV_SECTIONS } from './nav';
     BadgeComponent,
     MenuComponent,
     ToastHostComponent,
+    TourComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -46,6 +51,10 @@ export class AppComponent {
   private readonly themeService = inject(ThemeService);
   private readonly router = inject(Router);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** The showcase's own walkthrough: the shell owns the instance. */
+  readonly showcaseTour = inject(ShowcaseTourService);
+  private readonly tourRef = viewChild(TourComponent);
 
   readonly brand = brand;
   readonly sections = NAV_SECTIONS;
@@ -69,6 +78,14 @@ export class AppComponent {
   readonly navOpen = signal(false);
 
   constructor() {
+    // Hand the instance to the service the Tour page talks to.
+    effect(() => {
+      const tour = this.tourRef();
+      if (tour) {
+        this.showcaseTour.register(tour);
+      }
+    });
+
     // Close the mobile drawer whenever a route completes.
     this.router.events
       .pipe(

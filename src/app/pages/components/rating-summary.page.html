@@ -1,0 +1,77 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="star"
+    title="RatingSummary"
+    lede="The review header: stars, the score, how many said so. Three facts that mean one thing — so a screen reader hears one thing, once, instead of the same fact three times in pieces."
+    builtOn="ds-star-rating + one sentence"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Said once"
+    anchor="basic"
+    description="The stars, the number and the count are drawn for the eye and hidden from assistive tech. One visually-hidden sentence says all of it: “4.3 out of 5 stars, 1,204 reviews”. Without that, a rating header is an image announcing “4.3 of 5 stars”, then a “4.3”, then a “1,204 reviews”."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-rating-summary [value]="average()" [count]="reviews()" />
+        <ds-flex [gap]="2" align="center">
+          <ds-button size="sm" variant="ghost" iconStart="minus" label="Lower the average" (clicked)="nudge(-0.3)" />
+          <ds-button size="sm" variant="ghost" iconStart="plus" label="Raise the average" (clicked)="nudge(0.3)" />
+          <ds-text variant="caption">A screen reader hears: “{{ spoken() }}”</ds-text>
+        </ds-flex>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="With a link to the reviews"
+    anchor="link"
+    description="A link has to be reachable, so it cannot hide inside the one sentence. The count becomes a real <ds-link>, outside the hidden paint, and is left out of the sentence: “4.3 out of 5 stars” … “1,204 reviews, link”. Two things, because two things is what they are."
+  >
+    <app-doc-example code="{{ linkSnippet }}">
+      <ds-rating-summary [value]="average()" [count]="reviews()" reviewsHref="#api" />
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Sizes, tones, precision, nothing"
+    anchor="variants"
+    description="Three sizes from the control scale, any tone — warning for the classic gold. The score is written with the precision you ask for. No value says the words for nothing, and never “0 reviews” next to them."
+  >
+    <app-doc-example code="{{ variantsSnippet }}" [plain]="true">
+      <ds-stack [gap]="4" align="start">
+        <ds-rating-summary [value]="4.3" [count]="1204" size="lg" tone="warning" />
+        <ds-rating-summary [value]="4.3" [count]="1204" />
+        <ds-rating-summary [value]="4.3" [count]="1204" [showScore]="false" size="sm" />
+        <ds-rating-summary [value]="4.3" [precision]="2" tone="accent" />
+        <ds-rating-summary [value]="3" [count]="1" />
+        <ds-rating-summary [value]="null" [count]="0" emptyText="No reviews yet" />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="In a product row"
+    anchor="composition"
+    description="Where it lives: under a title, beside a price. The summary is inline, so it sits in a row of text without a wrapper."
+  >
+    <app-doc-example [plain]="true">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="demo-field">
+        <ds-flex [gap]="4" align="start">
+          <ds-image src="showcase/wet-paint-square.svg" alt="" [decorative]="true" ratio="1/1" class="product-thumb" />
+          <ds-stack [gap]="1">
+            <ds-text variant="label">Wet Paint — the poster</ds-text>
+            <ds-rating-summary [value]="4.3" [count]="1204" size="sm" reviewsHref="#api" />
+            <ds-text variant="bodySm" tone="muted">$24.00</ds-text>
+          </ds-stack>
+        </ds-flex>
+      </ds-box>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs of <ds-rating-summary>.">
+    <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+  </app-doc-section>
+</ds-stack>

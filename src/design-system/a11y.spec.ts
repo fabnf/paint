@@ -11,9 +11,15 @@ import { DataGridComponent } from './organisms/data-grid';
 import { DataGridActionsDirective } from './organisms/data-grid/data-grid-slots';
 import type {
   BoardColumn,
+  GalleryItem,
+  InterstitialItem,
+  TourStep,
+  ChartSeries,
   CommandPaletteItem,
   FeedItem,
+  InboxThread,
   MapMarker,
+  SchedulerEvent,
   DataTableColumn,
   FilterState,
   MenuEntry,
@@ -38,6 +44,9 @@ interface Row extends Record<string, unknown> {
   owner: string;
   amount: number;
 }
+
+/** A 1×1 GIF: a real picture that needs no network. */
+const PIXEL = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
 
 const ROWS: readonly Row[] = [
   { id: 1, project: 'Mural', owner: 'Ada Lovelace', amount: 4200 },
@@ -279,6 +288,62 @@ const ENTRIES: readonly MenuEntry[] = [
         [value]="granted"
       />
 
+      <!-- The small compositions: two controls with one label, a picture with
+           its words, a rating said once, a shortcut with its label -->
+      <ds-range-control label="Volume" [value]="40" suffix="%" hint="Louder is not better." />
+      <ds-range-control label="Broken" [value]="95" error="Too loud." />
+      <ds-range-control label="Locked" [value]="20" [disabled]="true" />
+      <ds-form-field label="Brightness" hint="Of the backlight.">
+        <ds-range-control [value]="60" />
+      </ds-form-field>
+      <ds-figure
+        src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+        alt="A single pixel"
+        ratio="16/9"
+        caption="Plate 3 — the first swatch."
+        credit="Photo: Ada Lovelace"
+        creditHref="https://example.com/ada"
+      />
+      <ds-figure src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="Floor plan" href="/plans/2.pdf" target="_blank" caption="Level 2." />
+      <ds-figure [src]="null" alt="Site photo" ratio="4/3" caption="Pending." credit="Site team" />
+      <ds-rating-summary [value]="4.3" [count]="1204" />
+      <ds-rating-summary [value]="4.3" [count]="1204" reviewsHref="#reviews" size="lg" tone="warning" />
+      <ds-rating-summary [value]="null" [count]="0" />
+      <ds-stack [gap]="0" [divided]="true">
+        <ds-shortcut-hint label="Search" keys="⌘K" [alternatives]="['/']" icon="search" />
+        <ds-shortcut-hint label="Save" description="Also saves drafts." keys="Ctrl+S" size="md" />
+        <ds-shortcut-hint label="Close" keys="Esc" />
+      </ds-stack>
+
+      <!-- Charts: drawn, loading, and with nothing to draw -->
+      <ds-chart
+        type="stacked-column"
+        title="Revenue by plan"
+        subtitle="Monthly recurring revenue"
+        [categories]="chartMonths"
+        [series]="chartSeries"
+        [options]="{ unit: 'k', yTitle: 'Revenue' }"
+      />
+      <ds-chart type="donut" title="Accounts by plan" [series]="chartSlices" [options]="{ innerSize: 60 }" />
+      <ds-chart type="gauge" title="Uptime" [series]="chartGauge" [options]="{ min: 99, max: 100, unit: '%', decimals: 2 }" legend="none" />
+      <ds-chart type="line" title="Loading" [loading]="true" [categories]="chartMonths" [series]="chartSeries" />
+      <ds-chart type="line" title="Nothing yet" [categories]="chartMonths" [series]="[]" emptyTitle="No revenue in this region" />
+
+      <!-- The tour: nothing on the page until it is started -->
+      <ds-tour tourId="a11y" [steps]="tourSteps" [dontShowAgain]="true" [targetTimeout]="200" />
+
+      <!-- The interruption: nothing on the page until it is opened -->
+      <ds-interstitial [items]="announcements" [(open)]="interstitialOpen" label="What's new" />
+
+      <!-- A gallery: thumbnails, its own filter, and a slideshow door -->
+      <ds-gallery
+        label="Product shots"
+        [items]="shots"
+        [filterable]="true"
+        [presentable]="true"
+        [showCaptions]="true"
+      />
+
       <!-- Structure: hierarchy, disclosure, and the way out -->
       <ds-breadcrumb [items]="crumbs" [maxItems]="3" />
 
@@ -428,6 +493,23 @@ const ENTRIES: readonly MenuEntry[] = [
       <!-- Board: lanes of cards, one lane honestly empty -->
       <ds-board label="Release board" [columns]="boardColumns" />
 
+      <!-- Inbox + Scheduler: queue and calendar -->
+      <ds-inbox
+        label="Support queue"
+        [threads]="inboxThreads"
+        [selected]="'invoice'"
+        [composer]="true"
+        [bulk]="true"
+      />
+      <ds-inbox label="Empty queue" [threads]="[]" />
+      <ds-scheduler
+        [events]="schedulerEvents"
+        view="month"
+        date="2026-03-04"
+        today="2026-03-04"
+      />
+      <ds-scheduler [events]="schedulerEvents" view="agenda" date="2026-03-04" today="2026-03-04" />
+
       <!-- Feed: a rail of events, read and unread, actor and icon nodes -->
       <ds-feed
         [items]="feedItems"
@@ -494,6 +576,40 @@ const ENTRIES: readonly MenuEntry[] = [
 class HarnessComponent {
   readonly entries = ENTRIES;
   readonly options = OPTIONS;
+  readonly chartMonths = ['Jan', 'Feb', 'Mar', 'Apr'];
+  readonly chartSeries: readonly ChartSeries[] = [
+    { name: 'Pro', data: [42, 46, 51, 58] },
+    { name: 'Team', data: [18, 21, 23, 28] },
+  ];
+  readonly chartSlices: readonly ChartSeries[] = [
+    { name: 'Accounts', data: [{ name: 'Pro', y: 1840 }, { name: 'Free', y: 3120 }] },
+  ];
+  readonly chartGauge: readonly ChartSeries[] = [
+    { name: 'Uptime', data: [{ name: 'Uptime', y: 99.82 }], tone: 'success' },
+  ];
+
+  readonly tourSteps: readonly TourStep[] = [
+    { id: 'welcome', layer: 'Overview', title: 'This is Paint', body: 'Tokens at the bottom.' },
+    { id: 'tokens', layer: 'Foundation', title: 'Colour is a role', body: 'Not a hex.', target: 'main h1' },
+  ];
+
+  readonly interstitialOpen = signal(false);
+  readonly announcements: readonly InterstitialItem[] = [
+    {
+      id: 'release',
+      title: 'Wet Paint 0.4 is here',
+      body: 'Nothing you already use has moved.',
+      imageSrc: PIXEL,
+      imageAlt: 'A violet wash',
+      learnMoreHref: '/changelog',
+      learnMoreLabel: 'See what shipped',
+    },
+    { id: 'packs', title: 'Your brand, our components' },
+  ];
+  readonly shots: readonly GalleryItem[] = [
+    { id: 'a', src: PIXEL, alt: 'The poster, flat', caption: 'Plate 1', credit: 'Photo: Ada', tags: ['prints'] },
+    { id: 'b', src: PIXEL, alt: 'The mug', tags: ['mugs'] },
+  ];
   readonly rows = signal<readonly Row[]>(ROWS);
   readonly rowKey = (row: Row): RowKey => row.id;
   readonly rowLabel = (row: Row): string => row.project;
@@ -585,6 +701,34 @@ class HarnessComponent {
     },
     { id: 'doing', label: 'In progress', tone: 'primary', cards: [{ id: 'docs', title: 'Write the docs' }] },
     { id: 'done', label: 'Done', tone: 'success', cards: [] },
+  ];
+
+  readonly inboxThreads: readonly InboxThread[] = [
+    {
+      id: 'invoice',
+      subject: 'Invoice 4471 is overdue',
+      participants: ['Ada Lovelace', 'Billing bot'],
+      preview: 'The card on file was declined twice.',
+      time: '09:42',
+      unread: true,
+      labels: ['Billing'],
+      labelTone: 'warning',
+      messages: [{ id: 'm1', author: 'Ada Lovelace', body: 'Please retry it.', sentAt: '09:42' }],
+    },
+    {
+      id: 'closed',
+      subject: 'Zephyr migration (closed)',
+      participants: ['Billing bot'],
+      preview: 'Closed after the migration.',
+      time: 'Mar 3',
+      disabled: true,
+    },
+  ];
+
+  readonly schedulerEvents: readonly SchedulerEvent[] = [
+    { id: 'standup', title: 'Standup', start: '2026-03-04T09:00', end: '2026-03-04T09:15', calendar: 'Team' },
+    { id: 'review', title: 'Design review', start: '2026-03-04T09:00', end: '2026-03-04T10:00', tone: 'accent' },
+    { id: 'offsite', title: 'Offsite', start: '2026-03-06', end: '2026-03-07', allDay: true, tone: 'success' },
   ];
 
   readonly feedItems: FeedItem[] = [
@@ -731,7 +875,7 @@ describe('accessibility (axe-core)', () => {
   it('has no violations across the form molecules', async () => {
     // A field that labels a Select's button, a field that labels a native input,
     // a password toggle, a search landmark, and two groups in a fieldset.
-    expect(fixture.nativeElement.querySelectorAll('ds-form-field').length).toBe(11);
+    expect(fixture.nativeElement.querySelectorAll('ds-form-field').length).toBe(12);
     expect(fixture.nativeElement.querySelectorAll('fieldset legend').length).toBe(4);
 
     await scan(fixture.nativeElement.querySelector('main'));
@@ -763,8 +907,9 @@ describe('accessibility (axe-core)', () => {
   it('has no violations across the display & feedback atoms, in every tone', async () => {
     // Solid badges on every tone, a named progress bar, a silent skeleton, a
     // separator with a word in it, and a link that opens a new tab.
-    // 22 in the tone grid above, one in the accordion item, one on a board card.
-    expect(fixture.nativeElement.querySelectorAll('ds-badge').length).toBe(24);
+    // 22 in the tone grid above, one in the accordion item, one on a board card,
+    // and two labels in the inbox's threads.
+    expect(fixture.nativeElement.querySelectorAll('ds-badge').length).toBe(26);
     expect(fixture.nativeElement.querySelector('[role="progressbar"]')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('[role="separator"]')).toBeTruthy();
 
@@ -773,20 +918,122 @@ describe('accessibility (axe-core)', () => {
 
   it('has no violations across the range-style atoms, in every state', async () => {
     const main = fixture.nativeElement.querySelector('main') as HTMLElement;
-    expect(main.querySelectorAll('input[type="range"]').length).toBe(5);
-    expect(main.querySelectorAll('ds-number-input input[type="number"]').length).toBe(5);
+    // Five bare sliders and number inputs each, plus the four pairs inside range controls.
+    expect(main.querySelectorAll('input[type="range"]').length).toBe(9);
+    expect(main.querySelectorAll('ds-number-input input[type="number"]').length).toBe(9);
     expect(main.querySelectorAll('ds-star-rating [role="radiogroup"]').length).toBe(4);
-    expect(main.querySelectorAll('ds-star-rating [role="img"]').length).toBe(2);
+    // Two bare read-only ratings; the three inside rating summaries are hidden paint.
+    expect(main.querySelectorAll('ds-star-rating [role="img"]').length).toBe(5);
     const steppers = Array.from(main.querySelectorAll('.ds-number__step')) as HTMLButtonElement[];
-    expect(steppers.length).toBe(10);
+    expect(steppers.length).toBe(18);
     expect(steppers.every((button) => button.getAttribute('aria-label') && button.tabIndex === -1)).toBeTrue();
+    await scan(main);
+  });
+
+  it('has no violations across the charts, drawn, loading and empty', async () => {
+    const main = fixture.nativeElement.querySelector('main') as HTMLElement;
+    const charts = Array.from(main.querySelectorAll('ds-chart')) as HTMLElement[];
+    expect(charts.length).toBe(5);
+
+    const drawn = charts.filter((chart) => chart.querySelector('[data-chart-mock] [data-point]'));
+    expect(drawn.length).toBe(3);
+    for (const chart of drawn) {
+      const canvas = chart.querySelector('.ds-chart__canvas')!;
+      expect(canvas.getAttribute('role')).toBe('img');
+      expect(canvas.getAttribute('aria-label')).toBeTruthy();
+      expect(chart.querySelector('table caption')!.textContent).toBeTruthy();
+    }
+    expect(main.querySelector('.ds-chart__frame[aria-busy="true"]')).toBeTruthy();
+    expect(main.querySelector('.ds-chart__frame[data-state="empty"] ds-empty-state')).toBeTruthy();
+
+    await scan(main);
+  });
+
+  it('has no violations with a tour step open over the page', async () => {
+    const main = fixture.nativeElement.querySelector('main') as HTMLElement;
+    expect(main.querySelector('.ds-tour__card')).toBeNull();
+
+    const tour = fixture.debugElement.query((node) => node.name === 'ds-tour')
+      .componentInstance as { start: () => boolean; close: () => void };
+    expect(tour.start()).toBeTrue();
+    fixture.detectChanges();
+    await settle();
+    fixture.detectChanges();
+
+    const card = main.querySelector('.ds-tour__card') as HTMLElement;
+    expect(card.getAttribute('aria-modal')).toBe('true');
+    expect(card.querySelector('h2')!.textContent).toContain('This is Paint');
+    await scan(card);
+
+    tour.close();
+    fixture.detectChanges();
+  });
+
+  it('has no violations with the interstitial open over the page', async () => {
+    const main = fixture.nativeElement.querySelector('main') as HTMLElement;
+    // Closed, it is not on the page at all.
+    expect(main.querySelector('.ds-interstitial__slide')).toBeNull();
+
+    fixture.componentInstance.interstitialOpen.set(true);
+    fixture.detectChanges();
+    await settle();
+    fixture.detectChanges();
+
+    const slide = main.querySelector('.ds-interstitial__slide') as HTMLElement;
+    expect(slide).toBeTruthy();
+    expect(slide.querySelector('h2')!.textContent).toContain('Wet Paint 0.4 is here');
+    await scan(main.querySelector('.ds-gallery__viewer') as HTMLElement);
+
+    fixture.componentInstance.interstitialOpen.set(false);
+    fixture.detectChanges();
+  });
+
+  it('has no violations across the gallery, thumbnails and viewer', async () => {
+    const main = fixture.nativeElement.querySelector('main') as HTMLElement;
+    // Every thumbnail is a named button; its picture is decoration.
+    const thumbs = Array.from(main.querySelectorAll('.ds-gallery__thumb')) as HTMLButtonElement[];
+    expect(thumbs.length).toBe(2);
+    expect(thumbs.every((thumb) => thumb.getAttribute('aria-label'))).toBeTrue();
+    await scan(main);
+
+    // And again with the viewer open, on an item that has words about it.
+    thumbs[0].click();
+    fixture.detectChanges();
+    await settle();
+    const viewer = main.querySelector('.ds-gallery__viewer') as HTMLElement;
+    expect(viewer.getAttribute('aria-modal')).toBe('true');
+    expect(viewer.querySelector('figcaption')).toBeTruthy();
+    await scan(viewer);
+
+    viewer.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    fixture.detectChanges();
+  });
+
+  it('has no violations across the small compositions', async () => {
+    const main = fixture.nativeElement.querySelector('main') as HTMLElement;
+    // Two controls, one label: every range control draws exactly one <label>.
+    const controls = Array.from(main.querySelectorAll('ds-range-control')) as HTMLElement[];
+    expect(controls.length).toBe(4);
+    for (const control of controls) {
+      const range = control.querySelector('input[type="range"]')!;
+      const number = control.querySelector('input[type="number"]')!;
+      expect(range.id).not.toBe(number.id);
+      expect(control.querySelectorAll('label').length).toBeLessThanOrEqual(1);
+      expect(number.getAttribute('aria-labelledby') || number.getAttribute('aria-label')).toBeTruthy();
+    }
+    // A figure is named by its caption; a rating summary says one sentence.
+    expect(main.querySelectorAll('figure[aria-labelledby]').length).toBe(3);
+    expect(main.querySelectorAll('ds-rating-summary .visually-hidden').length).toBe(3);
+    expect(main.querySelectorAll('ds-shortcut-hint [tabindex], ds-shortcut-hint button').length).toBe(0);
+
     await scan(main);
   });
 
   it('has no violations across the keycaps and the pictures', async () => {
     const main = fixture.nativeElement.querySelector('main') as HTMLElement;
     expect(main.querySelectorAll('ds-kbd kbd').length).toBeGreaterThan(4);
-    expect(main.querySelectorAll('ds-image [role="img"]').length).toBe(2);
+    // Two bare images, and the figure whose photo is pending.
+    expect(main.querySelectorAll('ds-image [role="img"]').length).toBe(3);
     expect(main.querySelectorAll('ds-image [aria-hidden="true"].ds-image').length).toBe(1);
     await scan(main);
   });
@@ -914,6 +1161,22 @@ describe('accessibility (axe-core)', () => {
 
     expect(fixture.nativeElement.querySelector('[role="dialog"]')).toBeTruthy();
     await scan();
+  });
+
+  it('has no violations across the inbox and the scheduler', async () => {
+    const main = fixture.nativeElement.querySelector('main') as HTMLElement;
+
+    const queue = main.querySelector('ds-inbox') as HTMLElement;
+    expect(queue.querySelector('[role="listbox"]')!.getAttribute('aria-label')).toBe('Support queue');
+    expect(queue.querySelector('.ds-inbox__thread--unread .visually-hidden')!.textContent).toContain(
+      'Unread',
+    );
+    expect(queue.querySelector('[aria-disabled="true"]')!.textContent).toContain('closed');
+
+    const cal = main.querySelector('ds-scheduler') as HTMLElement;
+    expect(cal.querySelector('[role="grid"]')).toBeTruthy();
+
+    await scan(main);
   });
 
   it('has no violations with a board card grabbed mid-journey', async () => {

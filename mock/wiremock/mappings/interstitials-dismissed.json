@@ -1,0 +1,8 @@
+{
+  "name": "interstitials — record that an item was dismissed",
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/api/interstitials/([^/]+)/dismissed"
+  },
+  "response": { "status": 204 }
+}

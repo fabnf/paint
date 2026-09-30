@@ -130,3 +130,18 @@
 
 <!-- Last in the document: notifications must not precede the page they are about -->
 <ds-toast-host placement="bottom-end" />
+
+<!--
+  The tour of Paint. It lives in the shell, not in a page: it walks the user
+  across six routes, and a component inside the outlet would be destroyed on the
+  first Next.
+-->
+<ds-tour
+  #tour
+  tourId="paint-intro"
+  [steps]="showcaseTour.steps"
+  [dontShowAgain]="true"
+  (stepChange)="showcaseTour.onStep($event)"
+  (ended)="showcaseTour.onEnded($event)"
+  (suppressed)="showcaseTour.onSuppressed($event)"
+/>

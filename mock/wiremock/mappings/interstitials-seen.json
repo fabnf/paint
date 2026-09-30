@@ -1,0 +1,8 @@
+{
+  "name": "interstitials — record that an item was seen",
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/api/interstitials/([^/]+)/seen"
+  },
+  "response": { "status": 204 }
+}

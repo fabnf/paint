@@ -1,0 +1,161 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="image"
+    title="Gallery"
+    lede="Thumbnails, a lightbox and a slideshow over one list. The host passes the pictures once; “clicked a thumb” and “start the slideshow” are the same viewer in two modes, so the two can never drift apart. The modal behaviour is the Dialog's, note for note."
+    builtOn="ds-image + ds-figure + the Dialog's machinery"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A gallery you could ship"
+    anchor="anatomy"
+    description="Two layouts, three thumbnail sizes, the gallery's own tag filter, and a slideshow button. Click a thumbnail to open it; the page listens to itemOpen and itemChange, so the rating beside the gallery follows whatever the viewer is on."
+  >
+    <app-doc-example code="{{ basicSnippet }}" language="ts">
+      <ds-stack [gap]="5">
+        <ds-flex [gap]="4" [wrap]="'wrap'" align="center">
+          <ds-flex [gap]="2">
+            @for (option of layouts; track option) {
+              <ds-button size="sm" [variant]="layout() === option ? 'primary' : 'outline'" (clicked)="layout.set(option)">
+                {{ option }}
+              </ds-button>
+            }
+          </ds-flex>
+          <ds-divider orientation="vertical" [spacing]="0" />
+          <ds-flex [gap]="2">
+            @for (option of sizes; track option) {
+              <ds-button size="sm" [variant]="thumbSize() === option ? 'primary' : 'outline'" (clicked)="thumbSize.set(option)">
+                {{ option }}
+              </ds-button>
+            }
+          </ds-flex>
+        </ds-flex>
+
+        <ds-flex [gap]="4" align="center" [wrap]="'wrap'">
+          <ds-text variant="label">{{ selected().alt }}</ds-text>
+          <!-- Product shots with reviews: the summary says one thing about the selection. -->
+          <ds-rating-summary [value]="selectedRating()" [count]="selectedReviews()" size="sm" tone="warning" />
+        </ds-flex>
+
+        <ds-gallery
+          #deck
+          label="Product shots"
+          [items]="shots"
+          [layout]="layout()"
+          [thumbSize]="thumbSize()"
+          ratio="4/3"
+          [showCaptions]="true"
+          [filterable]="true"
+          [presentable]="true"
+          (itemOpen)="onSelect($event)"
+          (itemChange)="onSelect($event)"
+        />
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Filtering, two ways"
+    anchor="filter"
+    description="Either the gallery owns it — filterable builds one aria-pressed toggle per tag, with [(activeTag)] for the host to read or pre-set — or the host filters and passes a shorter list, which is the right answer when the filter is shared with the rest of the page. They compose: the gallery filters what it is given."
+  >
+    <app-doc-example code="{{ hostFilterSnippet }}" language="ts">
+      <ds-stack [gap]="4">
+        <ds-flex [gap]="2" [wrap]="'wrap'">
+          @for (option of categories; track option) {
+            <ds-button size="sm" [variant]="category() === option ? 'primary' : 'outline'" [ariaPressed]="category() === option" (clicked)="category.set(option)">
+              {{ option }}
+            </ds-button>
+          }
+        </ds-flex>
+        <ds-gallery
+          label="{{ category() === 'all' ? 'Everything' : category() }}"
+          [items]="hostFiltered()"
+          layout="strip"
+          thumbSize="sm"
+          ratio="1/1"
+        />
+        <ds-text variant="caption">
+          {{ hostFiltered().length }} of {{ shots.length }} pictures — the viewer walks exactly this list.
+        </ds-text>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Presentation mode"
+    anchor="presentation"
+    description="The slide-deck case: one picture at a time, back and forward, dots for where you are, and the position in a polite live region so moving is heard without leaving the viewer. Start it from the gallery's own button, from the lightbox, or from anywhere with present()."
+  >
+    <app-doc-example code="{{ presentSnippet }}">
+      <ds-flex [gap]="3" align="center" [wrap]="'wrap'">
+        <ds-button iconStart="play" variant="secondary" (clicked)="startDeck()">Play the deck</ds-button>
+        <ds-text variant="caption">Runs the same six pictures as the gallery above, from the host's own button.</ds-text>
+      </ds-flex>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The viewer's keyboard"
+    anchor="keyboard"
+    description="While the viewer is open it is a modal dialog: Tab cycles inside it, the rest of the page is inert, Escape closes and focus goes back to the thumbnail that opened it."
+  >
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="4" class="shortcut-sheet">
+      <ds-stack [gap]="0" [divided]="true">
+        <ds-shortcut-hint label="Next picture" keys="→" [alternatives]="['↓']" />
+        <ds-shortcut-hint label="Previous picture" keys="←" [alternatives]="['↑']" />
+        <ds-shortcut-hint label="First / last" keys="Home" [alternatives]="['End']" />
+        <ds-shortcut-hint label="Close, and focus goes back" keys="Esc" />
+        <ds-shortcut-hint label="Move inside the viewer" keys="⇥" description="Trapped, as in a dialog." />
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="What it refuses to do"
+    anchor="refuses"
+    description="A gallery is a set of pictures and a way to look at them."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Own a second list</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            One <ds-text variant="code" [as]="'code'">items</ds-text> array. The slideshow is a mode of the
+            same viewer over the same list — never a separate deck that can fall out of step.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Invent sizing</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            Thumbnails are <ds-text variant="code" [as]="'code'">&lt;ds-image&gt;</ds-text> with the ratio and
+            radius tokens; the big view is a <ds-text variant="code" [as]="'code'">&lt;ds-figure&gt;</ds-text>
+            when the item has words, and a picture when it does not.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">Play by itself</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            No autoplay, no timer: a picture that moves on its own is a picture nobody finished
+            reading. The keys and the two buttons advance the deck.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs, methods of <ds-gallery>, and the shape of an item.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="methods" nameHeading="Method" />
+      <app-doc-api-table [rows]="itemRows" nameHeading="GalleryItem" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

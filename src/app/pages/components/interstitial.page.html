@@ -1,0 +1,130 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="bell"
+    title="Interstitial"
+    lede="The full-page interruption, once per user per item. A content API returns zero or more things the product wants to say; everything already seen or dismissed is dropped; whatever is left opens in the Gallery's viewer — one item alone, or a set you can move through."
+    builtOn="ds-gallery's viewer + a content seam"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Loaded over HTTP, from WireMock"
+    anchor="load"
+    description="The demo really does a GET: the repo ships WireMock stub mappings in mock/wiremock, and the dev server proxies /api to them. Start the stub with npm run mock:api and press Load — the panel says where the items came from. With the stub down, the same button shows the organism's failure path and falls back to the bundled catalogue."
+  >
+    <app-doc-example code="{{ wireSnippet }}" language="ts">
+      <ds-stack [gap]="4" class="demo-form">
+        <ds-flex [gap]="2" [wrap]="'wrap'" align="center">
+          <ds-button iconStart="download" [loading]="loading()" (clicked)="load()">Load</ds-button>
+          <ds-button variant="secondary" (clicked)="show()">Show again</ds-button>
+          <ds-button variant="ghost" (clicked)="reset()">Forget everything</ds-button>
+        </ds-flex>
+
+        <ds-flex [gap]="2" align="center" [wrap]="'wrap'">
+          @switch (origin()) {
+            @case ('wiremock') {
+              <ds-badge tone="success" icon="check">Loaded from WireMock</ds-badge>
+            }
+            @case ('offline') {
+              <ds-badge tone="warning" icon="warning">Stub not running — bundled catalogue</ds-badge>
+            }
+            @default {
+              <ds-badge tone="neutral" variant="outline">Nothing loaded yet</ds-badge>
+            }
+          }
+          <ds-text variant="caption">{{ summary() }}</ds-text>
+        </ds-flex>
+
+        @if (error()) {
+          <ds-alert tone="warning" title="The content API did not answer">
+            {{ error() }} — an interruption that cannot load is not an error the page should wear.
+          </ds-alert>
+        }
+
+        <ds-box background="surface-sunken" [border]="true" radius="md" [padding]="4">
+          <ds-stack [gap]="2">
+            <ds-text variant="label">Records</ds-text>
+            <ds-text variant="code" tone="muted" class="record-seen">seen: [{{ records().seen.join(', ') }}]</ds-text>
+            <ds-text variant="code" tone="muted" class="record-dismissed">dismissed: [{{ records().dismissed.join(', ') }}]</ds-text>
+            @for (line of log(); track $index) {
+              <ds-text variant="code" tone="primary">{{ line }}</ds-text>
+            }
+          </ds-stack>
+        </ds-box>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Dismiss once, and it is gone"
+    anchor="dismiss"
+    description="Dismissing records the id, and the eligibility rule drops it from every later load — so in this demo it never comes back, even after pressing Load again. “Seen” is the weaker promise with the same effect: showing an item, or following its link, is enough. Both records live in localStorage, so a reload does not undo them."
+  >
+    <app-doc-example code="{{ usageSnippet }}" language="ts">
+      <ds-stack [gap]="3" class="demo-form">
+        <ds-text variant="bodySm" tone="muted">
+          Press <strong>Load</strong> above, dismiss one item, then press <strong>Load</strong>
+          again: the catalogue still has three, the deck has fewer.
+        </ds-text>
+        <ds-stack [gap]="0" [divided]="true">
+          @for (item of catalogue(); track item.id) {
+            <ds-flex justify="between" align="center" class="interstitial-row">
+              <ds-text variant="bodySm">{{ item.title }}</ds-text>
+              @if (records().dismissed.includes(item.id)) {
+                <ds-badge tone="danger">dismissed</ds-badge>
+              } @else if (records().seen.includes(item.id)) {
+                <ds-badge tone="neutral">seen</ds-badge>
+              } @else {
+                <ds-badge tone="success" variant="outline">eligible</ds-badge>
+              }
+            </ds-flex>
+          }
+        </ds-stack>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="One item, or a set"
+    anchor="set"
+    description="Several eligible items become a deck: the Gallery's viewer, with its counter, its dots, its two buttons and its keyboard. One item opens alone — no counter, no dots, nothing to move through. The modality is the Dialog's either way: focus trapped, the page inert and locked, Escape closes, focus goes back."
+  >
+    <ds-box background="surface" [border]="true" radius="lg" [padding]="4" class="shortcut-sheet">
+      <ds-stack [gap]="0" [divided]="true">
+        <ds-shortcut-hint label="Next announcement" keys="→" [alternatives]="['↓']" />
+        <ds-shortcut-hint label="Previous announcement" keys="←" [alternatives]="['↑']" />
+        <ds-shortcut-hint label="Close the interruption" keys="Esc" description="Focus returns to the page." />
+      </ds-stack>
+    </ds-box>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The mock, and the seam"
+    anchor="seam"
+    description="The organism never owns the wire. A source provides the content; a record store remembers what the user has been shown. Both are swapped at the root — WireMock in the showcase, a static double in the unit suite, a real API in a product."
+  >
+    <app-doc-example code="{{ mockSnippet }}" language="bash" [plain]="true">
+      <app-doc-api-table [rows]="seamRows" nameHeading="Export" />
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and the shape of an item.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="itemRows" nameHeading="InterstitialItem" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>
+
+<!-- The interruption itself: nothing renders until something is eligible. -->
+<ds-interstitial
+  [items]="eligible()"
+  [(open)]="open"
+  label="What's new"
+  (seen)="onSeen($event)"
+  (dismissed)="onDismissed($event)"
+  (learnMore)="onLearnMore($event)"
+  (closed)="onClosed($event)"
+/>

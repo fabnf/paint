@@ -23,6 +23,7 @@ import { NumberInputComponent, type NumberInputValue } from './number-input.comp
       [prefix]="prefix()"
       [suffix]="suffix()"
       [inputMode]="inputMode()"
+      [labelledBy]="labelledBy()"
       [decrementLabel]="decrementLabel()"
       [incrementLabel]="incrementLabel()"
       (valueInput)="inputs.push($event)"
@@ -46,6 +47,7 @@ class HostComponent {
   readonly prefix = signal('');
   readonly suffix = signal('');
   readonly inputMode = signal('');
+  readonly labelledBy = signal('');
   readonly decrementLabel = signal('Decrease');
   readonly incrementLabel = signal('Increase');
   inputs: NumberInputValue[] = [];
@@ -118,6 +120,15 @@ describe('NumberInputComponent', () => {
     fixture.detectChanges();
     expect(query('label')).toBeNull();
     expect(input().getAttribute('aria-label')).toBe('Number of seats');
+  });
+
+  it('can be named by an element elsewhere, which wins over aria-label', () => {
+    host.label.set('');
+    host.ariaLabel.set('Seats');
+    host.labelledBy.set('shared-label');
+    fixture.detectChanges();
+    expect(input().getAttribute('aria-labelledby')).toBe('shared-label');
+    expect(input().getAttribute('aria-label')).toBeNull();
   });
 
   it('describes the control with its hint and error, and an error is invalid', () => {

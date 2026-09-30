@@ -1,0 +1,279 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Organism"
+    icon="ruler"
+    title="Chart"
+    lede="Ten chart types on one contract, with the engine behind a seam. The host passes a type, categories and named series of plain numbers; Paint owns the colours (from the tokens), the loading and empty states, and the legend and tooltip decisions — and no Highcharts type ever reaches the host's tree."
+    builtOn="Highcharts, or the token-styled preview plate"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="A dashboard, not three fake points"
+    anchor="dashboard"
+    description="Every chart below is the same organism with a different type, drawing the kind of data a product actually has. This showcase configures no engine, so all of them are the preview plate — which is the point: the contract, the chrome and the colours are identical when Highcharts is wired in."
+  >
+    <ds-stack [gap]="5">
+      <ds-flex [gap]="3" [wrap]="'wrap'" align="center" id="dashboard-controls">
+        <ds-flex [gap]="2">
+          @for (option of ranges; track option.id) {
+            <ds-button
+              size="sm"
+              [variant]="range() === option.id ? 'primary' : 'outline'"
+              [ariaPressed]="range() === option.id"
+              (clicked)="range.set(option.id)"
+            >
+              {{ option.label }}
+            </ds-button>
+          }
+        </ds-flex>
+        <ds-divider orientation="vertical" [spacing]="0" />
+        <ds-button size="sm" variant="secondary" [iconStart]="dark() ? 'sun' : 'moon'" (clicked)="toggleTheme()">
+          {{ dark() ? 'Light' : 'Dark' }}
+        </ds-button>
+        <ds-text variant="caption">
+          Switch the theme: every series re-colours from the tokens, with no restyle fork.
+        </ds-text>
+      </ds-flex>
+
+      <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="5">
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-stacked-column">
+          <ds-chart
+            type="stacked-column"
+            title="Revenue by plan"
+            subtitle="Monthly recurring revenue, in thousands"
+            [categories]="categories()"
+            [series]="revenueSeries()"
+            [options]="revenueOptions"
+          />
+        </ds-box>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-area">
+          <ds-chart
+            type="area"
+            title="Signups"
+            subtitle="New accounts per month"
+            [categories]="categories()"
+            [series]="signupSeries()"
+            [options]="signupOptions"
+          />
+        </ds-box>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-line">
+          <ds-chart
+            type="line"
+            title="Churn"
+            subtitle="Share of accounts leaving each month"
+            [categories]="categories()"
+            [series]="churnSeries()"
+            [options]="churnOptions"
+          />
+        </ds-box>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-spline">
+          <ds-chart
+            type="spline"
+            title="Revenue trend"
+            subtitle="The same three plans, smoothed"
+            [categories]="categories()"
+            [series]="revenueSeries()"
+            [options]="revenueOptions"
+          />
+        </ds-box>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-column">
+          <ds-chart
+            type="column"
+            title="Traffic by channel"
+            subtitle="Visits, organic against referral"
+            [categories]="channelCategories"
+            [series]="channelSeries"
+            [options]="channelOptions"
+          />
+        </ds-box>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-bar">
+          <ds-chart
+            type="bar"
+            title="Revenue by region"
+            subtitle="Year to date, in thousands"
+            [categories]="['Europe', 'North America', 'Asia Pacific', 'Latin America']"
+            [series]="regionSeries"
+            [options]="regionOptions"
+            legend="none"
+          />
+        </ds-box>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-pie">
+          <ds-chart
+            type="pie"
+            title="Revenue share"
+            subtitle="Where the money came from"
+            [series]="regionSeries"
+            [options]="regionOptions"
+          />
+        </ds-box>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-donut">
+          <ds-chart
+            type="donut"
+            title="Accounts by plan"
+            subtitle="The hole is an option, not another component"
+            [series]="planSeries"
+            [options]="planOptions"
+          />
+        </ds-box>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-scatter">
+          <ds-chart
+            type="scatter"
+            title="Spend against seats"
+            subtitle="One dot per account"
+            [series]="seatsSeries"
+            [options]="seatsOptions"
+            legend="none"
+          />
+        </ds-box>
+
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-gauge">
+          <ds-chart
+            type="gauge"
+            title="Uptime"
+            subtitle="Rolling thirty days, against the 99.9% target"
+            [series]="uptimeSeries"
+            [options]="uptimeOptions"
+            legend="none"
+            height="14rem"
+          />
+        </ds-box>
+      </ds-grid>
+    </ds-stack>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Ten types, one component"
+    anchor="types"
+    description="The same data, the same contract, a different type. Nothing else changes — which is the whole argument against ten components."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <ds-stack [gap]="4">
+        <ds-flex [gap]="2" [wrap]="'wrap'" id="type-switcher">
+          @for (option of switchableTypes; track option) {
+            <ds-button
+              size="sm"
+              [variant]="switchType() === option ? 'primary' : 'outline'"
+              [ariaPressed]="switchType() === option"
+              (clicked)="switchType.set(option)"
+            >
+              {{ option }}
+            </ds-button>
+          }
+        </ds-flex>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-switchable">
+          <ds-chart
+            [type]="switchType()"
+            title="Revenue by plan"
+            [subtitle]="'Drawn as a ' + switchType()"
+            [categories]="categories()"
+            [series]="revenueSeries()"
+            [options]="revenueOptions"
+          />
+        </ds-box>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Loading, and nothing to draw"
+    anchor="states"
+    description="Two states every dashboard needs and most charting libraries leave to the product: a skeleton that holds the space and says it is busy, and an empty state with the host's words — never an axis with nothing on it."
+  >
+    <app-doc-example [plain]="true">
+      <ds-stack [gap]="4">
+        <ds-button size="sm" variant="secondary" id="loading-toggle" (clicked)="toggleLoading()">
+          {{ loading() ? 'Finish loading' : 'Load again' }}
+        </ds-button>
+        <ds-grid [cols]="{ base: 1, lg: 2 }" [gap]="5">
+          <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-loading">
+            <ds-chart
+              type="column"
+              title="Revenue by plan"
+              subtitle="Waiting for the query"
+              [loading]="loading()"
+              [categories]="categories()"
+              [series]="revenueSeries()"
+              [options]="revenueOptions"
+            />
+          </ds-box>
+          <ds-box background="surface" [border]="true" radius="lg" [padding]="5" id="chart-empty">
+            <ds-chart
+              type="line"
+              title="Revenue by plan"
+              subtitle="Filtered to a region with no customers yet"
+              [categories]="categories()"
+              [series]="emptySeries"
+              emptyTitle="No revenue in this region"
+              emptyDescription="Nothing has been billed here yet. Try another region."
+              emptyIcon="search"
+            />
+          </ds-box>
+        </ds-grid>
+      </ds-stack>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="Colour comes from the tokens"
+    anchor="tokens"
+    description="A series names a tone — primary, accent, danger — or nothing at all, and takes the next step of the palette. The colours are read from the live theme when the chart is drawn, so a mode switch or a brand pack re-colours every series, and no product ever pastes a hex into a chart config again."
+  >
+    <app-doc-example code="{{ toneSnippet }}" [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">No palette, anywhere</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              The organism resolves every colour before the engine sees the data, so no adapter
+              ships a palette and no engine default can leak through.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">Tones, not hexes</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              <ds-text variant="code" [as]="'code'">tone: 'danger'</ds-text> on a series, or on a single
+              point, is the same red as a danger badge — in both modes and in all three brand packs.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+        <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+          <ds-stack [gap]="2">
+            <ds-text variant="label" tone="primary">And a table underneath</ds-text>
+            <ds-text variant="bodySm" tone="muted">
+              Every chart writes its data as a visually-hidden <ds-text variant="code" [as]="'code'">&lt;table&gt;</ds-text>.
+              It is the only part of a chart a screen reader can actually read.
+            </ds-text>
+          </ds-stack>
+        </ds-box>
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The engine is a seam"
+    anchor="engine"
+    description="Paint depends on no charting library. The host passes its own Highcharts namespace through a deep-imported provider — so the licence, the version, the modules and the megabyte stay in the host's hands, and Paint's tests, CI and docs never need any of them."
+  >
+    <app-doc-example code="{{ engineSnippet }}" language="ts" [plain]="true">
+      <app-doc-api-table [rows]="seamRows" nameHeading="Export" />
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs and outputs of <ds-chart>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>

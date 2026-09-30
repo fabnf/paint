@@ -110,7 +110,8 @@ export type NumberInputValue = number | null;
           [attr.placeholder]="placeholder() || null"
           [attr.inputmode]="inputModeAttr()"
           autocomplete="off"
-          [attr.aria-label]="ariaLabelAttr()"
+          [attr.aria-label]="labelledBy() ? null : ariaLabelAttr()"
+          [attr.aria-labelledby]="labelledBy() || null"
           [attr.aria-describedby]="describedByIds()"
           [attr.aria-invalid]="ariaInvalid()"
           (input)="onInput($event)"
@@ -313,6 +314,12 @@ export class NumberInputComponent extends FormControlBase<NumberInputValue> {
    * numeric keypads have no minus sign.
    */
   readonly inputMode = input<string>('');
+  /**
+   * Id of an element elsewhere that names this control. For compositions where
+   * one visible label names two controls — `<ds-range-control>` points its
+   * slider's `<label for>` and this at the same text. Wins over `ariaLabel`.
+   */
+  readonly labelledBy = input<string>('');
   /** Accessible names of the two buttons. Add the field's name when several share a screen. */
   readonly decrementLabel = input<string>('Decrease');
   readonly incrementLabel = input<string>('Increase');

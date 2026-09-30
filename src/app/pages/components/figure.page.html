@@ -1,0 +1,144 @@
+<ds-stack [gap]="12" class="page">
+  <app-doc-page-header
+    layer="Molecule"
+    icon="image"
+    title="Figure"
+    lede="A picture with something to say about it. A real <figure> around a <ds-image>, with a real <figcaption> for the caption and the credit — a figure, not a card: no title, no body, no actions, no surface behind it."
+    builtOn="<figure> + ds-image + <figcaption>"
+    status="New"
+  />
+
+  <app-doc-section
+    heading="Caption and credit"
+    anchor="basic"
+    description="The alt says what the picture shows; the caption says why it is here. They are different words. The credit is the quietest line on the page, and it may be a link — to the photographer, the licence, the source."
+  >
+    <app-doc-example code="{{ basicSnippet }}">
+      <div class="figure-demo">
+        <ds-figure
+          [src]="wide"
+          alt="A violet wash with a magenta bleed and a lime sun"
+          ratio="16/9"
+          caption="Plate 3 — the first Wet Paint swatch, mixed on paper."
+          credit="Photo: Ada Lovelace"
+          creditHref="https://example.com/ada"
+          creditTarget="_blank"
+        />
+      </div>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="The picture as a link"
+    anchor="link"
+    description="href or link wraps the picture in an anchor, named by the alt — the one thing an <a> around an <img> does well, so nothing is added. The credit link is a separate, different link."
+  >
+    <app-doc-example code="{{ linkSnippet }}">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-figure
+          [src]="square"
+          alt="Floor plan, level 2"
+          ratio="4/3"
+          [href]="square"
+          target="_blank"
+          caption="Level 2, as built. Opens the full size."
+          credit="© 2026 Paint Architects"
+          creditHref="/brand"
+        />
+        <ds-figure
+          [src]="tall"
+          alt="A tall test plate"
+          ratio="4/3"
+          position="top"
+          link="/primitives/image"
+          caption="Cropped to the top; a router link to the atom."
+        />
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="A caption with markup"
+    anchor="rich"
+    description="The caption input is a string. For a link, emphasis or a citation in the caption, project content into the [dsFigureCaption] slot — it is rendered inside the <figcaption>, so the figure is still named by it."
+  >
+    <app-doc-example code="{{ richSnippet }}">
+      <div class="figure-demo">
+        <ds-figure [src]="square" alt="Floor plan, level 2" ratio="3/2" captionAlign="center">
+          <span dsFigureCaption>
+            Level 2, <em>as built</em>. <ds-link link="/primitives/link">Download the drawing</ds-link>.
+          </span>
+        </ds-figure>
+      </div>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="When there is no picture"
+    anchor="fallback"
+    description="The image atom's fallback, with the figure's caption under it. The frame is still an image named by the alt, and the figure is still named by its caption."
+  >
+    <app-doc-example [plain]="true">
+      <ds-grid [cols]="{ base: 1, md: 2 }" [gap]="5">
+        <ds-figure
+          [src]="null"
+          alt="Site photo, north elevation"
+          ratio="16/9"
+          fallbackText="Photo pending"
+          caption="North elevation, to be photographed after the scaffold comes down."
+        />
+        <ds-figure
+          src="showcase/does-not-exist.jpg"
+          alt="Site photo, south elevation"
+          ratio="16/9"
+          caption="South elevation. The file was lost; the caption was not."
+          credit="Site team"
+        />
+      </ds-grid>
+    </app-doc-example>
+  </app-doc-section>
+
+  <app-doc-section
+    heading="What it refuses to be"
+    anchor="refuses"
+    description="A figure is the smallest thing that is a picture plus its words."
+  >
+    <ds-grid [cols]="{ base: 1, md: 3 }" [gap]="4">
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">A card</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            No title, no body, no actions, no surface. If it needs a button, it is a card with a
+            figure inside it — and the card is a different component.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">A gallery</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            One picture. A grid of figures is a <ds-text variant="code" [as]="'code'">&lt;ds-grid&gt;</ds-text>
+            of <ds-text variant="code" [as]="'code'">&lt;ds-figure&gt;</ds-text>s, and the lightbox is an organism.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+      <ds-box background="surface" [border]="true" radius="lg" [padding]="5" class="h-100">
+        <ds-stack [gap]="2">
+          <ds-text variant="label" tone="primary">A second alt</ds-text>
+          <ds-text variant="bodySm" tone="muted">
+            The caption is not repeated into the alt, and the alt is not repeated into the caption.
+            One says what, the other says why.
+          </ds-text>
+        </ds-stack>
+      </ds-box>
+    </ds-grid>
+  </app-doc-section>
+
+  <app-doc-section heading="API" anchor="api" description="Inputs, outputs and slots of <ds-figure>.">
+    <ds-stack [gap]="4">
+      <app-doc-api-table [rows]="inputs" nameHeading="Input" />
+      <app-doc-api-table [rows]="outputs" nameHeading="Output" />
+      <app-doc-api-table [rows]="slots" nameHeading="Slot" />
+    </ds-stack>
+  </app-doc-section>
+</ds-stack>
